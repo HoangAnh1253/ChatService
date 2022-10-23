@@ -1,17 +1,17 @@
-import { display } from '@mui/system';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import ScrollToBottom from 'react-scroll-to-bottom';
 
 function Chat({ socket, username, room }) {
     const [currentMessage, setCurrentMessage] = useState('');
     const [messageList, setMessageList] = useState([]);
     const [userList, setUserList] = useState([username]);
+    const inputRef = useRef("");
     const sendMessage = async (e) => {
         e.preventDefault();
-        console.log(currentMessage);
         if (currentMessage !== '') {
             await socket.emit('user-send-message', currentMessage);
-            setCurrentMessage('');
+            inputRef.current.value = ""
+            console.log(currentMessage)
         }
     };
 
@@ -67,16 +67,19 @@ function Chat({ socket, username, room }) {
                         <ScrollToBottom style={{display:'flex'}}>
                             {messageList.map((messageContent, index) => {
                                 return (
-                                    <div
-                                        className="message"
-                                        id={username == messageContent.username ? 'you' : 'other'}
-                                        key={index}
+                                    <div className="wrapper-massage" 
+                                        key={index}  
+                                        id={username === messageContent.username ? 'you' : 'other'} 
                                     >
-                                        <p className="meta">
-                                            {messageContent.username}
-                                            <span> {messageContent.time}</span>
-                                        </p>
-                                        <p className="text">{messageContent.text}</p>
+                                        <div
+                                            className="message"
+                                        >
+                                            <p className="meta">
+                                                {messageContent.username}
+                                                <span> {messageContent.time}</span>
+                                            </p>
+                                            <p className="text">{messageContent.text}</p>
+                                        </div>
                                     </div>
                                 );
                             })}
@@ -87,6 +90,7 @@ function Chat({ socket, username, room }) {
                     <form id="chat-form">
                         <input
                             id="msg"
+                            ref={inputRef}
                             type="text"
                             placeholder="Enter Message"
                             required

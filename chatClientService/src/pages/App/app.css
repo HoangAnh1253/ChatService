@@ -92,12 +92,22 @@ a {
 	overflow-y: scroll;
 }
 
+.chat-messages .wrapper-massage {
+	display: flex;
+	align-items: flex-start;
+}
+
+.chat-messages .wrapper-massage#you {
+	justify-content: end;
+}
+
 .chat-messages .message {
 	padding: 10px;
 	margin-bottom: 15px;
 	background-color: var(--light-color);
-	border-radius: 5px;
+	border-radius: 8px;
 	overflow-wrap: break-word;
+	max-width: 70%;
 }
 
 .chat-messages .message .meta {
@@ -180,7 +190,7 @@ a {
 	width: 100%;
 }
 
-#you {
+/* #you {
     justify-content: flex-start;
 }
 
@@ -191,8 +201,8 @@ a {
 #you .meta {
 	justify-content: flex-start;
 	margin-left: 5px;
-}
-
+} */
+/* 
 #other {
 	justify-content: flex-end;
 }
@@ -205,7 +215,7 @@ a {
 #other .meta {
 	justify-content: flex-end;
 	margin-right: 5px;
-}
+} */
 
 
 @media (max-width: 700px) {

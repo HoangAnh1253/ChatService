@@ -20,7 +20,7 @@ const EventType = {
 class SocketIO {
   connect(server) {
     let io = socketio(server, {
-        cors: {
+        cors: { 
           origin: "*",
           methods: ["GET", "POST"]
         }
