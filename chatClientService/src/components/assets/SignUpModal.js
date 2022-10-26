@@ -11,12 +11,11 @@ import React from "react";
 
 const SignUpModal = (props) => {
     const { openSignUpModal, handleCloseSignUpModal } = props;
-    let image = require("./banner_form.png");
 
     return (
         <Modal open={openSignUpModal} onClose={handleCloseSignUpModal}>
             <Box sx={containerStyle}>
-                <img src={image} width="100%" />
+                <img src={process.env.PUBLIC_URL + '/banner_form.png'} width="100%" />
 
                 <Typography sx={labelStyle}> Email </Typography>
                 <TextField placeholder="nlhoanganh@gmail.com" variant="outlined" size="small" fullWidth={true} />
