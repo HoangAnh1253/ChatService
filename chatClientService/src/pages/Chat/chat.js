@@ -67,13 +67,12 @@ function Chat({ socket, username, room }) {
                         <ScrollToBottom style={{display:'flex'}}>
                             {messageList.map((messageContent, index) => {
                                 return (
-                                    <div className="wrapper-massage" 
+                                    <div 
+                                        className="wrapper-massage" 
                                         key={index}  
                                         id={username === messageContent.username ? 'you' : 'other'} 
                                     >
-                                        <div
-                                            className="message"
-                                        >
+                                        <div className="message">
                                             <p className="meta">
                                                 {messageContent.username}
                                                 <span> {messageContent.time}</span>
