@@ -10,23 +10,23 @@ import React from 'react';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Avatar from '@mui/material/Avatar';
 
-const SignUpModal = (props) => {
-    const { openSignUpModal, handleCloseSignUpModal, handleOpenSignInModal } = props;
+const SignInModal = (props) => {
+    const { openSignInModal, handleCloseSignInModal, handleOpenSignUpModal } = props;
 
     return (
-        <Modal open={openSignUpModal} onClose={handleCloseSignUpModal}>
+        <Modal open={openSignInModal} onClose={handleCloseSignInModal}>
             <Box sx={containerStyle}>
                 <Avatar sx={avatarStyle}>
                     <LockOutlinedIcon />
                 </Avatar>
                 <Typography component="h1" variant="h5" sx={signinStyle}>
-                    Sign up
+                    Sign in
                 </Typography>
                 <img src={process.env.PUBLIC_URL + '/banner_form.png'} width="100%" />
 
                 <Typography sx={labelStyle}> Email </Typography>
                 <TextField
-                    placeholder="nlhoanganh@gmail.com"
+                    placeholder="Email Address"
                     variant="outlined"
                     size="small"
                     fullWidth={true}
@@ -44,22 +44,21 @@ const SignUpModal = (props) => {
                     type="password"
                     fullWidth={true}
                     name="password"
-                    placeholder="Strong password: Nlh0@ng4nH"
+                    placeholder="Password"
                 />
 
-                <Typography sx={labelStyle} marginTop={2}>
-                    Confirm password
-                </Typography>
-                <TextField variant="outlined" size="small" type="password" fullWidth={true} name="password" />
+                <Button variant="text" color="primary" sx={textButtonStyle} disableElevation>
+                    Forgot password?
+                </Button>
 
                 <Button variant="contained" fullWidth={true} color="primary" sx={signUpButtonStyle} disableElevation>
-                    Sign Up
+                    Sign In
                 </Button>
 
                 <Divider style={{ width: '100%' }} />
 
                 <Grid container direction="row" justifyContent="center" alignItems="center" marginTop={4}>
-                    <Typography sx={noAccountTextStyle}>Already have an account?</Typography>
+                    <Typography sx={noAccountTextStyle}>Don't have an account?</Typography>
 
                     <Button
                         variant="outlined"
@@ -68,11 +67,11 @@ const SignUpModal = (props) => {
                         sx={{ marginLeft: 2 }}
                         disableElevation
                         onClick={() => {
-                            handleCloseSignUpModal();
-                            handleOpenSignInModal();
+                            handleCloseSignInModal();
+                            handleOpenSignUpModal();
                         }}
                     >
-                        Sign in
+                        Sign Up
                     </Button>
                 </Grid>
             </Box>
@@ -127,4 +126,9 @@ const signinStyle = {
     margin: 'auto',
 };
 
-export default SignUpModal;
+const textButtonStyle = {
+    color: 'primary',
+    textTransform: 'capitalize',
+};
+
+export default SignInModal;
