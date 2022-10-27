@@ -16,6 +16,7 @@ import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import Modal from '@mui/material/Modal';
 import SignUpModal from './SignUpModal';
+import SignInModal from './SignInModal';
 
 let searchButton = (
     <IconButton type="submit" aria-label="search">
@@ -26,8 +27,11 @@ let searchButton = (
 function MainAppBar(props) {
     const { activePageIndex, onChangeTabbarIndex } = props;
     const [openSignUpModal, setOpenSignUpModal] = React.useState(false);
+    const [openSignInModal, setOpenSignInModal] = React.useState(false);
     const handleOpenSignUpModal = () => setOpenSignUpModal(true);
     const handleCloseSignUpModal = () => setOpenSignUpModal(false);
+    const handleOpenSignInModal = () => setOpenSignInModal(true);
+    const handleCloseSignInModal = () => setOpenSignInModal(false);
 
     return (
         <Box sx={{ flexGrow: 1, marginBottom: 3 }}>
@@ -54,7 +58,13 @@ function MainAppBar(props) {
                         </Tabs>
 
                         <Box>
-                            <Button variant="outlined" size="medium" sx={{ marginX: 1 }} disableElevation>
+                            <Button
+                                variant="outlined"
+                                size="medium"
+                                onClick={handleOpenSignInModal}
+                                sx={{ marginX: 1 }}
+                                disableElevation
+                            >
                                 Sign in
                             </Button>
                             <Button variant="contained" size="medium" onClick={handleOpenSignUpModal} disableElevation>
@@ -65,7 +75,16 @@ function MainAppBar(props) {
                 </Toolbar>
             </AppBar>
 
-            <SignUpModal openSignUpModal={openSignUpModal} handleCloseSignUpModal={handleCloseSignUpModal} />
+            <SignUpModal
+                openSignUpModal={openSignUpModal}
+                handleOpenSignInModal={handleOpenSignInModal}
+                handleCloseSignUpModal={handleCloseSignUpModal} 
+            />
+            <SignInModal
+                openSignInModal={openSignInModal}
+                handleCloseSignInModal={handleCloseSignInModal} 
+                handleOpenSignUpModal={handleOpenSignUpModal}
+            />
         </Box>
     );
 }
