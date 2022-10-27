@@ -7,7 +7,7 @@ import Modal from '@mui/material/Modal';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import React from 'react';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import LockOpenIcon from '@mui/icons-material/LockOpen';
 import Avatar from '@mui/material/Avatar';
 
 const SignInModal = (props) => {
@@ -17,7 +17,7 @@ const SignInModal = (props) => {
         <Modal open={openSignInModal} onClose={handleCloseSignInModal}>
             <Box sx={containerStyle}>
                 <Avatar sx={avatarStyle}>
-                    <LockOutlinedIcon />
+                    <LockOpenIcon />
                 </Avatar>
                 <Typography component="h1" variant="h5" sx={signinStyle}>
                     Sign in

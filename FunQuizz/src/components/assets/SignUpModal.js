@@ -7,7 +7,7 @@ import Modal from '@mui/material/Modal';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import React from 'react';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import HowToRegIcon from '@mui/icons-material/HowToReg';
 import Avatar from '@mui/material/Avatar';
 
 const SignUpModal = (props) => {
@@ -17,7 +17,7 @@ const SignUpModal = (props) => {
         <Modal open={openSignUpModal} onClose={handleCloseSignUpModal}>
             <Box sx={containerStyle}>
                 <Avatar sx={avatarStyle}>
-                    <LockOutlinedIcon />
+                    <HowToRegIcon />
                 </Avatar>
                 <Typography component="h1" variant="h5" sx={signinStyle}>
                     Sign up
@@ -44,7 +44,7 @@ const SignUpModal = (props) => {
                     type="password"
                     fullWidth={true}
                     name="password"
-                    placeholder="Strong password: Nlh0@ng4nH"
+                    placeholder="Ex: Nlh0@ng4nH"
                 />
 
                 <Typography sx={labelStyle} marginTop={2}>

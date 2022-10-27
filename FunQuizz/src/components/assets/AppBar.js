@@ -20,7 +20,7 @@ import SignInModal from './SignInModal';
 
 let searchButton = (
     <IconButton type="submit" aria-label="search">
-        <SearchIcon style={{ fill: 'blue' }} />
+        <SearchIcon color="primary"/>
     </IconButton>
 );
 
@@ -37,9 +37,7 @@ function MainAppBar(props) {
         <Box sx={{ flexGrow: 1, marginBottom: 3 }}>
             <AppBar position="sticky" sx={{ backgroundColor: '#FFFFFF', pt: 2 }}>
                 <Toolbar variant="dense">
-                    <Typography variant="h6" color="#000000" fontSize={25} component="span" sx={{ mr: 2 }}>
-                        Quizziz
-                    </Typography>
+                    <img src={process.env.PUBLIC_URL + '/FunQuizz_logo.png'} width="150px" style={{marginRight: 25}}/>
 
                     <TextField
                         id="search-bar"
@@ -52,9 +50,9 @@ function MainAppBar(props) {
                     />
                     <Grid container direction="row" justifyContent="space-between" alignItems="center">
                         <Tabs value={activePageIndex} onChange={onChangeTabbarIndex}>
-                            <Tab label="Home" value={0} />
+                            <Tab label="Home"     value={0} />
                             <Tab label="Activity" value={1} />
-                            <Tab label="Classes" value={2} />
+                            <Tab label="Classes"  value={2} />
                         </Tabs>
 
                         <Box>
