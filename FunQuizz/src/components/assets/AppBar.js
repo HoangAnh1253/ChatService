@@ -28,6 +28,7 @@ function MainAppBar(props) {
     const { activePageIndex, onChangeTabbarIndex } = props;
     const [openSignUpModal, setOpenSignUpModal] = React.useState(false);
     const [openSignInModal, setOpenSignInModal] = React.useState(false);
+    
     const handleOpenSignUpModal = () => setOpenSignUpModal(true);
     const handleCloseSignUpModal = () => setOpenSignUpModal(false);
     const handleOpenSignInModal = () => setOpenSignInModal(true);
