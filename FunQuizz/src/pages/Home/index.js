@@ -3,7 +3,7 @@ import Typography from '@mui/material/Typography';
 import Card from '@mui/material/Card';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
-import { TextField, Button, Paper } from '@mui/material';
+import { TextField, Button, Paper, Container } from '@mui/material';
 import Stack from '@mui/system/Stack';
 import ExamCard from '~/components/assets/ExamCard';
 
@@ -25,8 +25,8 @@ const Home = () => {
     }
 
     return (
-        <React.Fragment>
-            <Box marginX={5}>
+        <Container maxWidth="xl">
+            <Box marginX={5} >
                 <Grid container spacing={2} justifyContent="space-between">
                     <Grid item xs={8} spacing={1}>
                         <Box sx={cardStyle}>
@@ -48,21 +48,26 @@ const Home = () => {
                     </Grid>
                 </Grid>
 
-                <Grid container rowSpacing={2} columnSpacing={2} sx={{ mt: 2 }}>
+                <Grid container rowSpacing={2} columnSpacing={2} sx={{ mt: 2}} >
+                    <Grid item md={12/5} sm={4}> <ExamCard exam={exam}/> </Grid>
+                    <Grid item md={12/5} sm={3}> <ExamCard exam={exam}/> </Grid>
+                    <Grid item md={12/5} sm={3}> <ExamCard exam={exam}/> </Grid>
+                    <Grid item md={12/5} sm={3}> <ExamCard exam={exam}/> </Grid>
+                    <Grid item md={12/5} sm={3}> <ExamCard exam={exam}/> </Grid>
+                    <Grid item md={12/5} sm={3}> <ExamCard exam={exam}/> </Grid>
+                    <Grid item md={12/5} sm={3}> <ExamCard exam={exam}/> </Grid>
+                    <Grid item md={12/5} sm={3}> <ExamCard exam={exam}/> </Grid>
+                    <Grid item md={12/5} sm={3}> <ExamCard exam={exam}/> </Grid>
+                    <Grid item md={12/5} sm={3}> <ExamCard exam={exam}/> </Grid>
+                    {/* <Grid item xs={2}> <ExamCard exam={exam}/> </Grid>
                     <Grid item xs={2}> <ExamCard exam={exam}/> </Grid>
                     <Grid item xs={2}> <ExamCard exam={exam}/> </Grid>
                     <Grid item xs={2}> <ExamCard exam={exam}/> </Grid>
                     <Grid item xs={2}> <ExamCard exam={exam}/> </Grid>
-                    <Grid item xs={2}> <ExamCard exam={exam}/> </Grid>
-                    <Grid item xs={2}> <ExamCard exam={exam}/> </Grid>
-                    <Grid item xs={2}> <ExamCard exam={exam}/> </Grid>
-                    <Grid item xs={2}> <ExamCard exam={exam}/> </Grid>
-                    <Grid item xs={2}> <ExamCard exam={exam}/> </Grid>
-                    <Grid item xs={2}> <ExamCard exam={exam}/> </Grid>
-                    <Grid item xs={2}> <ExamCard exam={exam}/> </Grid>
+                    <Grid item xs={2}> <ExamCard exam={exam}/> </Grid> */}
                 </Grid>
             </Box>
-        </React.Fragment>
+        </Container>
     );
 };
 

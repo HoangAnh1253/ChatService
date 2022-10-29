@@ -49,7 +49,7 @@ const ExamCard = (props) => {
 };
 
 const cardStyle = {
-    minWidth: 275, 
+    minWidth: 100, 
     boxShadow: 'rgba(33, 35, 38, 0.1) 10px 10px 10px -5px;'
 }
 

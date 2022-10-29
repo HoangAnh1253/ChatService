@@ -10,6 +10,7 @@ import LockOpenIcon from '@mui/icons-material/LockOpen';
 import Avatar from '@mui/material/Avatar';
 import axios from 'axios';
 import CredentialService from '~/Services/CredentialService';
+import LocalStorageKey from '~/Constants/LocalStorageKey';
 
 const SignInModal = (props) => {
     const { openSignInModal, handleCloseSignInModal, handleOpenSignUpModal } = props;
@@ -28,7 +29,7 @@ const SignInModal = (props) => {
             password,
             (response) => {
                 console.log(response);
-                localStorage.setItem('accessToken', response.data.accessToken);
+                localStorage.setItem(LocalStorageKey.ACCESS_TOKEN, response.data.accessToken);
                 setError({});
             },
             (error) => {
