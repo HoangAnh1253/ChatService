@@ -24,6 +24,8 @@ import { createTheme, makeStyles } from '@mui/material';
 import { ThemeProvider } from '@emotion/react';
 import AccountMenu from './AccountMenu';
 import LocalStorageKey from '~/Constants/LocalStorageKey';
+import CredentialService from '~/Services/CredentialService';
+import { UserContext } from '~/Context/UserContext';
 
 let searchButton = (
     <IconButton type="submit" aria-label="search">
@@ -32,7 +34,7 @@ let searchButton = (
 );
 
 function MainAppBar(props) {
-    const { activePageIndex, onChangeTabbarIndex } = props;
+    const { activePageIndex, onChangeTabbarIndex } = props
     const [openSignUpModal, setOpenSignUpModal] = React.useState(false)
     const [openSignInModal, setOpenSignInModal] = React.useState(false)
 
@@ -40,7 +42,12 @@ function MainAppBar(props) {
     const handleCloseSignUpModal = () => setOpenSignUpModal(false)
     const handleOpenSignInModal = () => setOpenSignInModal(true)
     const handleCloseSignInModal = () => setOpenSignInModal(false)
-    const isLogin = localStorage.getItem(LocalStorageKey.ACCESS_TOKEN)
+    const handleLogOut = () => {
+        CredentialService.logOut()
+        setUser("")
+    }
+
+    const {user, setUser} = React.useContext(UserContext)
 
     return (
         <Box sx={{ flexGrow: 1, marginBottom: 3 }}>
@@ -86,29 +93,39 @@ function MainAppBar(props) {
                                     sx={{ fontWeight: '700' }}
                                 />
                             </Tabs>
-                            {
-                            
-                            }
-                            <Box sx={{ display: 'flex', flexDirection: 'row' }}>
+                            {user !== "" ? (
                                 <Button
                                     variant="outlined"
                                     size="medium"
-                                    onClick={handleOpenSignInModal}
-                                    sx={{ marginX: 1 }}
+                                    color="error"
+                                    onClick={handleLogOut}
+                                    sx={{ marginX: 1, textTransform: "capitalize" }}
                                     disableElevation
                                 >
-                                    Sign in
+                                    Log out
                                 </Button>
-                                <Button
-                                    variant="contained"
-                                    size="medium"
-                                    onClick={handleOpenSignUpModal}
-                                    disableElevation
-                                >
-                                    Sign up
-                                </Button>
-                                <AccountMenu />
-                            </Box>
+                            ) : (
+                                <Box sx={{ display: 'flex', flexDirection: 'row' }}>
+                                    <Button
+                                        variant="outlined"
+                                        size="medium"
+                                        onClick={handleOpenSignInModal}
+                                        sx={{ marginX: 1 }}
+                                        disableElevation
+                                    >
+                                        Sign in
+                                    </Button>
+                                    <Button
+                                        variant="contained"
+                                        size="medium"
+                                        onClick={handleOpenSignUpModal}
+                                        disableElevation
+                                    >
+                                        Sign up
+                                    </Button>
+                                    <AccountMenu />
+                                </Box>
+                            )}
                         </ThemeProvider>
                     </Grid>
                 </Toolbar>

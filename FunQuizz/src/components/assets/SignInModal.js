@@ -11,10 +11,12 @@ import Avatar from '@mui/material/Avatar';
 import axios from 'axios';
 import CredentialService from '~/Services/CredentialService';
 import LocalStorageKey from '~/Constants/LocalStorageKey';
+import { UserContext } from '~/Context/UserContext';
 
 const SignInModal = (props) => {
     const { openSignInModal, handleCloseSignInModal, handleOpenSignUpModal } = props;
 
+    const {user, setUser} = React.useContext(UserContext)
     const [email, setEmail] = React.useState('');
     const [password, setPassword] = React.useState('');
     const [error, setError] = React.useState({});
@@ -30,7 +32,9 @@ const SignInModal = (props) => {
             (response) => {
                 console.log(response);
                 localStorage.setItem(LocalStorageKey.ACCESS_TOKEN, response.data.accessToken);
+                setUser(response.data.email)
                 setError({});
+                handleCloseSignInModal(true)
             },
             (error) => {
                 setError(error.response.data);
@@ -40,9 +44,9 @@ const SignInModal = (props) => {
 
     useEffect(() => {
         return () => {
-            setEmail('')
-            setPassword('')
-            setError({})
+            setEmail('');
+            setPassword('');
+            setError({});
         };
     }, [openSignInModal]);
 
