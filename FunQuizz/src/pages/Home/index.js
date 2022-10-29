@@ -24,50 +24,42 @@ const Home = () => {
         ]
     }
 
-    return (
-        <Container maxWidth="xl">
-            <Box marginX={5} >
-                <Grid container spacing={2} justifyContent="space-between">
-                    <Grid item xs={8} spacing={1}>
-                        <Box sx={cardStyle}>
-                            <Stack direction="row" spacing={1}>
-                                <TextField
-                                    variant="outlined"
-                                    placeholder="enter a join code"
-                                    fullWidth={true}
-                                ></TextField>
-                                <Button variant="contained" color="primary" size="large" sx={{ paddingY: 1.8 }}>
-                                    Join
-                                </Button>
-                            </Stack>
-                        </Box>
-                    </Grid>
-
-                    <Grid item xs={4}>
-                        <Box sx={{ ...cardStyle, height: 216 }}> Text </Box>
-                    </Grid>
+    return ( 
+        <Box marginX={5} >
+            <Grid container spacing={2} justifyContent="space-between">
+                <Grid item xs={8} spacing={1}>
+                    <Box sx={cardStyle}>
+                        <Stack direction="row" spacing={1}>
+                            <TextField
+                                variant="outlined"
+                                placeholder="enter a join code"
+                                fullWidth={true}
+                            ></TextField>
+                            <Button variant="contained" color="primary" size="large" sx={{ paddingY: 1.8 }}>
+                                Join
+                            </Button>
+                        </Stack>
+                    </Box>
                 </Grid>
 
-                <Grid container rowSpacing={2} columnSpacing={2} sx={{ mt: 2}} >
-                    <Grid item md={12/5} sm={4}> <ExamCard exam={exam}/> </Grid>
-                    <Grid item md={12/5} sm={3}> <ExamCard exam={exam}/> </Grid>
-                    <Grid item md={12/5} sm={3}> <ExamCard exam={exam}/> </Grid>
-                    <Grid item md={12/5} sm={3}> <ExamCard exam={exam}/> </Grid>
-                    <Grid item md={12/5} sm={3}> <ExamCard exam={exam}/> </Grid>
-                    <Grid item md={12/5} sm={3}> <ExamCard exam={exam}/> </Grid>
-                    <Grid item md={12/5} sm={3}> <ExamCard exam={exam}/> </Grid>
-                    <Grid item md={12/5} sm={3}> <ExamCard exam={exam}/> </Grid>
-                    <Grid item md={12/5} sm={3}> <ExamCard exam={exam}/> </Grid>
-                    <Grid item md={12/5} sm={3}> <ExamCard exam={exam}/> </Grid>
-                    {/* <Grid item xs={2}> <ExamCard exam={exam}/> </Grid>
-                    <Grid item xs={2}> <ExamCard exam={exam}/> </Grid>
-                    <Grid item xs={2}> <ExamCard exam={exam}/> </Grid>
-                    <Grid item xs={2}> <ExamCard exam={exam}/> </Grid>
-                    <Grid item xs={2}> <ExamCard exam={exam}/> </Grid>
-                    <Grid item xs={2}> <ExamCard exam={exam}/> </Grid> */}
+                <Grid item xs={4}>
+                    <Box sx={{ ...cardStyle, height: 216 }}> Text </Box>
                 </Grid>
-            </Box>
-        </Container>
+            </Grid>
+
+            <Grid container rowSpacing={2} columnSpacing={2} sx={{ mt: 2}} >
+                <Grid item md={12/5} sm={4}> <ExamCard exam={exam}/> </Grid>
+                <Grid item md={12/5} sm={3}> <ExamCard exam={exam}/> </Grid>
+                <Grid item md={12/5} sm={3}> <ExamCard exam={exam}/> </Grid>
+                <Grid item md={12/5} sm={3}> <ExamCard exam={exam}/> </Grid>
+                <Grid item md={12/5} sm={3}> <ExamCard exam={exam}/> </Grid>
+                <Grid item md={12/5} sm={3}> <ExamCard exam={exam}/> </Grid>
+                <Grid item md={12/5} sm={3}> <ExamCard exam={exam}/> </Grid>
+                <Grid item md={12/5} sm={3}> <ExamCard exam={exam}/> </Grid>
+                <Grid item md={12/5} sm={3}> <ExamCard exam={exam}/> </Grid>
+                <Grid item md={12/5} sm={3}> <ExamCard exam={exam}/> </Grid>
+            </Grid>
+        </Box>
     );
 };
 

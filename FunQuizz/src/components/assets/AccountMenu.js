@@ -12,10 +12,10 @@ import PersonAdd from '@mui/icons-material/PersonAdd';
 import Settings from '@mui/icons-material/Settings';
 import Logout from '@mui/icons-material/Logout';
 import DensityMediumIcon from '@mui/icons-material/DensityMedium';
+import { UserContext } from '~/Context/UserContext';
 
 const AccountMenu = () => {
     const [anchorEl, setAnchorEl] = React.useState(null);
-    const [isLoggin, setIsLoggin] = React.useState(true);
     const open = Boolean(anchorEl);
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
@@ -23,6 +23,8 @@ const AccountMenu = () => {
     const handleClose = () => {
         setAnchorEl(null);
     };
+
+    const { user, setUser } = React.useContext(UserContext);
     return (
         <React.Fragment>
             <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
@@ -74,7 +76,7 @@ const AccountMenu = () => {
                 transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                 anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
             >
-                {isLoggin && (
+                {user !== '' && (
                     <Box>
                         <MenuItem sx={{ fontSize: 14 }}>nlhoanganh@gmail.com</MenuItem>
                         <Divider />
@@ -90,7 +92,7 @@ const AccountMenu = () => {
                     <ListItemIcon>
                         <Logout fontSize="small" />
                     </ListItemIcon>
-                    {!isLoggin ? 'Log in' : 'Log out'}
+                    {user === '' ? 'Log in' : 'Log out'}
                 </MenuItem>
                 <MenuItem sx={{ fontSize: 14 }}>
                     <ListItemIcon>

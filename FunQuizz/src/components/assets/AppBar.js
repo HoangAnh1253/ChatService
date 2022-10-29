@@ -34,24 +34,24 @@ let searchButton = (
 );
 
 function MainAppBar(props) {
-    const { activePageIndex, onChangeTabbarIndex } = props
-    const [openSignUpModal, setOpenSignUpModal] = React.useState(false)
-    const [openSignInModal, setOpenSignInModal] = React.useState(false)
+    const { activePageIndex, onChangeTabbarIndex } = props;
+    const [openSignUpModal, setOpenSignUpModal] = React.useState(false);
+    const [openSignInModal, setOpenSignInModal] = React.useState(false);
 
-    const handleOpenSignUpModal = () => setOpenSignUpModal(true)
-    const handleCloseSignUpModal = () => setOpenSignUpModal(false)
-    const handleOpenSignInModal = () => setOpenSignInModal(true)
-    const handleCloseSignInModal = () => setOpenSignInModal(false)
+    const handleOpenSignUpModal = () => setOpenSignUpModal(true);
+    const handleCloseSignUpModal = () => setOpenSignUpModal(false);
+    const handleOpenSignInModal = () => setOpenSignInModal(true);
+    const handleCloseSignInModal = () => setOpenSignInModal(false);
     const handleLogOut = () => {
-        CredentialService.logOut()
-        setUser("")
-    }
+        CredentialService.logOut();
+        setUser('');
+    };
 
-    const {user, setUser} = React.useContext(UserContext)
+    const { user, setUser } = React.useContext(UserContext);
 
     return (
         <Box sx={{ flexGrow: 1, marginBottom: 3 }}>
-            <AppBar position="sticky" sx={{ backgroundColor: '#FFFFFF' }}>
+            <AppBar position="sticky" sx={{ backgroundColor: '#FFFFFF', boxShadow: 2 }}>
                 <Toolbar variant="dense">
                     <img
                         src={process.env.PUBLIC_URL + '/FunQuizz_logo.png'}
@@ -93,17 +93,20 @@ function MainAppBar(props) {
                                     sx={{ fontWeight: '700' }}
                                 />
                             </Tabs>
-                            {user !== "" ? (
-                                <Button
-                                    variant="outlined"
-                                    size="medium"
-                                    color="error"
-                                    onClick={handleLogOut}
-                                    sx={{ marginX: 1, textTransform: "capitalize" }}
-                                    disableElevation
-                                >
-                                    Log out
-                                </Button>
+                            {user !== '' ? (
+                                <Box sx={{ display: 'flex', flexDirection: 'row' }}>
+                                    <Button
+                                        variant="outlined"
+                                        size="medium"
+                                        color="error"
+                                        onClick={handleLogOut}
+                                        sx={{ marginX: 1, textTransform: 'capitalize' }}
+                                        disableElevation
+                                    >
+                                        Log out
+                                    </Button>
+                                    <AccountMenu />
+                                </Box>
                             ) : (
                                 <Box sx={{ display: 'flex', flexDirection: 'row' }}>
                                     <Button

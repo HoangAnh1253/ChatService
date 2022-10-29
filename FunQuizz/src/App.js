@@ -5,6 +5,8 @@ import { DefaultLayout } from '~/components/Layout';
 import React from 'react';
 import './App.css';
 import { UserContext } from './Context/UserContext';
+import { Container } from '@mui/material';
+import { Box } from '@mui/system';
 
 function App() {
     const [user, setUser] = React.useState('');
@@ -30,7 +32,9 @@ function App() {
                                     path={route.path}
                                     element={
                                         <Layout>
-                                            <Page />
+                                            <Container maxWidth="xl">
+                                                <Page />
+                                            </Container>
                                         </Layout>
                                     }
                                 />
