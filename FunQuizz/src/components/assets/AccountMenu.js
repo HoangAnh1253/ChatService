@@ -12,14 +12,14 @@ import PersonAdd from '@mui/icons-material/PersonAdd';
 import Settings from '@mui/icons-material/Settings';
 import Logout from '@mui/icons-material/Logout';
 import DensityMediumIcon from '@mui/icons-material/DensityMedium';
-import { UserContext } from '~/Context/UserContext';
 import CredentialService from '~/Services/CredentialService';
+import UserContext from '~/Context/UserContext';
 
 const AccountMenu = () => {
     const { user, setUser } = React.useContext(UserContext);
-
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
+    
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
     };
@@ -34,7 +34,7 @@ const AccountMenu = () => {
 
     return (
         <React.Fragment>
-            <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center'}}>
                 <Tooltip title="Account settings">
                     <IconButton
                         onClick={handleClick}

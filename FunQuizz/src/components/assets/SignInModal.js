@@ -11,8 +11,8 @@ import Avatar from '@mui/material/Avatar';
 import axios from 'axios';
 import CredentialService from '~/Services/CredentialService';
 import LocalStorageKey from '~/Constants/LocalStorageKey';
-import { UserContext } from '~/Context/UserContext';
 import UserService from '~/Services/UserService';
+import UserContext from '~/Context/UserContext';
 
 const SignInModal = (props) => {
     const { openSignInModal, handleCloseSignInModal, handleOpenSignUpModal } = props;
@@ -30,25 +30,25 @@ const SignInModal = (props) => {
         CredentialService.login(
             email,
             password,
-            async (response) => {
+            (response) => {
                 localStorage.setItem(LocalStorageKey.ACCESS_TOKEN, response.data.accessToken);
-
-                await UserService.fetch(
-                    response.data.email,
-                    response.data.accessToken,
-                    (userResponse) => {
-                        setUser(userResponse.data.data);
-                        console.log(userResponse.data.data);
-                        console.log(user);
-
-                        setError({});
-                        handleCloseSignInModal(true);
-                    },
-                    (error) => {},
-                );
+                localStorage.setItem(LocalStorageKey.CURRENT_USER_EMAIL, response.data.email);
+                fetchUser(response.data.email, response.data.accessToken);
             },
             (error) => {
                 setError(error.response.data);
+            },
+        );
+    };
+
+    const fetchUser = (email, token) => {
+        UserService.get(
+            token,
+            email,
+            (response) => {
+                setUser(response.data.data);
+                setError({});
+                handleCloseSignInModal(true);
             },
         );
     };

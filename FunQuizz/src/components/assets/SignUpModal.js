@@ -33,16 +33,6 @@ const SignUpModal = (props) => {
         checkPass()
     };
 
-    useEffect(() => {
-        checkPass();
-    }, [password, confirmPassword]);
-
-    useEffect(() => {
-        clearText()
-        setError({})
-        setShowSuccessAlert(false)
-    }, [openSignUpModal]);
-
     const onSubmit = (_) => {
         CredentialService.register(
             email,
@@ -58,13 +48,22 @@ const SignUpModal = (props) => {
         );
     };
 
+    useEffect(() => {
+        checkPass();
+    }, [password, confirmPassword]);
+
+    useEffect(() => {
+        clearText()
+        setError({})
+        setShowSuccessAlert(false)
+    }, [openSignUpModal]);
+
     const checkPass = () => {
         if (confirmPassword != password) {
             setError(PASSWORD_NOT_MATCH);
         } else {
             setError({});
         }
-        console.log(error === {})
     };
 
     function clearText() {

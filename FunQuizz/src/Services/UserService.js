@@ -4,7 +4,7 @@ import LocalStorageKey from '~/Constants/LocalStorageKey';
 class UserService {
     BASE_URL = 'http://acme.com/api/User';
 
-    async fetch(email, token, onSuccess, onError) {
+    async get(token, email, onSuccess, onError) {
         try {
             const response = await axios.get(`${this.BASE_URL + '/email/' + email}`, {
                 headers: {
@@ -12,6 +12,8 @@ class UserService {
                     'Access-Control-Allow-Origin': true,
                 },
             });
+
+            console.log(`Get user successfully with email: '${email}'`);
             onSuccess(response);
         } catch (error) {
             onError(error);

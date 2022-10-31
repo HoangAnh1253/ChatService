@@ -24,7 +24,7 @@ import { ThemeProvider } from '@emotion/react';
 import AccountMenu from './AccountMenu';
 import LocalStorageKey from '~/Constants/LocalStorageKey';
 import CredentialService from '~/Services/CredentialService';
-import { UserContext } from '~/Context/UserContext';
+import UserContext from '~/Context/UserContext';
 
 let searchButton = (
     <IconButton type="submit" aria-label="search">
@@ -36,12 +36,13 @@ function MainAppBar(props) {
     const { activePageIndex, onChangeTabbarIndex } = props;
     const [openSignUpModal, setOpenSignUpModal] = React.useState(false);
     const [openSignInModal, setOpenSignInModal] = React.useState(false);
+    const isLogin = localStorage.getItem(LocalStorageKey.ACCESS_TOKEN) !== null;
 
     const handleOpenSignUpModal = () => setOpenSignUpModal(true);
     const handleCloseSignUpModal = () => setOpenSignUpModal(false);
     const handleOpenSignInModal = () => setOpenSignInModal(true);
     const handleCloseSignInModal = () => setOpenSignInModal(false);
-    
+
     const handleLogOut = () => {
         CredentialService.logOut();
         setUser(null);
@@ -93,7 +94,7 @@ function MainAppBar(props) {
                                     sx={{ fontWeight: '700' }}
                                 />
                             </Tabs>
-                            {user !== null ? (
+                            {isLogin ? (
                                 <AccountMenu />
                             ) : (
                                 <Box sx={{ display: 'flex', flexDirection: 'row' }}>

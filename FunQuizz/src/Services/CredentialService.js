@@ -32,7 +32,7 @@ class CredentialService {
     }
 
     logOut() {
-        localStorage.removeItem(LocalStorageKey.ACCESS_TOKEN)
+        localStorage.clear()
     }
 }
 

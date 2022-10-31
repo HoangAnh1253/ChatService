@@ -1,18 +1,19 @@
-import { Fragment } from 'react';
+import { Fragment, useContext, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { publicRoutes } from '~/routes';
 import { DefaultLayout } from '~/components/Layout';
 import React from 'react';
 import './App.css';
-import { UserContext } from './Context/UserContext';
 import { Container } from '@mui/material';
 import { Box } from '@mui/system';
+import LocalStorageKey from './Constants/LocalStorageKey';
+import UserService from './Services/UserService';
+import UserContext, { UserContextProvider } from './Context/UserContext';
 
 function App() {
-    const [user, setUser] = React.useState('');
 
     return (
-        <UserContext.Provider value={{ user, setUser }}>
+        <UserContextProvider>
             <Router>
                 <div className="App">
                     <Routes>
@@ -43,7 +44,7 @@ function App() {
                     </Routes>
                 </div>
             </Router>
-        </UserContext.Provider>
+        </UserContextProvider>
     );
 }
 

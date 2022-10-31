@@ -3,7 +3,7 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
-import { TextField, Button, Paper } from '@mui/material';
+import { TextField, Button, Paper, makeStyles } from '@mui/material';
 import Stack from '@mui/system/Stack';
 import ExamCard from '~/components/assets/ExamCard';
 import { flexbox } from '@mui/system';
@@ -27,8 +27,8 @@ const Home = () => {
     return (
         <Container maxWidth="xl">
             <Box marginX={5}>
-                <Grid container spacing={2} justifyContent="space-between">
-                    <Grid item xs={8} spacing={1}>
+                <Grid spacing={2} container justifyContent="space-between">
+                    <Grid item xs={8}>
                         <Box sx={cardStyle}>
                             <Stack direction="row" spacing={1}>
                                 <TextField
@@ -46,7 +46,7 @@ const Home = () => {
                     <Grid item xs={4}>
                         <Box sx={{ ...cardStyle, height: 216, background: 'linear-gradient(45deg, #3c3c8a, #2c6cd1)' }}>
                             <Button variant="outlined" sx={{ color: 'white', borderColor: 'white' }}>
-                                Create new room
+                                Create quiz
                             </Button>
                         </Box>
                     </Grid>
@@ -96,5 +96,6 @@ const cardStyle = {
     borderRadius: 3,
     boxShadow: '0 2px 4px 0 rgb(0 0 0 / 10%)',
 };
+
 
 export default Home;
