@@ -13,8 +13,11 @@ import Settings from '@mui/icons-material/Settings';
 import Logout from '@mui/icons-material/Logout';
 import DensityMediumIcon from '@mui/icons-material/DensityMedium';
 import { UserContext } from '~/Context/UserContext';
+import CredentialService from '~/Services/CredentialService';
 
 const AccountMenu = () => {
+    const { user, setUser } = React.useContext(UserContext);
+
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
     const handleClick = (event) => {
@@ -24,7 +27,11 @@ const AccountMenu = () => {
         setAnchorEl(null);
     };
 
-    const { user, setUser } = React.useContext(UserContext);
+    const handleLogOut = () => {
+        CredentialService.logOut();
+        setUser(null);
+    };
+
     return (
         <React.Fragment>
             <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
@@ -76,29 +83,21 @@ const AccountMenu = () => {
                 transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                 anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
             >
-                {user !== '' && (
-                    <Box>
-                        <MenuItem sx={{ fontSize: 14 }}>nlhoanganh@gmail.com</MenuItem>
-                        <Divider />
-                    </Box>
-                )}
+                <Box>
+                    <MenuItem sx={{ fontSize: 14 }}>{user}</MenuItem>
+                    <Divider />
+                </Box>
                 <MenuItem sx={{ fontSize: 14 }}>
                     <ListItemIcon>
                         <Settings fontSize="small" />
                     </ListItemIcon>
                     Settings
                 </MenuItem>
-                <MenuItem sx={{ fontSize: 14 }}>
-                    <ListItemIcon>
+                <MenuItem sx={{ fontSize: 14, color: 'red' }} onClick={handleLogOut}>
+                    <ListItemIcon sx={{ color: 'red' }}>
                         <Logout fontSize="small" />
                     </ListItemIcon>
-                    {user === '' ? 'Log in' : 'Log out'}
-                </MenuItem>
-                <MenuItem sx={{ fontSize: 14 }}>
-                    <ListItemIcon>
-                        <PersonAdd fontSize="small" />
-                    </ListItemIcon>
-                    Sign up
+                    Log out
                 </MenuItem>
             </Menu>
         </React.Fragment>

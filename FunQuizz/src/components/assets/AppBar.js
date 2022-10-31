@@ -10,7 +10,6 @@ import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import { BrowserRouter, Link, Route, Routes } from 'react-router-dom';
-import Home from '~/pages/Home';
 import Activity from '~/pages/Activity';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
@@ -44,7 +43,7 @@ function MainAppBar(props) {
     const handleCloseSignInModal = () => setOpenSignInModal(false);
     const handleLogOut = () => {
         CredentialService.logOut();
-        setUser('');
+        setUser(null);
     };
 
     const { user, setUser } = React.useContext(UserContext);
@@ -93,20 +92,8 @@ function MainAppBar(props) {
                                     sx={{ fontWeight: '700' }}
                                 />
                             </Tabs>
-                            {user !== '' ? (
-                                <Box sx={{ display: 'flex', flexDirection: 'row' }}>
-                                    <Button
-                                        variant="outlined"
-                                        size="medium"
-                                        color="error"
-                                        onClick={handleLogOut}
-                                        sx={{ marginX: 1, textTransform: 'capitalize' }}
-                                        disableElevation
-                                    >
-                                        Log out
-                                    </Button>
-                                    <AccountMenu />
-                                </Box>
+                            {user !== null ? (
+                                <AccountMenu />
                             ) : (
                                 <Box sx={{ display: 'flex', flexDirection: 'row' }}>
                                     <Button
@@ -126,7 +113,6 @@ function MainAppBar(props) {
                                     >
                                         Sign up
                                     </Button>
-                                    <AccountMenu />
                                 </Box>
                             )}
                         </ThemeProvider>
