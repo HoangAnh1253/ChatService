@@ -1,27 +1,72 @@
+import React, { useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Container from '@mui/material/Container';
 import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Grid';
 import Modal from '@mui/material/Modal';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import React from 'react';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
 import Avatar from '@mui/material/Avatar';
+import axios from 'axios';
+import CredentialService from '~/Services/CredentialService';
+import LocalStorageKey from '~/Constants/LocalStorageKey';
+import UserService from '~/Services/UserService';
+import UserContext from '~/Context/UserContext';
 
 const SignInModal = (props) => {
     const { openSignInModal, handleCloseSignInModal, handleOpenSignUpModal } = props;
 
+    const { user, setUser } = React.useContext(UserContext);
+    const [email, setEmail] = React.useState('');
+    const [password, setPassword] = React.useState('');
+    const [error, setError] = React.useState({});
+
+    const handleEmailChange = (e) => setEmail(e.target.value);
+    const handlePasswordChange = (e) => setPassword(e.target.value);
+    const isFormNotValid = () => email == '' || password == '';
+
+    const onSubmit = (_) => {
+        CredentialService.login(
+            email,
+            password,
+            (response) => {
+                localStorage.setItem(LocalStorageKey.ACCESS_TOKEN, response.data.accessToken);
+                localStorage.setItem(LocalStorageKey.CURRENT_USER_EMAIL, response.data.email);
+                fetchUser(response.data.email, response.data.accessToken);
+            },
+            (error) => {
+                setError(error.response.data);
+            },
+        );
+    };
+
+    const fetchUser = (email, token) => {
+        UserService.get(
+            token,
+            email,
+            (response) => {
+                setUser(response.data.data);
+                setError({});
+                handleCloseSignInModal(true);
+            },
+        );
+    };
+
+    useEffect(() => {
+        return () => {
+            setEmail('');
+            setPassword('');
+            setError({});
+        };
+    }, [openSignInModal]);
+
     return (
         <Modal open={openSignInModal} onClose={handleCloseSignInModal}>
-            <Box sx={containerStyle}>
+            <Box component="form" sx={containerStyle}>
                 <Avatar sx={avatarStyle}>
                     <LockOpenIcon />
                 </Avatar>
-                <Typography component="h1" variant="h5" sx={signinStyle}>
-                    Sign in
-                </Typography>
                 <img src={process.env.PUBLIC_URL + '/banner_form.png'} width="100%" />
 
                 <Typography sx={labelStyle}> Email </Typography>
@@ -29,10 +74,13 @@ const SignInModal = (props) => {
                     placeholder="Email Address"
                     variant="outlined"
                     size="small"
-                    fullWidth={true}
                     name="email"
+                    fullWidth={true}
+                    helperText={'email' in error ? error.email : ''}
+                    onChange={handleEmailChange}
                     required
                     autoFocus
+                    error={'email' in error}
                 />
 
                 <Typography sx={labelStyle} marginTop={2}>
@@ -42,17 +90,28 @@ const SignInModal = (props) => {
                     variant="outlined"
                     size="small"
                     type="password"
-                    fullWidth={true}
                     name="password"
                     placeholder="Password"
+                    fullWidth={true}
+                    helperText={'password' in error ? error.password : ''}
+                    onChange={handlePasswordChange}
+                    error={'password' in error}
                 />
 
                 <Button variant="text" color="primary" sx={textButtonStyle} disableElevation>
                     Forgot password?
                 </Button>
 
-                <Button variant="contained" fullWidth={true} color="primary" sx={signUpButtonStyle} disableElevation>
-                    Sign In
+                <Button
+                    variant="contained"
+                    fullWidth={true}
+                    color="primary"
+                    sx={signUpButtonStyle}
+                    onClick={onSubmit}
+                    disableElevation
+                    disabled={isFormNotValid()}
+                >
+                    Log in
                 </Button>
 
                 <Divider style={{ width: '100%' }} />
@@ -71,7 +130,7 @@ const SignInModal = (props) => {
                             handleOpenSignUpModal();
                         }}
                     >
-                        Sign Up
+                        Register
                     </Button>
                 </Grid>
             </Box>
@@ -112,7 +171,8 @@ const signUpButtonStyle = {
 };
 
 const avatarStyle = {
-    backgroundColor: '#333',
+    // backgroundColor: '#333',
+    backgroundColor: 'primary.main',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',

@@ -1,24 +1,34 @@
-import React from 'react';
+import React, { useContext, useEffect } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import MainAppBar from '~/components/assets/AppBar';
 import Activity from '../Activity';
 import { Typography } from '@mui/material';
 import Home from '../Home';
+import PageIndexContext from '~/Context/PageIndexContext';
+import UserContext from '~/Context/UserContext';
+import LocalStorageKey from '~/Constants/LocalStorageKey';
+import UserService from '~/Services/UserService';
 
 const Main = () => {
-    const [activePageIndex, setActivePageIndex] = React.useState(0);
+    const pageIndex = useContext(PageIndexContext);
+    const {user, setUser} = useContext(UserContext)
 
-    const onChangeTabbarIndex = (_, val) => {
-        setActivePageIndex(val);
-    };
+    useEffect(() => {
+        const accessToken = localStorage.getItem(LocalStorageKey.ACCESS_TOKEN);
+        
+        if (accessToken !== null) {
+            const userEmail = localStorage.getItem(LocalStorageKey.CURRENT_USER_EMAIL);
+            UserService.get(accessToken, userEmail, (response) => {
+                setUser(response.data.data);
+            });
+        }
+    }, []);
 
     return (
         <React.Fragment>
-            <MainAppBar activePageIndex={activePageIndex} onChangeTabbarIndex={onChangeTabbarIndex}/>
-
-            { activePageIndex === 0 && <Home /> }
-            { activePageIndex === 1 && <Activity /> }
-            { activePageIndex === 2 && <Classes /> }
+            {pageIndex.activePageIndex === 0 && <Home />}
+            {pageIndex.activePageIndex === 1 && <Activity />}
+            {pageIndex.activePageIndex === 2 && <Classes />}
         </React.Fragment>
     );
 };
@@ -29,6 +39,6 @@ const Classes = () => {
             Classes page
         </Typography>
     );
-}
+};
 
 export default Main;

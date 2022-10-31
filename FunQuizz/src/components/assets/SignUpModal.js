@@ -6,32 +6,97 @@ import Grid from '@mui/material/Grid';
 import Modal from '@mui/material/Modal';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import React from 'react';
+import React, { useEffect } from 'react';
 import HowToRegIcon from '@mui/icons-material/HowToReg';
 import Avatar from '@mui/material/Avatar';
+import axios from 'axios';
+import CredentialService from '~/Services/CredentialService';
+import Alert from '@mui/material/Alert';
 
 const SignUpModal = (props) => {
     const { openSignUpModal, handleCloseSignUpModal, handleOpenSignInModal } = props;
 
+    const PASSWORD_NOT_MATCH = {confirmPassword: "Password doesn't match"};
+
+    const [email, setEmail] = React.useState('');
+    const [password, setPassword] = React.useState('');
+    const [confirmPassword, setConfirmPassword] = React.useState('');
+    const [error, setError] = React.useState({});
+    const [showSuccessAlert, setShowSuccessAlert] = React.useState(false);
+
+    const handleEmailChange = (e) => setEmail(e.target.value);
+    const handlePasswordChange = (e) => setPassword(e.target.value);
+    const isFormNotValid = () => email == '' || password == '' || confirmPassword == '' || 'confirmPassword' in error;
+
+    const handleConfirmPasswordChange = (e) => {
+        setConfirmPassword(e.target.value);
+        checkPass()
+    };
+
+    const onSubmit = (_) => {
+        CredentialService.register(
+            email,
+            password,
+            (response) => {
+                clearText()
+                setShowSuccessAlert(true)
+            },
+            (error) => {
+                console.log(error.response);
+                setError(error.response.data);
+            },
+        );
+    };
+
+    useEffect(() => {
+        checkPass();
+    }, [password, confirmPassword]);
+
+    useEffect(() => {
+        clearText()
+        setError({})
+        setShowSuccessAlert(false)
+    }, [openSignUpModal]);
+
+    const checkPass = () => {
+        if (confirmPassword != password) {
+            setError(PASSWORD_NOT_MATCH);
+        } else {
+            setError({});
+        }
+    };
+
+    function clearText() {
+        setEmail('')
+        setPassword('')
+        setConfirmPassword('')
+    }
+
     return (
         <Modal open={openSignUpModal} onClose={handleCloseSignUpModal}>
-            <Box sx={containerStyle}>
+            <Box component="form" sx={containerStyle}>
                 <Avatar sx={avatarStyle}>
                     <HowToRegIcon />
                 </Avatar>
-                <Typography component="h1" variant="h5" sx={signinStyle}>
-                    Sign up
-                </Typography>
                 <img src={process.env.PUBLIC_URL + '/banner_form.png'} width="100%" />
+
+                {showSuccessAlert && (
+                    <Alert severity="success" color="info" sx={{ mb: 2 }}>
+                        Your account has been created!
+                    </Alert>
+                )}
 
                 <Typography sx={labelStyle}> Email </Typography>
                 <TextField
                     placeholder="nlhoanganh@gmail.com"
                     variant="outlined"
                     size="small"
-                    fullWidth={true}
                     name="email"
-                    required
+                    value={email}
+                    fullWidth={true}
+                    onChange={handleEmailChange}
+                    helperText={'email' in error ? error.email : ''}
+                    error={'email' in error}
                     autoFocus
                 />
 
@@ -43,17 +108,37 @@ const SignUpModal = (props) => {
                     size="small"
                     type="password"
                     fullWidth={true}
+                    value={password}
                     name="password"
                     placeholder="Ex: Nlh0@ng4nH"
+                    onChange={handlePasswordChange}
                 />
 
                 <Typography sx={labelStyle} marginTop={2}>
                     Confirm password
                 </Typography>
-                <TextField variant="outlined" size="small" type="password" fullWidth={true} name="password" />
+                <TextField
+                    variant="outlined"
+                    size="small"
+                    type="password"
+                    fullWidth={true}
+                    name="confirmPassword"
+                    value={confirmPassword}
+                    onChange={handleConfirmPasswordChange}
+                    helperText={'confirmPassword' in error ? error.confirmPassword : ''}
+                    error={'confirmPassword' in error}
+                />
 
-                <Button variant="contained" fullWidth={true} color="primary" sx={signUpButtonStyle} disableElevation>
-                    Sign Up
+                <Button
+                    variant="contained"
+                    fullWidth={true}
+                    color="primary"
+                    sx={signUpButtonStyle}
+                    onClick={onSubmit}
+                    disableElevation
+                    disabled={isFormNotValid()}
+                >
+                    Register
                 </Button>
 
                 <Divider style={{ width: '100%' }} />
@@ -72,7 +157,7 @@ const SignUpModal = (props) => {
                             handleOpenSignInModal();
                         }}
                     >
-                        Sign in
+                        Log in
                     </Button>
                 </Grid>
             </Box>
@@ -113,7 +198,8 @@ const signUpButtonStyle = {
 };
 
 const avatarStyle = {
-    backgroundColor: '#333',
+    // backgroundColor: '#333',
+    backgroundColor: 'primary.main',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
