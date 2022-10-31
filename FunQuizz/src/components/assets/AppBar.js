@@ -34,20 +34,20 @@ let searchButton = (
 );
 
 function MainAppBar(props) {
-    const { activePageIndex, onChangeTabbarIndex } = props
-    const [openSignUpModal, setOpenSignUpModal] = React.useState(false)
-    const [openSignInModal, setOpenSignInModal] = React.useState(false)
+    const { activePageIndex, onChangeTabbarIndex } = props;
+    const [openSignUpModal, setOpenSignUpModal] = React.useState(false);
+    const [openSignInModal, setOpenSignInModal] = React.useState(false);
 
-    const handleOpenSignUpModal = () => setOpenSignUpModal(true)
-    const handleCloseSignUpModal = () => setOpenSignUpModal(false)
-    const handleOpenSignInModal = () => setOpenSignInModal(true)
-    const handleCloseSignInModal = () => setOpenSignInModal(false)
+    const handleOpenSignUpModal = () => setOpenSignUpModal(true);
+    const handleCloseSignUpModal = () => setOpenSignUpModal(false);
+    const handleOpenSignInModal = () => setOpenSignInModal(true);
+    const handleCloseSignInModal = () => setOpenSignInModal(false);
     const handleLogOut = () => {
-        CredentialService.logOut()
-        setUser("")
-    }
+        CredentialService.logOut();
+        setUser(null);
+    };
 
-    const {user, setUser} = React.useContext(UserContext)
+    const { user, setUser } = React.useContext(UserContext);
 
     return (
         <Box sx={{ flexGrow: 1, marginBottom: 3 }}>
@@ -93,17 +93,8 @@ function MainAppBar(props) {
                                     sx={{ fontWeight: '700' }}
                                 />
                             </Tabs>
-                            {user !== "" ? (
-                                <Button
-                                    variant="outlined"
-                                    size="medium"
-                                    color="error"
-                                    onClick={handleLogOut}
-                                    sx={{ marginX: 1, textTransform: "capitalize" }}
-                                    disableElevation
-                                >
-                                    Log out
-                                </Button>
+                            {user !== null ? (
+                                <AccountMenu />
                             ) : (
                                 <Box sx={{ display: 'flex', flexDirection: 'row' }}>
                                     <Button
@@ -123,7 +114,6 @@ function MainAppBar(props) {
                                     >
                                         Sign up
                                     </Button>
-                                    <AccountMenu />
                                 </Box>
                             )}
                         </ThemeProvider>
