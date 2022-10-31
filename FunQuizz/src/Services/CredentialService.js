@@ -3,7 +3,7 @@ import LocalStorageKey from "~/Constants/LocalStorageKey";
 
 class CredentialService {
     BASE_URL = 'http://acme.com/auth';
-    ACCESS_CONTROL_HEADER = {'Access-Control-Allow-Origin': true}
+    ACCESS_CONTROL_HEADER = { 'Access-Control-Allow-Origin': true }
 
     async login(email, password, onSuccess, onError) {
         try {

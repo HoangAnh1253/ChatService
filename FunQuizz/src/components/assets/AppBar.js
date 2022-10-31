@@ -41,6 +41,7 @@ function MainAppBar(props) {
     const handleCloseSignUpModal = () => setOpenSignUpModal(false);
     const handleOpenSignInModal = () => setOpenSignInModal(true);
     const handleCloseSignInModal = () => setOpenSignInModal(false);
+    
     const handleLogOut = () => {
         CredentialService.logOut();
         setUser(null);

@@ -84,7 +84,7 @@ const AccountMenu = () => {
                 anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
             >
                 <Box>
-                    <MenuItem sx={{ fontSize: 14 }}>{user}</MenuItem>
+                    <MenuItem sx={{ fontSize: 14, fontWeight: "bold" }}>{user.email}</MenuItem>
                     <Divider />
                 </Box>
                 <MenuItem sx={{ fontSize: 14 }}>

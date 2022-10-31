@@ -29,7 +29,6 @@ const Home = () => {
             <Box marginX={5}>
                 <Grid container spacing={2} justifyContent="space-between">
                     <Grid item xs={8} spacing={1}>
-                        {/* <Box sx={{ ...cardStyle, background: 'linear-gradient(45deg, #380036, #081350)' }}> */}
                         <Box sx={cardStyle}>
                             <Stack direction="row" spacing={1}>
                                 <TextField
@@ -55,44 +54,34 @@ const Home = () => {
 
                 <Grid container rowSpacing={2} columnSpacing={2} sx={{ mt: 2 }}>
                     <Grid item md={12 / 5} sm={4}>
-                        {' '}
-                        <ExamCard exam={exam} />{' '}
+                        <ExamCard exam={exam} />
                     </Grid>
                     <Grid item md={12 / 5} sm={3}>
-                        {' '}
-                        <ExamCard exam={exam} />{' '}
+                        <ExamCard exam={exam} />
                     </Grid>
                     <Grid item md={12 / 5} sm={3}>
-                        {' '}
-                        <ExamCard exam={exam} />{' '}
+                        <ExamCard exam={exam} />
                     </Grid>
                     <Grid item md={12 / 5} sm={3}>
-                        {' '}
-                        <ExamCard exam={exam} />{' '}
+                        <ExamCard exam={exam} />
                     </Grid>
                     <Grid item md={12 / 5} sm={3}>
-                        {' '}
-                        <ExamCard exam={exam} />{' '}
+                        <ExamCard exam={exam} />
                     </Grid>
                     <Grid item md={12 / 5} sm={3}>
-                        {' '}
-                        <ExamCard exam={exam} />{' '}
+                        <ExamCard exam={exam} />
                     </Grid>
                     <Grid item md={12 / 5} sm={3}>
-                        {' '}
-                        <ExamCard exam={exam} />{' '}
+                        <ExamCard exam={exam} />
                     </Grid>
                     <Grid item md={12 / 5} sm={3}>
-                        {' '}
-                        <ExamCard exam={exam} />{' '}
+                        <ExamCard exam={exam} />
                     </Grid>
                     <Grid item md={12 / 5} sm={3}>
-                        {' '}
-                        <ExamCard exam={exam} />{' '}
+                        <ExamCard exam={exam} />
                     </Grid>
                     <Grid item md={12 / 5} sm={3}>
-                        {' '}
-                        <ExamCard exam={exam} />{' '}
+                        <ExamCard exam={exam} />
                     </Grid>
                 </Grid>
             </Box>

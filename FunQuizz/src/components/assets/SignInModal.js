@@ -12,11 +12,12 @@ import axios from 'axios';
 import CredentialService from '~/Services/CredentialService';
 import LocalStorageKey from '~/Constants/LocalStorageKey';
 import { UserContext } from '~/Context/UserContext';
+import UserService from '~/Services/UserService';
 
 const SignInModal = (props) => {
     const { openSignInModal, handleCloseSignInModal, handleOpenSignUpModal } = props;
 
-    const {user, setUser} = React.useContext(UserContext)
+    const { user, setUser } = React.useContext(UserContext);
     const [email, setEmail] = React.useState('');
     const [password, setPassword] = React.useState('');
     const [error, setError] = React.useState({});
@@ -29,12 +30,22 @@ const SignInModal = (props) => {
         CredentialService.login(
             email,
             password,
-            (response) => {
-                console.log(response);
+            async (response) => {
                 localStorage.setItem(LocalStorageKey.ACCESS_TOKEN, response.data.accessToken);
-                setUser(response.data.email)
-                setError({});
-                handleCloseSignInModal(true)
+
+                await UserService.fetch(
+                    response.data.email,
+                    response.data.accessToken,
+                    (userResponse) => {
+                        setUser(userResponse.data.data);
+                        console.log(userResponse.data.data);
+                        console.log(user);
+
+                        setError({});
+                        handleCloseSignInModal(true);
+                    },
+                    (error) => {},
+                );
             },
             (error) => {
                 setError(error.response.data);
