@@ -3,7 +3,7 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
-import { TextField, Button, Paper, makeStyles } from '@mui/material';
+import { TextField, Button, Paper, makeStyles, createStyles, collapseClasses } from '@mui/material';
 import Stack from '@mui/system/Stack';
 import ExamCard from '~/components/assets/ExamCard';
 import { flexbox } from '@mui/system';
@@ -27,19 +27,33 @@ const Home = () => {
     return (
         <Container maxWidth="xl">
             <Box marginX={5}>
-                <Grid spacing={2} container justifyContent="space-between">
+                <Grid spacing={2} container justifyContent="space-between" alignItems="center">
                     <Grid item xs={8}>
                         <Box sx={cardStyle}>
-                            <Stack direction="row" spacing={1}>
-                                <TextField
-                                    variant="outlined"
-                                    placeholder="enter a join code"
-                                    fullWidth={true}
-                                ></TextField>
-                                <Button variant="contained" color="primary" size="large" sx={{ paddingY: 1.8 }}>
-                                    Join
-                                </Button>
-                            </Stack>
+                            <Box sx={wrapperStyle}>
+                                <Stack direction="row" spacing={1}>
+                                    <TextField
+                                        variant="standard"
+                                        placeholder="Enter a join code"
+                                        fullWidth={true}
+                                        sx={{
+                                            borderRadius: 3,
+                                            backgroundColor: 'white',
+                                            px: 2,
+                                            py: 1,
+                                        }}
+                                        InputProps={{ disableUnderline: true }}
+                                    ></TextField>
+                                    <Button
+                                        variant="contained"
+                                        color="primary"
+                                        size="small"
+                                        sx={{ py: 1, px: 3, borderRadius: 3, boxShadow: '0 4px 0 #0c4689' }}
+                                    >
+                                        Join
+                                    </Button>
+                                </Stack>
+                            </Box>
                         </Box>
                     </Grid>
 
@@ -95,7 +109,17 @@ const cardStyle = {
     backgroundColor: 'white',
     borderRadius: 3,
     boxShadow: '0 2px 4px 0 rgb(0 0 0 / 10%)',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
 };
 
+const wrapperStyle = {
+    border: '2px solid rgba(0,0,0,.33)',
+    backgroundColor: '#f4f4f5',
+    borderRadius: 3,
+    padding: 0.8,
+    width: '60%',
+};
 
 export default Home;
