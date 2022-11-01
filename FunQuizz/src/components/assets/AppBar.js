@@ -38,10 +38,10 @@ function MainAppBar(props) {
     const [openSignInModal, setOpenSignInModal] = React.useState(false);
     const isLogin = localStorage.getItem(LocalStorageKey.ACCESS_TOKEN) !== null;
 
-    const handleOpenSignUpModal = () => setOpenSignUpModal(true);
-    const handleCloseSignUpModal = () => setOpenSignUpModal(false);
-    const handleOpenSignInModal = () => setOpenSignInModal(true);
-    const handleCloseSignInModal = () => setOpenSignInModal(false);
+    // const handleOpenSignUpModal = () => setOpenSignUpModal(true);
+    // const handleCloseSignUpModal = () => setOpenSignUpModal(false);
+    // const handleOpenSignInModal = () => setOpenSignInModal(true);
+    // const handleCloseSignInModal = () => setOpenSignInModal(false);
 
     const handleLogOut = () => {
         CredentialService.logOut();
@@ -101,7 +101,7 @@ function MainAppBar(props) {
                                     <Button
                                         variant="outlined"
                                         size="medium"
-                                        onClick={handleOpenSignInModal}
+                                        onClick={() => setOpenSignInModal(true)}
                                         sx={{ marginX: 1 }}
                                         disableElevation
                                     >
@@ -110,7 +110,7 @@ function MainAppBar(props) {
                                     <Button
                                         variant="contained"
                                         size="medium"
-                                        onClick={handleOpenSignUpModal}
+                                        onClick={() => setOpenSignUpModal(true)}
                                         disableElevation
                                     >
                                         Sign up
@@ -123,14 +123,14 @@ function MainAppBar(props) {
             </AppBar>
 
             <SignUpModal
-                openSignUpModal={openSignUpModal}
-                handleOpenSignInModal={handleOpenSignInModal}
-                handleCloseSignUpModal={handleCloseSignUpModal}
+                isOpen={openSignUpModal}
+                handleClose={() => setOpenSignUpModal(false)}
+                handleOpenSignInModal={() => setOpenSignInModal(true)}
             />
             <SignInModal
-                openSignInModal={openSignInModal}
-                handleCloseSignInModal={handleCloseSignInModal}
-                handleOpenSignUpModal={handleOpenSignUpModal}
+                isOpen={openSignInModal}
+                handleClose={() => setOpenSignInModal(false)}
+                handleOpenSignUpModal={() => setOpenSignUpModal(true)}
             />
         </Box>
     );

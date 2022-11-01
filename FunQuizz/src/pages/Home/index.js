@@ -7,8 +7,14 @@ import { TextField, Button, Paper, makeStyles, createStyles, collapseClasses } f
 import Stack from '@mui/system/Stack';
 import ExamCard from '~/components/assets/ExamCard';
 import { flexbox } from '@mui/system';
+import NewQuizModal from '~/components/assets/NewQuizModal';
 
 const Home = () => {
+    const [openNewQuizModal, setOpenNewQuizModal] = React.useState(false)
+
+    const handleCreateQuiz = () => {
+        setOpenNewQuizModal(true)
+    }
     const exam = {
         name: 'Math 101: explore the topics and practice activity',
         time: 120,
@@ -59,7 +65,7 @@ const Home = () => {
 
                     <Grid item xs={4}>
                         <Box sx={{ ...cardStyle, height: 216, background: 'linear-gradient(45deg, #3c3c8a, #2c6cd1)' }}>
-                            <Button variant="outlined" sx={{ color: 'white', borderColor: 'white' }}>
+                            <Button variant="outlined" onClick={handleCreateQuiz} sx={{ color: 'white', borderColor: 'white', textTransform: 'capitalize' }}>
                                 Create quiz
                             </Button>
                         </Box>
@@ -99,6 +105,8 @@ const Home = () => {
                     </Grid>
                 </Grid>
             </Box>
+
+            <NewQuizModal open={openNewQuizModal} setOpen={setOpenNewQuizModal} />
         </Container>
     );
 };

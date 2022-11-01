@@ -15,7 +15,7 @@ import UserService from '~/Services/UserService';
 import UserContext from '~/Context/UserContext';
 
 const SignInModal = (props) => {
-    const { openSignInModal, handleCloseSignInModal, handleOpenSignUpModal } = props;
+    const { isOpen, handleClose, handleOpenSignUpModal } = props;
 
     const { user, setUser } = React.useContext(UserContext);
     const [email, setEmail] = React.useState('');
@@ -48,7 +48,7 @@ const SignInModal = (props) => {
             (response) => {
                 setUser(response.data.data);
                 setError({});
-                handleCloseSignInModal(true);
+                handleClose(true);
             },
         );
     };
@@ -59,10 +59,10 @@ const SignInModal = (props) => {
             setPassword('');
             setError({});
         };
-    }, [openSignInModal]);
+    }, [isOpen]);
 
     return (
-        <Modal open={openSignInModal} onClose={handleCloseSignInModal}>
+        <Modal open={isOpen} onClose={handleClose}>
             <Box component="form" sx={containerStyle}>
                 <Avatar sx={avatarStyle}>
                     <LockOpenIcon />
@@ -126,7 +126,7 @@ const SignInModal = (props) => {
                         sx={{ marginLeft: 2 }}
                         disableElevation
                         onClick={() => {
-                            handleCloseSignInModal();
+                            handleClose();
                             handleOpenSignUpModal();
                         }}
                     >

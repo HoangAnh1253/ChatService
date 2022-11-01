@@ -14,7 +14,7 @@ import CredentialService from '~/Services/CredentialService';
 import Alert from '@mui/material/Alert';
 
 const SignUpModal = (props) => {
-    const { openSignUpModal, handleCloseSignUpModal, handleOpenSignInModal } = props;
+    const { isOpen, handleClose, handleOpenSignInModal } = props;
 
     const PASSWORD_NOT_MATCH = {confirmPassword: "Password doesn't match"};
 
@@ -56,7 +56,7 @@ const SignUpModal = (props) => {
         clearText()
         setError({})
         setShowSuccessAlert(false)
-    }, [openSignUpModal]);
+    }, [isOpen]);
 
     const checkPass = () => {
         if (confirmPassword != password) {
@@ -73,7 +73,7 @@ const SignUpModal = (props) => {
     }
 
     return (
-        <Modal open={openSignUpModal} onClose={handleCloseSignUpModal}>
+        <Modal open={isOpen} onClose={handleClose}>
             <Box component="form" sx={containerStyle}>
                 <Avatar sx={avatarStyle}>
                     <HowToRegIcon />
@@ -153,7 +153,7 @@ const SignUpModal = (props) => {
                         sx={{ marginLeft: 2 }}
                         disableElevation
                         onClick={() => {
-                            handleCloseSignUpModal();
+                            handleClose();
                             handleOpenSignInModal();
                         }}
                     >
