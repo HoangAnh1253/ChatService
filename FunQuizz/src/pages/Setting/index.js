@@ -1,97 +1,88 @@
-import { Button, Card, CardActions, CardContent, Modal, TextField, Typography } from '@mui/material';
+import { Button, Card, CardActions, CardContent, Modal, Stack, TextField, Typography } from '@mui/material';
 import { Box } from '@mui/system';
-import React from 'react';
+import React, { useCallback } from 'react';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 const Setting = () => {
     const [open, setOpen] = React.useState(false);
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
 
+    const handleOpen = useCallback(
+        (modalText) => () => {
+            setOpen(true);
+            setModal(modalText);
+        },
+        [],
+    );
+
+    const handleClose = () => setOpen(false);
+    const [modal, setModal] = React.useState('Set username');
+    const [settingList, setSettingList] = React.useState([
+        {
+            name: 'username',
+            description: 'nlhoanganh',
+            modalText: "Pick a username that's fun and unique!",
+        },
+        {
+            name: 'email',
+            description: 'nlhoanganh@gmail.com',
+            modalText: 'Enter email',
+        },
+        {
+            name: 'password',
+            description: 'Change password',
+            modalText: 'Enter password',
+        },
+    ]);
     return (
-        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
+        <Box sx={settingContainer}>
             <Typography variant="h5">Settings</Typography>
             <Card sx={{ width: '500px', boxShadow: 1 }}>
                 <CardContent>
-                    <Typography sx={{ fontSize: 14 }} color="text.secondary">
-                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                            <ManageAccountsIcon color="warning" sx={{ fontSize: 18, mr: 1 }} />
-                            <Box sx={{ fontSize: 16, fontWeight: 400, mr: 1 }}>Profile</Box>
-                        </Box>
-                    </Typography>
-                    <Box
-                        onClick={handleOpen}
-                        sx={{ display: 'flex', cursor: 'pointer', justifyContent: 'space-between', mt: 2 }}
-                    >
-                        <Box>
-                            <Typography variant="h5" sx={{ fontWeight: 700, fontSize: 16 }}>
-                                Username
-                            </Typography>
-                            <Typography sx={{ mb: 1.5, fontSize: 14 }} color="text.secondary">
-                                tomorrow
-                            </Typography>
-                        </Box>
-                        <ChevronRightIcon sx={{ color: '#9d9da4' }} fontSize="small" />
-                    </Box>
-
-                    <Box
-                        onClick={handleOpen}
-                        sx={{ display: 'flex', cursor: 'pointer', justifyContent: 'space-between', mt: 0.7 }}
-                    >
-                        <Box>
-                            <Typography variant="h5" sx={{ fontWeight: 700, fontSize: 16 }}>
-                                Name
-                            </Typography>
-                            <Typography sx={{ mb: 1.5, fontSize: 14 }} color="text.secondary">
-                                tomorrow
-                            </Typography>
-                        </Box>
-                        <ChevronRightIcon sx={{ color: '#9d9da4' }} fontSize="small" />
-                    </Box>
-
-                    <Box
-                        onClick={handleOpen}
-                        sx={{ display: 'flex', cursor: 'pointer', justifyContent: 'space-between', mt: 0.7 }}
-                    >
-                        <Box>
-                            <Typography variant="h5" sx={{ fontWeight: 700, fontSize: 16 }}>
-                                Grade
-                            </Typography>
-                            <Typography sx={{ mb: 1.5, fontSize: 14 }} color="text.secondary">
-                                tomorrow
-                            </Typography>
-                        </Box>
-                        <ChevronRightIcon sx={{ color: '#9d9da4' }} fontSize="small" />
-                    </Box>
-
-                    <Modal open={open} onClose={handleClose}>
-                        <Box sx={style}>
-                            <Typography
-                                id="modal-modal-title"
-                                sx={{ fontSize: 14 }}
-                                color="text.secondary"
-                                component="h2"
-                            >
-                                Pick a username that's fun and unique!
-                            </Typography>
-                            <TextField
-                                sx={{ my: 2 }}
-                                variant="outlined"
-                                fullWidth
-                                inputProps={{
-                                    style: {
-                                        padding: '10px 8px',
-                                    },
-                                }}
-                            />
-                            <Box sx={{ display: 'flex', justifyContent: 'end', mt: 2 }}>
-                                <Button sx={{ mr: 2 }} onClick={handleClose}>
-                                    Cancel
-                                </Button>
-                                <Button variant="contained">Save</Button>
+                    <>
+                        <Typography component="div" sx={{ fontSize: 14 }} color="text.secondary">
+                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                <ManageAccountsIcon color="warning" sx={{ fontSize: 18, mr: 1 }} />
+                                <Box sx={{ fontSize: 16, fontWeight: 400, mr: 1 }}>Profile</Box>
                             </Box>
-                        </Box>
-                    </Modal>
+                        </Typography>
+                        {settingList.map((setting) => (
+                            <Box onClick={handleOpen(setting.modalText)} sx={settingItem} key={setting.name}>
+                                <Box>
+                                    <Typography sx={{ fontWeight: 700, fontSize: 16, textTransform: 'capitalize' }}>
+                                        {setting.name}
+                                    </Typography>
+                                    <Typography sx={{ fontSize: 14 }} color="text.secondary">
+                                        {setting.description}
+                                    </Typography>
+                                </Box>
+                                <ChevronRightIcon sx={{ color: '#9d9da4' }} fontSize="small" />
+                            </Box>
+                        ))}
+
+                        <Modal open={open} onClose={handleClose}>
+                            <Box sx={style}>
+                                <Typography id="modal-modal-title" sx={{ fontSize: 14 }} color="text.secondary">
+                                    {modal}
+                                </Typography>
+                                <TextField
+                                    sx={{ my: 2, mb: 2 }}
+                                    variant="outlined"
+                                    fullWidth
+                                    inputProps={{
+                                        style: {
+                                            padding: '10px 8px',
+                                        },
+                                    }}
+                                />
+                                <Box sx={{ display: 'flex', justifyContent: 'end' }}>
+                                    <Button sx={{ mr: 2 }} onClick={handleClose}>
+                                        Cancel
+                                    </Button>
+                                    <Button variant="contained">Save</Button>
+                                </Box>
+                            </Box>
+                        </Modal>
+                    </>
                 </CardContent>
             </Card>
         </Box>
@@ -108,6 +99,19 @@ const style = {
     borderRadius: 2,
     px: 4,
     py: 2,
+};
+
+const settingItem = {
+    display: 'flex',
+    cursor: 'pointer',
+    justifyContent: 'space-between',
+    mt: 2,
+};
+
+const settingContainer = {
+    display: 'flex',
+    alignItems: 'center',
+    flexDirection: 'column',
 };
 
 export default Setting;
