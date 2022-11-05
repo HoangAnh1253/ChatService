@@ -20,7 +20,6 @@ const ExamCard = (props) => {
                     <Typography gutterBottom color="primary.main" align="left" fontSize={12} sx={{ mb: 1 }}>
                         {exam.topic.name}
                     </Typography>
-
                     <Typography
                         gutterBottom
                         variant="h5"

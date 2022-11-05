@@ -33,6 +33,7 @@ const SignInModal = (props) => {
             (response) => {
                 localStorage.setItem(LocalStorageKey.ACCESS_TOKEN, response.data.accessToken);
                 localStorage.setItem(LocalStorageKey.CURRENT_USER_EMAIL, response.data.email);
+                
                 fetchUser(response.data.email, response.data.accessToken);
             },
             (error) => {
@@ -46,9 +47,14 @@ const SignInModal = (props) => {
             token,
             email,
             (response) => {
-                setUser(response.data.data);
+                let data = response.data.data;
+                localStorage.setItem(LocalStorageKey.CURRENT_USER_ID, data.id);
+                setUser({ ...data });
                 setError({});
                 handleClose(true);
+            },
+            (error) => {
+                console.log(error);
             },
         );
     };
