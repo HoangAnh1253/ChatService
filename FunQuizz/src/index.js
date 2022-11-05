@@ -8,6 +8,8 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Activity from './pages/Activity';
 import MainAppBar from './components/assets/AppBar';
 import { PageIndexProvider } from './Context/PageIndexContext';
+import UserContext, { UserContextProvider } from './Context/UserContext';
+
 import { createTheme } from '@mui/material';
 import { ThemeProvider } from '@emotion/react';
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -26,9 +28,11 @@ const theme = createTheme({
 root.render(
     <GlobalStyles>
         <PageIndexProvider>
-            <ThemeProvider theme={theme}>
-                <App />
-            </ThemeProvider>
+            <UserContextProvider>
+                <ThemeProvider theme={theme}>
+                    <App />
+                </ThemeProvider>
+            </UserContextProvider>
         </PageIndexProvider>
     </GlobalStyles>,
 );

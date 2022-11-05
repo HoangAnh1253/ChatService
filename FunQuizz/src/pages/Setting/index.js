@@ -4,6 +4,7 @@ import {
     Card,
     CardActions,
     CardContent,
+    Grow,
     IconButton,
     Modal,
     Stack,
@@ -19,38 +20,41 @@ import UserContext from '~/Context/UserContext';
 import axios from 'axios';
 import UserService from '~/Services/UserService';
 import CredentialService from '~/Services/CredentialService';
+import LocalStorageKey from '~/Constants/LocalStorageKey';
 
 const Setting = () => {
+    const { user, setUser } = React.useContext(UserContext);
     const [open, setOpen] = React.useState(false);
     const [type, setType] = React.useState('');
-    const { user } = React.useContext(UserContext);
     const [settingList, setSettingList] = React.useState([]);
     const [modal, setModal] = React.useState('Set username');
-    const [saveValue, setSaveValue] = React.useState('');
+    const [desc, setDesc] = React.useState('');
     const [showAlert, setShowAlert] = React.useState(false);
-
+    const handleClose = () => setOpen(false);
     const handleOpen = React.useCallback(
-        (modalText, modalType) => () => {
+        (modalText, modalType, modalDesc) => () => {
             setOpen(true);
             setModal(modalText);
             setType(modalType);
+            setDesc(modalDesc);
         },
         [],
     );
 
     const handleChangeForm = (event) => {
-        setSaveValue(event.target.value);
+        setDesc(event.target.value);
     };
 
     const handleSave = () => {
         UserService.update(
             type,
-            saveValue,
+            desc,
             (response) => {
                 let data = response.data.data;
-                setSaveValue(data[type]);
-                console.log(data);
+                setDesc(data[type]);
+                setUser(data);
                 setShowAlert(true);
+                handleClose();
             },
             (error) => {
                 console.log(error);
@@ -58,7 +62,16 @@ const Setting = () => {
         );
     };
 
-    const handleClose = () => setOpen(false);
+    React.useEffect(() => {
+        const accessToken = localStorage.getItem(LocalStorageKey.ACCESS_TOKEN);
+
+        if (accessToken !== null) {
+            const userEmail = localStorage.getItem(LocalStorageKey.CURRENT_USER_EMAIL);
+            UserService.get(accessToken, userEmail, (response) => {
+                setUser(response.data.data);
+            });
+        }
+    }, []);
 
     React.useEffect(() => {
         setSettingList([
@@ -93,26 +106,28 @@ const Setting = () => {
         <Box sx={settingContainer}>
             <Typography variant="h5">Settings</Typography>
 
-            {showAlert && (
-                <Alert
-                    severity="success"
-                    action={
-                        <IconButton
-                            aria-label="close"
-                            color="inherit"
-                            size="small"
-                            onClick={() => {
-                                setShowAlert(false);
-                            }}
-                        >
-                            <CloseIcon fontSize="inherit" />
-                        </IconButton>
-                    }
-                    sx={{ my: 2 }}
-                >
-                    Your info has been updated!
-                </Alert>
-            )}
+            <Box sx={{ display: 'flex' }}>
+                <Grow in={showAlert}>
+                    <Alert
+                        severity="success"
+                        action={
+                            <IconButton
+                                aria-label="close"
+                                color="inherit"
+                                size="small"
+                                onClick={() => {
+                                    setShowAlert(false);
+                                }}
+                            >
+                                <CloseIcon fontSize="inherit" />
+                            </IconButton>
+                        }
+                        sx={{ my: 2 }}
+                    >
+                        Your info has been updated!
+                    </Alert>
+                </Grow>
+            </Box>
             <Card sx={{ width: '500px', boxShadow: 1 }}>
                 <CardContent>
                     <React.Fragment>
@@ -124,7 +139,11 @@ const Setting = () => {
                         </Typography>
                         {settingList.map((setting, index) => (
                             <Box
-                                onClick={index != 0 ? handleOpen(setting.modalText, setting.codeName) : undefined}
+                                onClick={
+                                    index != 0
+                                        ? handleOpen(setting.modalText, setting.codeName, setting.description)
+                                        : undefined
+                                }
                                 sx={settingItem}
                                 key={setting.name}
                             >
@@ -155,6 +174,7 @@ const Setting = () => {
                                             padding: '10px 8px',
                                         },
                                     }}
+                                    value={desc}
                                 />
                                 <Box sx={{ display: 'flex', justifyContent: 'end' }}>
                                     <Button sx={{ mr: 2 }} onClick={handleClose}>

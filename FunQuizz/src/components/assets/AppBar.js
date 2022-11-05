@@ -54,11 +54,13 @@ function MainAppBar(props) {
         <Box sx={{ flexGrow: 1, marginBottom: 3 }}>
             <AppBar position="sticky" sx={{ backgroundColor: '#FFFFFF', boxShadow: 2 }}>
                 <Toolbar variant="dense">
-                    <img
-                        src={process.env.PUBLIC_URL + '/FunQuizz_logo.png'}
-                        width="150px"
-                        style={{ marginRight: 25 }}
-                    />
+                    <Link to="/">
+                        <img
+                            src={process.env.PUBLIC_URL + '/FunQuizz_logo.png'}
+                            width="150px"
+                            style={{ marginRight: 25 }}
+                        />
+                    </Link>
 
                     <TextField
                         id="search-bar"

@@ -14,12 +14,15 @@ import Logout from '@mui/icons-material/Logout';
 import DensityMediumIcon from '@mui/icons-material/DensityMedium';
 import CredentialService from '~/Services/CredentialService';
 import UserContext from '~/Context/UserContext';
-
+import { InsertInvitation } from '@mui/icons-material';
+import { Link, useNavigate } from 'react-router-dom';
 const AccountMenu = () => {
     const { user, setUser } = React.useContext(UserContext);
+    const userContext = React.useContext(UserContext);
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
-    
+    const navigate = useNavigate();
+
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
     };
@@ -30,11 +33,12 @@ const AccountMenu = () => {
     const handleLogOut = () => {
         CredentialService.logOut();
         setUser(null);
+        return navigate('/');
     };
 
     return (
         <React.Fragment>
-            <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center'}}>
+            <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
                 <Tooltip title="Account settings">
                     <IconButton
                         onClick={handleClick}
@@ -84,15 +88,17 @@ const AccountMenu = () => {
                 anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
             >
                 <Box>
-                    <MenuItem sx={{ fontSize: 14, fontWeight: "bold" }}>{user.email}</MenuItem>
+                    <MenuItem sx={{ fontSize: 14, fontWeight: 'bold' }}>{user.email}</MenuItem>
                     <Divider />
                 </Box>
-                <MenuItem sx={{ fontSize: 14 }}>
-                    <ListItemIcon>
-                        <Settings fontSize="small" />
-                    </ListItemIcon>
-                    Settings
-                </MenuItem>
+                <Link to="/setting" style={{ textDecoration: 'none', color: 'black' }}>
+                    <MenuItem sx={{ fontSize: 14 }}>
+                        <ListItemIcon>
+                            <Settings fontSize="small" />
+                        </ListItemIcon>
+                        Settings
+                    </MenuItem>
+                </Link>
                 <MenuItem sx={{ fontSize: 14, color: 'red' }} onClick={handleLogOut}>
                     <ListItemIcon sx={{ color: 'red' }}>
                         <Logout fontSize="small" />
