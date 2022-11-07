@@ -11,18 +11,6 @@ import UserService from '~/Services/UserService';
 
 const Main = () => {
     const pageIndex = useContext(PageIndexContext);
-    const {user, setUser} = useContext(UserContext)
-
-    useEffect(() => {
-        const accessToken = localStorage.getItem(LocalStorageKey.ACCESS_TOKEN);
-        
-        if (accessToken !== null) {
-            const userEmail = localStorage.getItem(LocalStorageKey.CURRENT_USER_EMAIL);
-            UserService.get(accessToken, userEmail, (response) => {
-                setUser(response.data.data);
-            });
-        }
-    }, []);
 
     return (
         <React.Fragment>

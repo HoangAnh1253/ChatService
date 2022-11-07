@@ -63,17 +63,6 @@ const Setting = () => {
     };
 
     React.useEffect(() => {
-        const accessToken = localStorage.getItem(LocalStorageKey.ACCESS_TOKEN);
-
-        if (accessToken !== null) {
-            const userEmail = localStorage.getItem(LocalStorageKey.CURRENT_USER_EMAIL);
-            UserService.get(accessToken, userEmail, (response) => {
-                setUser(response.data.data);
-            });
-        }
-    }, []);
-
-    React.useEffect(() => {
         setSettingList([
             {
                 name: 'email',
