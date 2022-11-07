@@ -30,13 +30,21 @@ const Setting = () => {
     const [modal, setModal] = React.useState('Set username');
     const [desc, setDesc] = React.useState('');
     const [showAlert, setShowAlert] = React.useState(false);
-    const handleClose = () => setOpen(false);
+
+    const handleClose = () => {
+        setOpen(false)
+        setDesc('')
+    };
+
     const handleOpen = React.useCallback(
         (modalText, modalType, modalDesc) => () => {
             setOpen(true);
             setModal(modalText);
             setType(modalType);
             setDesc(modalDesc);
+            if(modalType === 'password') {
+                setDesc('');
+            }
         },
         [],
     );
@@ -85,7 +93,7 @@ const Setting = () => {
             {
                 name: 'password',
                 description: 'Change password',
-                modalText: 'Enter password',
+                modalText: 'Enter new password',
                 codeName: 'password',
             },
         ]);
@@ -155,6 +163,7 @@ const Setting = () => {
                                 </Typography>
                                 <TextField
                                     sx={{ my: 2, mb: 2 }}
+                                    type={type === 'password' ? 'password' : 'text'}
                                     variant="outlined"
                                     fullWidth
                                     onChange={handleChangeForm}
@@ -169,7 +178,7 @@ const Setting = () => {
                                     <Button sx={{ mr: 2 }} onClick={handleClose}>
                                         Cancel
                                     </Button>
-                                    <Button variant="contained" onClick={handleSave}>
+                                    <Button variant="contained" onClick={handleSave} disabled={desc === ''}>
                                         Save
                                     </Button>
                                 </Box>

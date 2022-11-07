@@ -65,7 +65,7 @@ const Home = () => {
 
                     <Grid item xs={4}>
                         <Box sx={{ ...cardStyle, height: 216, background: 'linear-gradient(45deg, #3c3c8a, #2c6cd1)' }}>
-                            <Button variant="outlined" onClick={handleCreateQuiz} sx={{ color: 'white', borderColor: 'white', textTransform: 'capitalize' }}>
+                            <Button variant="outlined" onClick={handleCreateQuiz} sx={{ color: 'white', borderColor: 'white', textTransform: 'none' }}>
                                 Create quiz
                             </Button>
                         </Box>
