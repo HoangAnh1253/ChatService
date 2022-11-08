@@ -14,6 +14,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 import Chip from '@mui/material/Chip';
 import Checkbox from '@mui/material/Checkbox';
 import { styled, alpha } from '@mui/material';
+import { Link } from 'react-router-dom';
 
 const NewQuizModal = (props) => {
     const {open, setOpen} = props;
@@ -183,6 +184,8 @@ const NewQuizModal = (props) => {
                                 color={'primary'}
                                 variant="contained"
                                 sx={{ textTransform: 'none' }}
+                                component={Link}
+                                to="/quiz/creator"
                             >
                                 Next
                             </Button>
