@@ -1,12 +1,12 @@
 
 class JsonHelper {
-    isEmpTy(json) {
+    static isEmpty(json) {
         return Object.keys(json).length == 0;
     }
 
-    isNotEmpTy(json) {
+    static isNotEmpty(json) {
         return Object.keys(json).length > 0;
     }
 }
 
-export default new JsonHelper();
+export default JsonHelper;

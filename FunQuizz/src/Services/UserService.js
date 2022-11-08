@@ -1,12 +1,14 @@
 import { AutoFixOffSharp } from '@mui/icons-material';
 import axios from 'axios';
 import LocalStorageKey from '~/Constants/LocalStorageKey';
+import LocalStorageService from './LocalStorageService';
 
 class UserService {
     BASE_URL = 'http://acme.com/api/User';
 
-    async get(token, email, onSuccess, onError) {
+    async get(email, onSuccess, onError) {
         try {
+            const { token } = LocalStorageService.get()
             const response = await axios.get(`${this.BASE_URL + '/email/' + email}`, {
                 headers: {
                     Authorization: `bearer ${token}`,
@@ -21,30 +23,18 @@ class UserService {
         }
     }
 
-    getLocalStorage() {
-        return {
-            token: localStorage.getItem(LocalStorageKey.ACCESS_TOKEN),
-            email: localStorage.getItem(LocalStorageKey.CURRENT_USER_EMAIL),
-            id: localStorage.getItem(LocalStorageKey.CURRENT_USER_ID),
-        };
-    }
-
     async update(type, value, onSuccess, onError) {
         try {
             const data = {
                 [type]: value,
             };
-            const { token, id } = this.getLocalStorage();
-            const response = await axios.patch(
-                `${this.BASE_URL + '/' + id}`,
-                data,
-                {
-                    headers: {
-                        Authorization: 'bearer ' + token,
-                        'Access-Control-Allow-Origin': true,
-                    },
-                }
-            );
+            const { token, id } = LocalStorageService.get();
+            const response = await axios.patch(this.BASE_URL + '/' + id, data, {
+                headers: {
+                    Authorization: 'bearer ' + token,
+                    'Access-Control-Allow-Origin': true,
+                },
+            });
 
             console.log(`Get user successfully : `);
             onSuccess(response);

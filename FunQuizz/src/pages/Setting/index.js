@@ -2,12 +2,10 @@ import {
     Alert,
     Button,
     Card,
-    CardActions,
     CardContent,
     Grow,
     IconButton,
     Modal,
-    Stack,
     TextField,
     Typography,
 } from '@mui/material';
@@ -17,10 +15,7 @@ import React from 'react';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import UserContext from '~/Context/UserContext';
-import axios from 'axios';
 import UserService from '~/Services/UserService';
-import CredentialService from '~/Services/CredentialService';
-import LocalStorageKey from '~/Constants/LocalStorageKey';
 
 const Setting = () => {
     const { user, setUser } = React.useContext(UserContext);

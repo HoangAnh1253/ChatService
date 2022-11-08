@@ -34,7 +34,7 @@ const SignInModal = (props) => {
                 localStorage.setItem(LocalStorageKey.ACCESS_TOKEN, response.data.accessToken);
                 localStorage.setItem(LocalStorageKey.CURRENT_USER_EMAIL, response.data.email);
                 
-                fetchUser(response.data.email, response.data.accessToken);
+                fetchUser(response.data.email);
             },
             (error) => {
                 setError(error.response.data);
@@ -42,9 +42,8 @@ const SignInModal = (props) => {
         );
     };
 
-    const fetchUser = (email, token) => {
+    const fetchUser = (email) => {
         UserService.get(
-            token,
             email,
             (response) => {
                 let data = response.data.data;

@@ -1,14 +1,10 @@
-import React, { createContext } from 'react';
+import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from '~/App';
 import reportWebVitals from './reportWebVitals';
 import GlobalStyles from '~/components/GlobalStyles';
-import Home from './pages/Home';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import Activity from './pages/Activity';
-import MainAppBar from './components/assets/AppBar';
 import { PageIndexProvider } from './Context/PageIndexContext';
-import UserContext, { UserContextProvider } from './Context/UserContext';
+import { UserContextProvider } from './Context/UserContext';
 
 import { createTheme } from '@mui/material';
 import { ThemeProvider } from '@emotion/react';

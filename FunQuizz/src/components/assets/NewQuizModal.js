@@ -14,74 +14,62 @@ import InputAdornment from '@mui/material/InputAdornment';
 import Chip from '@mui/material/Chip';
 import Checkbox from '@mui/material/Checkbox';
 import { styled, alpha } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import TopicService from '~/Services/TopicService';
+import JsonHelper from '~/Helpers/JsonHelper';
+import ExamService from '~/Services/ExamService';
+import UserContext from '~/Context/UserContext';
 
 const NewQuizModal = (props) => {
-    const {open, setOpen} = props;
+    const { open, setOpen } = props;
 
-    const [name, setName] = React.useState('');
     const lengthNameMax = 64;
-    const [tags, setTags] = React.useState([
-        'Mathematics',
-        'English',
-        'World Languages',
-        'Science',
-        'Physics',
-        'Chemistry',
-        'Biology',
-        'Social',
-        'Studies',
-        'Geography',
-        'History',
-        'Arts',
-        'Computers',
-        'Physical Ed',
-        'Fun',
-        'Professional',
-        'Development',
-        'Architecture',
-        'Business',
-        'Design',
-        'Education',
-        'Instructional Technology',
-        'Journalism',
-        'Life Skills',
-        'Moral',
-        'Science',
-        'Philosophy',
-        'Performing Arts',
-        'Religious Studies',
-        'Special Education',
-        'Specialty',
-        'Other',
-    ]);
+    const { user } = React.useContext(UserContext);
+    const [name, setName] = React.useState('');
+    const [tags, setTags] = React.useState([{}]);
+    const [chooseTags, setChooseTags] = React.useState({});
+    const navigate = useNavigate();
 
-    const [chooseTags, setChooseTags] = React.useState([]);
-
-    const removeTag = (beTag) => {
-        var tagsCopy = [...chooseTags];
-        var tagsCopy1 = tagsCopy.filter((tag) => {
-            return tag !== beTag;
-        });
-        setChooseTags(tagsCopy1);
-    };
-
-    const addTag = (beTag) => {
-        var tagsCopy = [...chooseTags];
-        tagsCopy.push(beTag);
-        setChooseTags(tagsCopy);
+    const handleOpen = () => {
+        setOpen(false);
+        setChooseTags({});
     };
 
     const handleClickTag = (beTag) => {
-        var check = false;
-        chooseTags.map((tag) => {
-            if (tag === beTag) {
-                removeTag(beTag);
-                check = true;
-            }
-        });
-        if (!check) addTag(beTag);
+        if (JsonHelper.isNotEmpty(chooseTags) && chooseTags.id === beTag.id) {
+            setChooseTags({});
+        } else {
+            setChooseTags(beTag);
+        }
     };
+
+    const handleCreateQuiz = () => {
+        const payload = {
+            name: name,
+            authorEmail: user.email,
+        }
+        ExamService.create(
+            chooseTags.id,
+            payload,
+            (response) => {
+                navigate('/quiz/creator', {
+                    state: {
+                        data: response.data.data
+                    },
+                });
+            },
+            (error) => {},
+        );
+    };
+
+    React.useEffect(() => {
+        TopicService.fetchAll(
+            (response) => {
+                setTags(response.data.data);
+            },
+            (error) => {},
+        );
+    }, []);
 
     return (
         <div>
@@ -89,7 +77,7 @@ const NewQuizModal = (props) => {
                 aria-labelledby="transition-modal-title"
                 aria-describedby="transition-modal-description"
                 open={open}
-                onClose={() => setOpen(false)}
+                onClose={handleOpen}
                 closeAfterTransition
                 BackdropComponent={Backdrop}
                 BackdropProps={{
@@ -109,7 +97,7 @@ const NewQuizModal = (props) => {
                             <Avatar
                                 sx={{ width: 40, height: 40 }}
                                 alt="Tom&Jerry"
-                                src="https://toigingiuvedep.vn/wp-content/uploads/2021/11/hinh-anh-jerry-hinh-anh-tom-and-jerry-ngo-nghinh-dang-yeu-nhat-1.jpg"
+                                src="http://thehuntsmanandhounds.co.uk/wp-content/uploads/2021/07/pub-quiz-HH.jpeg"
                             />
                             <Stack>
                                 <Tittle id="transition-modal-title" component="h6" variant="inherit">
@@ -150,33 +138,22 @@ const NewQuizModal = (props) => {
                         <SubTittle id="transition-modal-description" variant="caption">
                             2. Choose relevant subjects
                         </SubTittle>
-                        {chooseTags.length >= 3 ? (
-                            <MDTypography id="transition-modal-description" variant="caption" sx={{ ml: 2 }}>
-                                Maximum 3 subjects
-                            </MDTypography>
-                        ) : (
-                            ''
-                        )}
 
-                        <Stack direction={'row'} sx={{ display: 'inherit', mb: 3}}>
-                            {tags.map((tag, index) => {
-                                var disabled = false;
-                                if (chooseTags.length === 3 && !chooseTags.includes(tag)) disabled = true;
+                        <Stack direction={'row'} sx={{ display: 'inherit', mb: 3 }}>
+                            {tags.map((tag) => {
                                 return (
-                                    <Checkbox
-                                        key={index}
-                                        value={tag}
-                                        icon={<Chip label={tag} size="small" />}
-                                        checkedIcon={<Chip label={tag} color="primary" size="small" />}
-                                        sx={{ padding: 0.5 }}
-                                        onClick={(e) => handleClickTag(e.target.value)}
-                                        disabled={disabled}
+                                    <Chip
+                                        label={tag.name}
+                                        variant={chooseTags.id == tag.id ? 'filled' : 'outlined'}
+                                        color="primary"
+                                        sx={{ margin: 0.5 }}
+                                        onClick={() => handleClickTag(tag)}
                                     />
                                 );
                             })}
                         </Stack>
                         <Stack spacing={2} direction="row" sx={{ justifyContent: 'right' }}>
-                            <MDButton size={'small'} onClick={() => setOpen(false)}>
+                            <MDButton size={'small'} onClick={handleOpen}>
                                 Cancel
                             </MDButton>
                             <Button
@@ -184,10 +161,10 @@ const NewQuizModal = (props) => {
                                 color={'primary'}
                                 variant="contained"
                                 sx={{ textTransform: 'none' }}
-                                component={Link}
-                                to="/quiz/creator"
+                                onClick={handleCreateQuiz}
+                                disabled={'id' in chooseTags ? false : true}
                             >
-                                Next
+                                Create
                             </Button>
                         </Stack>
                     </Box>

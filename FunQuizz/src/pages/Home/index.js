@@ -1,34 +1,30 @@
 import React from 'react';
-import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
-import { TextField, Button, Paper, makeStyles, createStyles, collapseClasses } from '@mui/material';
+import { TextField, Button } from '@mui/material';
 import Stack from '@mui/system/Stack';
 import ExamCard from '~/components/assets/ExamCard';
-import { flexbox } from '@mui/system';
 import NewQuizModal from '~/components/assets/NewQuizModal';
+import ExamService from '~/Services/ExamService';
+import { Link } from 'react-router-dom';
 
 const Home = () => {
-    const [openNewQuizModal, setOpenNewQuizModal] = React.useState(false)
+    const [openNewQuizModal, setOpenNewQuizModal] = React.useState(false);
+    const [exams, setExams] = React.useState([]);
 
     const handleCreateQuiz = () => {
-        setOpenNewQuizModal(true)
-    }
-    const exam = {
-        name: 'Math 101: explore the topics and practice activity',
-        time: 120,
-        topic: {
-            name: 'Physical',
-        },
-        question: [
-            { content: 'ASdasd' },
-            { content: 'ASdasd' },
-            { content: 'ASdasd' },
-            { content: 'ASdasd' },
-            { content: 'ASdasd' },
-        ],
+        setOpenNewQuizModal(true);
     };
+
+    React.useEffect(() => {
+        ExamService.getAll(
+            (response) => {
+                setExams(response.data.data);
+            },
+            (error) => {},
+        );
+    }, []);
 
     return (
         <Container maxWidth="xl">
@@ -65,44 +61,38 @@ const Home = () => {
 
                     <Grid item xs={4}>
                         <Box sx={{ ...cardStyle, height: 216, background: 'linear-gradient(45deg, #3c3c8a, #2c6cd1)' }}>
-                            <Button variant="outlined" onClick={handleCreateQuiz} sx={{ color: 'white', borderColor: 'white', textTransform: 'none' }}>
-                                Create quiz
-                            </Button>
+                            <Stack spacing={1}>
+                                <Button
+                                    variant="outlined"
+                                    onClick={handleCreateQuiz}
+                                    sx={{
+                                        color: 'white',
+                                        borderColor: 'white',
+                                        textTransform: 'none',
+                                        fontWeight: 'bold',
+                                    }}
+                                >
+                                    Create quiz
+                                </Button>
+
+                                <Button
+                                    component={Link}
+                                    to="/quiz/owning/all"
+                                    sx={{ color: 'white', opacity: 0.9, textTransform: 'none', fontSize: 14 }}
+                                >
+                                    &gt; Show all my exam &lt;
+                                </Button>
+                            </Stack>
                         </Box>
                     </Grid>
                 </Grid>
 
                 <Grid container rowSpacing={2} columnSpacing={2} sx={{ mt: 2 }}>
-                    <Grid item md={12 / 5} sm={4}>
-                        <ExamCard exam={exam} />
-                    </Grid>
-                    <Grid item md={12 / 5} sm={3}>
-                        <ExamCard exam={exam} />
-                    </Grid>
-                    <Grid item md={12 / 5} sm={3}>
-                        <ExamCard exam={exam} />
-                    </Grid>
-                    <Grid item md={12 / 5} sm={3}>
-                        <ExamCard exam={exam} />
-                    </Grid>
-                    <Grid item md={12 / 5} sm={3}>
-                        <ExamCard exam={exam} />
-                    </Grid>
-                    <Grid item md={12 / 5} sm={3}>
-                        <ExamCard exam={exam} />
-                    </Grid>
-                    <Grid item md={12 / 5} sm={3}>
-                        <ExamCard exam={exam} />
-                    </Grid>
-                    <Grid item md={12 / 5} sm={3}>
-                        <ExamCard exam={exam} />
-                    </Grid>
-                    <Grid item md={12 / 5} sm={3}>
-                        <ExamCard exam={exam} />
-                    </Grid>
-                    <Grid item md={12 / 5} sm={3}>
-                        <ExamCard exam={exam} />
-                    </Grid>
+                    {exams.map((exam) => (
+                        <Grid item md={12 / 5} sm={3}>
+                            <ExamCard exam={exam} />
+                        </Grid>
+                    ))}
                 </Grid>
             </Box>
 

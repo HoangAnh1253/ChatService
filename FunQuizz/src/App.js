@@ -10,14 +10,14 @@ import UserService from './Services/UserService';
 import UserContext, { UserContextProvider } from './Context/UserContext';
 
 function App() {
-    const {setUser} = React.useContext(UserContext)
+    const { setUser } = React.useContext(UserContext);
 
     React.useEffect(() => {
         const accessToken = localStorage.getItem(LocalStorageKey.ACCESS_TOKEN);
 
         if (accessToken !== null) {
             const userEmail = localStorage.getItem(LocalStorageKey.CURRENT_USER_EMAIL);
-            UserService.get(accessToken, userEmail, (response) => {
+            UserService.get(userEmail, (response) => {
                 setUser(response.data.data);
             });
         }
