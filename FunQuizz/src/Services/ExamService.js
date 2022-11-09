@@ -4,6 +4,28 @@ class ExamService {
     BASE_URL = 'http://acme.com/api/examservice/Exam';
     ACCESS_CONTROL_HEADER = { 'Access-Control-Allow-Origin': true };
 
+    async getById(examId, onSuccess, onError) {
+        try {
+            const response = await axios.get(this.BASE_URL + "/" + examId, {
+                headers: this.ACCESS_CONTROL_HEADER,
+            });
+            onSuccess(response);
+        } catch (error) {
+            onError(error);
+        }
+    }
+
+    async getByEmail(email, onSuccess, onError) {
+        try {
+            const response = await axios.get(this.BASE_URL + "/author/" + email, {
+                headers: this.ACCESS_CONTROL_HEADER,
+            });
+            onSuccess(response);
+        } catch (error) {
+            onError(error);
+        }
+    }
+
     async getAll(onSuccess, onError) {
         try {
             const response = await axios.get(this.BASE_URL, {

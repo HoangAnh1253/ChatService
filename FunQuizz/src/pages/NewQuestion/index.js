@@ -4,23 +4,41 @@ import SaveIcon from '@mui/icons-material/Save';
 import { Link, useLocation } from 'react-router-dom';
 import { Alert, AppBar, Button, Grid, Grow, IconButton, Stack, TextField, Toolbar } from '@mui/material';
 import ExamService from '~/Services/ExamService';
-import CloseIcon from '@mui/icons-material/Close';
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import QuestionService from '~/Services/QuestionService';
-import { AnswerType } from '~/Enums/AnswerType';
+import { AnswerType, indexToAnswerType } from '~/Enums/AnswerType';
 
 const NewQuestion = () => {
     const location = useLocation();
     const instance = location.state.data;
-    const [showAlert, setShowAlert] = React.useState(false);
-    const [editName, setEditName] = React.useState(false);
-    const [examName, setExamName] = React.useState(instance.name);
+    const [exam, setExam] = React.useState({
+        questions: [],
+    });
     const [answerA, setAnswerA] = React.useState('');
     const [answerB, setAnswerB] = React.useState('');
     const [answerC, setAnswerC] = React.useState('');
     const [answerD, setAnswerD] = React.useState('');
     const [question, setQuestion] = React.useState('');
+    const [alertTitle, setAlertTitle] = React.useState('');
+    const [editName, setEditName] = React.useState(false);
+    const [showAlert, setShowAlert] = React.useState(false);
+    const [examName, setExamName] = React.useState(instance.name);
+    const [activeQuestion, setActiveQuestion] = React.useState(null);
     const [correctAnswer, setCorrectAnswer] = React.useState(AnswerType.A);
+
+    React.useEffect(() => {
+        refreshExam();
+    }, []);
+
+    const refreshExam = () => {
+        ExamService.getById(
+            instance.id,
+            (response) => {
+                setExam(response.data.data);
+                console.log(response.data.data);
+            },
+            (error) => {},
+        );
+    };
 
     const isAnyNullField =
         examName === '' ||
@@ -30,8 +48,34 @@ const NewQuestion = () => {
         answerC === '' ||
         answerD === '' ||
         correctAnswer === '';
-    const handleChangeExamName = (e) => {
-        setExamName(e.target.value);
+
+    const handleChangeExamName = (e) => setExamName(e.target.value);
+
+    const handleSwitchQuestion = React.useCallback(
+        (question) => () => {
+            setActiveQuestion(question);
+            if (question !== null) {
+                fillValueAllField(question);
+            } else {
+                setActiveQuestion(null);
+                resetAllField();
+            }
+        },
+        [],
+    );
+
+    const fillValueAllField = (question) => {
+        setQuestion(question.content);
+        setAnswerA(question.options[0].content);
+        setAnswerB(question.options[1].content);
+        setAnswerC(question.options[2].content);
+        setAnswerD(question.options[3].content);
+
+        question.options.map((answer, index) => {
+            if (answer.isCorrect) {
+                setCorrectAnswer(indexToAnswerType(index));
+            }
+        });
     };
 
     const handleEditName = () => {
@@ -66,43 +110,88 @@ const NewQuestion = () => {
     };
 
     const handleSave = () => {
-        let payload = {
-            content: question,
-            options: [
-                {
-                    content: answerA,
-                    isCorrect: correctAnswer == AnswerType.A,
+        if (activeQuestion === null) {
+            let payload = {
+                content: question,
+                options: [
+                    {
+                        content: answerA,
+                        isCorrect: correctAnswer == AnswerType.A,
+                    },
+                    {
+                        content: answerB,
+                        isCorrect: correctAnswer == AnswerType.B,
+                    },
+                    {
+                        content: answerC,
+                        isCorrect: correctAnswer == AnswerType.C,
+                    },
+                    {
+                        content: answerD,
+                        isCorrect: correctAnswer == AnswerType.D,
+                    },
+                ],
+            };
+            QuestionService.create(
+                instance.id,
+                payload,
+                (_) => {
+                    resetAllField();
+                    setShowAlert(true);
+                    setAlertTitle('Create question successfully');
+                    setTimeout(() => {
+                        setShowAlert(false);
+                    }, 2000);
+
+                    refreshExam();
                 },
-                {
-                    content: answerB,
-                    isCorrect: correctAnswer == AnswerType.B,
+                (_) => {},
+            );
+        } else {
+            let payload = {
+                content: question,
+                optionList: [
+                    {
+                        id: activeQuestion.options[0].id,
+                        content: answerA,
+                        isCorrect: correctAnswer == AnswerType.A,
+                    },
+                    {
+                        id: activeQuestion.options[1].id,
+                        content: answerB,
+                        isCorrect: correctAnswer == AnswerType.B,
+                    },
+                    {
+                        id: activeQuestion.options[2].id,
+                        content: answerC,
+                        isCorrect: correctAnswer == AnswerType.C,
+                    },
+                    {
+                        id: activeQuestion.options[3].id,
+                        content: answerD,
+                        isCorrect: correctAnswer == AnswerType.D,
+                    },
+                ],
+            };
+            QuestionService.update(
+                activeQuestion.id,
+                payload,
+                (_) => {
+                    refreshExam();
+                    setActiveQuestion(null);
+                    resetAllField();
+                    setShowAlert(true);
+                    setAlertTitle('Update question successfully');
+                    setTimeout(() => {
+                        setShowAlert(false);
+                    }, 2000);
                 },
-                {
-                    content: answerC,
-                    isCorrect: correctAnswer == AnswerType.C,
-                },
-                {
-                    content: answerD,
-                    isCorrect: correctAnswer == AnswerType.D,
-                },
-            ],
-        };
-        QuestionService.create(
-            instance.id,
-            payload,
-            (response) => {
-                resetAll();
-                setShowAlert(true);
-                setTimeout(() => {
-                    setShowAlert(false);
-                }, 2000);
-                console.log('response', response);
-            },
-            (error) => {},
-        );
+                (_) => {},
+            );
+        }
     };
 
-    const resetAll = () => {
+    const resetAllField = () => {
         setQuestion('');
         setAnswerA('');
         setAnswerB('');
@@ -114,18 +203,22 @@ const NewQuestion = () => {
     const answers = [
         {
             type: AnswerType.A,
+            value: answerA,
             placeholderText: 'Type your question A here...',
         },
         {
             type: AnswerType.B,
+            value: answerB,
             placeholderText: 'Type your question B here...',
         },
         {
             type: AnswerType.C,
+            value: answerC,
             placeholderText: 'Type your question C here...',
         },
         {
             type: AnswerType.D,
+            value: answerD,
             placeholderText: 'Type your question D here...',
         },
     ];
@@ -153,6 +246,31 @@ const NewQuestion = () => {
                     </IconButton>
                 </Toolbar>
             </AppBar>
+
+            <Stack direction="row">
+                {exam.questions.map((question) => (
+                    <Button
+                        variant={activeQuestion == question ? 'contained' : 'outlined'}
+                        size="small"
+                        key={question.id}
+                        sx={{ mr: 1, mt: 1, textTransform: 'none', borderRadius: 15 }}
+                        disableElevation
+                        onClick={handleSwitchQuestion(question)}
+                    >
+                        {question.content}
+                    </Button>
+                ))}
+                <Button
+                    variant={activeQuestion === null ? 'contained' : 'outlined'}
+                    size="small"
+                    sx={{ mr: 1, mt: 1, textTransform: 'none', borderRadius: 15 }}
+                    disableElevation
+                    onClick={handleSwitchQuestion(null)}
+                >
+                    Empty
+                </Button>
+            </Stack>
+
             <TextField
                 variant="outlined"
                 placeholder="Type your question here..."
@@ -161,6 +279,7 @@ const NewQuestion = () => {
                 inputProps={{ min: 0, style: { textAlign: 'center' } }}
                 fullWidth
                 sx={{ mt: 2 }}
+                value={question}
                 onChange={(e) => setQuestion(e.target.value)}
             />
             <Grid container spacing={1.5}>
@@ -175,6 +294,7 @@ const NewQuestion = () => {
                                 inputProps={{ min: 0, style: { textAlign: 'center' } }}
                                 fullWidth
                                 sx={{ mt: 2 }}
+                                value={answer.value}
                                 onChange={(event) => handleChangeAnswer(event, answer)}
                             />
                             <Button
@@ -208,7 +328,7 @@ const NewQuestion = () => {
                     severity="success"
                     sx={{ mb: 2, position: 'fixed', top: '20px', right: '20px' }}
                 >
-                    Create question successfully
+                    {alertTitle}
                 </Alert>
             </Grow>
         </React.Fragment>

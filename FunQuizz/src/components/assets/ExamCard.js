@@ -1,19 +1,21 @@
-import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import React from 'react';
-import Container from '@mui/material/Container';
-import { Button, ButtonBase, CardActionArea, CardMedia, Chip } from '@mui/material';
-import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
-import AccessTimeFilledIcon from '@mui/icons-material/AccessTimeFilled';
+import { CardActionArea } from '@mui/material';
 import Stack from '@mui/system/Stack';
+import { useNavigate } from 'react-router-dom';
 
 const ExamCard = (props) => {
     const { exam } = props;
+    const navigate = useNavigate();
+
+    const handleNavigateExamDetail = () => {
+        navigate(`/quiz/detail/${exam.id}`);
+    }
+
     return (
-        <Card variant="outlined" sx={cardStyle}>
+        <Card variant="outlined" sx={cardStyle} onClick={handleNavigateExamDetail}>
             <CardActionArea color='primary' sx={{pb: 0}}>
                 <CardContent>
                     <Typography gutterBottom color="primary.main" align="left" fontSize={12} sx={{ mb: 1 }}>
@@ -24,6 +26,7 @@ const ExamCard = (props) => {
                         variant="h5"
                         align="left"
                         component="div"
+                        noWrap
                         sx={{ fontSize: 18, color: 'black', opacity: 0.9, textTransform: "uppercase" }}
                     >
                         {exam.name}

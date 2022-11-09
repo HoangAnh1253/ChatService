@@ -25,6 +25,7 @@ import AccountMenu from './AccountMenu';
 import LocalStorageKey from '~/Constants/LocalStorageKey';
 import CredentialService from '~/Services/CredentialService';
 import UserContext from '~/Context/UserContext';
+import LoginModalContext from '~/Context/LoginModalContext';
 
 let searchButton = (
     <IconButton type="submit" aria-label="search">
@@ -35,13 +36,13 @@ let searchButton = (
 function MainAppBar(props) {
     const { activePageIndex, onChangeTabbarIndex } = props;
     const [openSignUpModal, setOpenSignUpModal] = React.useState(false);
-    const [openSignInModal, setOpenSignInModal] = React.useState(false);
+    const {openSignInModal, setOpenSignInModal} = React.useContext(LoginModalContext);
     const isLogin = localStorage.getItem(LocalStorageKey.ACCESS_TOKEN) !== null;
 
-    // const handleOpenSignUpModal = () => setOpenSignUpModal(true);
-    // const handleCloseSignUpModal = () => setOpenSignUpModal(false);
-    // const handleOpenSignInModal = () => setOpenSignInModal(true);
-    // const handleCloseSignInModal = () => setOpenSignInModal(false);
+    const handleOpenSignUpModal = () => setOpenSignUpModal(true);
+    const handleCloseSignUpModal = () => setOpenSignUpModal(false);
+    const handleOpenSignInModal = () => setOpenSignInModal(true);
+    const handleCloseSignInModal = () => setOpenSignInModal(false);
 
     const handleLogOut = () => {
         CredentialService.logOut();
@@ -51,8 +52,8 @@ function MainAppBar(props) {
     const { user, setUser } = React.useContext(UserContext);
 
     return (
-        <Box sx={{ flexGrow: 1, marginBottom: 3 }}>
-            <AppBar position="sticky" sx={{ backgroundColor: '#FFFFFF', boxShadow: 2 }}>
+        <Box sx={{ marginBottom: 11 }}>
+            <AppBar position="fixed" sx={{ backgroundColor: '#FFFFFF', boxShadow: 2 }}>
                 <Toolbar variant="dense">
                     <Link to="/">
                         <img
@@ -126,13 +127,13 @@ function MainAppBar(props) {
 
             <SignUpModal
                 isOpen={openSignUpModal}
-                handleClose={() => setOpenSignUpModal(false)}
-                handleOpenSignInModal={() => setOpenSignInModal(true)}
+                handleClose={handleCloseSignUpModal}
+                handleOpenSignInModal={handleOpenSignInModal}
             />
             <SignInModal
                 isOpen={openSignInModal}
-                handleClose={() => setOpenSignInModal(false)}
-                handleOpenSignUpModal={() => setOpenSignUpModal(true)}
+                handleClose={handleCloseSignInModal}
+                handleOpenSignUpModal={handleOpenSignUpModal}
             />
         </Box>
     );

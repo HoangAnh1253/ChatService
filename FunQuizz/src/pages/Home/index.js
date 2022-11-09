@@ -77,7 +77,7 @@ const Home = () => {
 
                                 <Button
                                     component={Link}
-                                    to="/quiz/owning/all"
+                                    to="/quiz/owning/"
                                     sx={{ color: 'white', opacity: 0.9, textTransform: 'none', fontSize: 14 }}
                                 >
                                     &gt; Show all my exam &lt;
@@ -94,6 +94,8 @@ const Home = () => {
                         </Grid>
                     ))}
                 </Grid>
+
+                <Box mt={5}></Box>
             </Box>
 
             <NewQuizModal open={openNewQuizModal} setOpen={setOpenNewQuizModal} />

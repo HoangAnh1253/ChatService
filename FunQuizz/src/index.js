@@ -8,6 +8,7 @@ import { UserContextProvider } from './Context/UserContext';
 
 import { createTheme } from '@mui/material';
 import { ThemeProvider } from '@emotion/react';
+import { LoginModalProvider } from './Context/LoginModalContext';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
 const font = "'Quicksand', sans-serif";
@@ -25,9 +26,11 @@ root.render(
     <GlobalStyles>
         <PageIndexProvider>
             <UserContextProvider>
-                <ThemeProvider theme={theme}>
-                    <App />
-                </ThemeProvider>
+                <LoginModalProvider>
+                    <ThemeProvider theme={theme}>
+                        <App />
+                    </ThemeProvider>
+                </LoginModalProvider>
             </UserContextProvider>
         </PageIndexProvider>
     </GlobalStyles>,

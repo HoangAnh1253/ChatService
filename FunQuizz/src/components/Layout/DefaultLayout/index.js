@@ -11,7 +11,7 @@ function DefaultLayout({ children }) {
                 onChangeTabbarIndex={pageIndex.onChangeTabbarIndex}
             />
             {children}
-            <Footer />
+            {/* <Footer /> */}
         </React.Fragment>
     );
 }
