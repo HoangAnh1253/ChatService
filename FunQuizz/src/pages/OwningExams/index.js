@@ -3,8 +3,11 @@ import ExamService from '~/Services/ExamService';
 import LocalStorageService from '~/Services/LocalStorageService';
 import LoginModalContext from '~/Context/LoginModalContext';
 import { Link, useNavigate } from 'react-router-dom';
-import { Button, Divider, Grid, Stack, TextField, Typography } from '@mui/material';
+import { Box, Button, Divider, Grid, IconButton, Stack, TextField, Typography } from '@mui/material';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import AddIcon from '@mui/icons-material/Add';
+import SaveIcon from '@mui/icons-material/Save';
+import EditIcon from '@mui/icons-material/Edit';
 import JsonHelper from '~/Helpers/JsonHelper';
 
 const OwningExams = () => {
@@ -16,6 +19,7 @@ const OwningExams = () => {
     const [answers, setAnswers] = React.useState([]);
     const [activeExam, setActiveExam] = React.useState({});
     const [activeQuestion, setActiveQuestion] = React.useState({});
+    const [isEditQuestion, setIsEditQuestion] = React.useState(false);
 
     React.useEffect(() => {
         if (id === null) {
@@ -41,11 +45,13 @@ const OwningExams = () => {
         setQuestions(exam.questions);
         setActiveQuestion({});
         setAnswers([]);
+        setIsEditQuestion(false);
     };
 
     const handleChangeQuestion = (question) => {
         setActiveQuestion(question);
         setAnswers(question.options);
+        setIsEditQuestion(false);
     };
 
     return (
@@ -53,9 +59,9 @@ const OwningExams = () => {
             <Button startIcon={<ArrowBackIosIcon />} sx={{ my: 2, textTransform: 'none' }} component={Link} to="/">
                 Home
             </Button>
-            <Grid container spacing={1} flexGrow={1}>
+            <Grid container spacing={1} justifyContent="center">
                 <Grid item xs={2}>
-                    <Typography gutterBottom variant="h6" pl={1}>
+                    <Typography variant="h6" pl={1}>
                         Exams
                     </Typography>
                     <Divider />
@@ -72,11 +78,17 @@ const OwningExams = () => {
                         </Button>
                     ))}
                 </Grid>
-                <Divider orientation="vertical" flexItem sx={{ mr: '-1px' }} />
+                <Divider orientation="vertical" flexItem sx={{ ml: 1 }} />
                 <Grid item xs={3}>
-                    <Typography gutterBottom variant="h6" pl={1}>
-                        Questions
-                    </Typography>
+                    <Stack direction="row" sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <Typography variant="h6" pl={1}>
+                            Questions
+                        </Typography>
+                        <IconButton color="success" size="small">
+                            <AddIcon />
+                        </IconButton>
+                    </Stack>
+
                     <Divider />
                     {questions.map((question) => (
                         <Button
@@ -91,24 +103,75 @@ const OwningExams = () => {
                         </Button>
                     ))}
                 </Grid>
-                <Divider orientation="vertical" flexItem sx={{ mr: '-1px' }} />
-                <Grid item flexGrow={1}>
-                    <Typography gutterBottom variant="h6" pl={1}>
-                        Actions
-                    </Typography>
+                <Divider orientation="vertical" flexItem sx={{ ml: 1 }} />
+                <Grid item xs={6.8}>
+                    <Stack direction="row" sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <Typography variant="h6" pl={1}>
+                            Result
+                        </Typography>
+                        {JsonHelper.isNotEmpty(activeQuestion) && !isEditQuestion && (
+                            <Button
+                                variant="outlined"
+                                size="small"
+                                startIcon={<EditIcon />}
+                                onClick={() => setIsEditQuestion(true)}
+                            >
+                                Edit
+                            </Button>
+                        )}
+                        {JsonHelper.isNotEmpty(activeQuestion) && isEditQuestion && (
+                            <Button
+                                variant="contained"
+                                size="small"
+                                startIcon={<SaveIcon />}
+                                disableElevation
+                                onClick={() => setIsEditQuestion(false)}
+                            >
+                                Save
+                            </Button>
+                        )}
+                    </Stack>
                     <Divider />
                     {JsonHelper.isNotEmpty(activeQuestion) && (
-                        <TextField size="small" value={activeQuestion.content} fullWidth />
+                        <TextField
+                            size="small"
+                            value={activeQuestion.content}
+                            fullWidth
+                            disabled={!isEditQuestion}
+                            rows={4}
+                            multiline
+                            inputProps={{ min: 0, style: { textAlign: 'center' } }}
+                            sx={{ mt: 1 }}
+                        />
                     )}
-                    <Grid container sx={{display: "inline"}}>
+                    <Grid container mt={1} spacing={1}>
                         {answers.map((answer) => (
-                            <Grid item xs={4}>
-                                <TextField
-                                    size="small"
-                                    value={answer.content}
+                            <Grid item xs={3}>
+                            <TextField
+                                size="small"
+                                value={answer.content}
+                                fullWidth
+                                rows={4}
+                                multiline
+                                disabled={!isEditQuestion}
+                                inputProps={{ style: { textAlign: 'center' } }}
+                            />
+                        </Grid>
+                        ))}
+                    </Grid>
+                    <Grid container mt={0.1} spacing={1}>
+                        {answers.map((answer) => (
+                            <Grid item xs={3}>
+                                <Button
+                                    variant={answer.isCorrect == true ? 'contained' : 'outlined'}
+                                    onClick={() => {}}
                                     fullWidth
-                                    sx={{ display: 'inline-block' }}
-                                />
+                                    sx={{ textTransform: 'none' }}
+                                    disableElevation
+                                    disabled={!isEditQuestion}
+                                >
+                                    {answer.isCorrect == true ? 'Correct Answer' : 'Choose'}
+                                </Button>
                             </Grid>
                         ))}
                     </Grid>
@@ -124,7 +187,9 @@ const buttonStyle = {
     overflow: 'hidden',
     textOverflow: 'ellipsis',
     textAlign: 'left',
-    borderRadius: 0,
+    borderRadius: 1,
+    m: 0.5,
+    ml: 0,
     textTransform: 'none',
 };
 
