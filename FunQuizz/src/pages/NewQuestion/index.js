@@ -150,7 +150,7 @@ const NewQuestion = () => {
         } else {
             let payload = {
                 content: question,
-                optionList: [
+                options: [
                     {
                         id: activeQuestion.options[0].id,
                         content: answerA,

@@ -3,6 +3,7 @@ export const AnswerType = {
     B: 'B',
     C: 'C',
     D: 'D',
+    empty: "",
 };
 
 export const indexToAnswerType = (index) => {

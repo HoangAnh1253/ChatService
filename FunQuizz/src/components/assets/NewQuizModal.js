@@ -143,7 +143,7 @@ const NewQuizModal = (props) => {
                                 return (
                                     <Chip
                                         label={tag.name}
-                                        variant={chooseTags.id == tag.id ? 'filled' : 'outlined'}
+                                        variant={chooseTags.id === tag.id ? 'filled' : 'outlined'}
                                         color="primary"
                                         sx={{ margin: 0.5 }}
                                         onClick={() => handleClickTag(tag)}

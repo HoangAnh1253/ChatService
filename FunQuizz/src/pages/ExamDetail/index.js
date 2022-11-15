@@ -1,12 +1,13 @@
 // @ts-nocheck
 import React from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import ExamService from '~/Services/ExamService';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import { Button, Card, CardActions, CardContent, Grid, Typography, Stack } from '@mui/material';
 
 const ExamDetail = () => {
     const params = useParams();
+    const navigate = useNavigate();
     const [exam, setExam] = React.useState({
         questions: [],
     });
@@ -33,6 +34,10 @@ const ExamDetail = () => {
 
     const getTotalScore = (exam) => {
         return exam.questions.reduce((pre, cur) => pre + cur.score, 0);
+    }
+
+    const handleCreateRoom = () => {
+        navigate("/quiz/wait-room/22052000")
     }
 
     return (
@@ -73,6 +78,9 @@ const ExamDetail = () => {
                                 Author: {exam.authorEmail}
                             </Typography>
                         </CardContent>
+                        <CardActions sx={{display: "flex", justifyContent: "center"}} onClick={handleCreateRoom}>
+                            <Button variant="contained" disableElevation>Create room</Button>
+                        </CardActions>
                     </Card>
                 </Grid>
 

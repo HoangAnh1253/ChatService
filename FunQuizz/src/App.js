@@ -1,7 +1,8 @@
 import { Fragment, useContext, useEffect } from 'react';
+import io from 'socket.io-client';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { publicRoutes } from '~/routes';
-import { DefaultLayout } from '~/components/Layout';
+import { DefaultLayout } from '~/Components/Layout';
 import React from 'react';
 import './App.css';
 import { Container } from '@mui/material';
@@ -10,6 +11,7 @@ import UserService from './Services/UserService';
 import UserContext, { UserContextProvider } from './Context/UserContext';
 
 function App() {
+    // const socket = io.connect("http://localhost:4000");
     const { setUser } = React.useContext(UserContext);
 
     React.useEffect(() => {

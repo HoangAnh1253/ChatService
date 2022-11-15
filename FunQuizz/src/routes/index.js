@@ -7,6 +7,7 @@ import Main from '~/pages/Main';
 import NewQuestion from '~/pages/NewQuestion';
 import OwningExams from '~/pages/OwningExams';
 import ExamDetail from '~/pages/ExamDetail';
+import WaitRoom from '~/pages/WaitRoom';
 
 // Public routes
 const publicRoutes = [
@@ -17,6 +18,7 @@ const publicRoutes = [
     { path: '/quiz/creator', component: NewQuestion, layout: null },
     { path: '/quiz/owning', component: OwningExams, layout: null },
     { path: '/quiz/detail/:id', component: ExamDetail, layout: null },
+    { path: '/quiz/wait-room/:id', component: WaitRoom, layout: null },
     // { path: '/activity', component: Activity, layout: null },
 ];
 

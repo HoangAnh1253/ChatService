@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
-import MainAppBar from '~/components/assets/AppBar';
+import MainAppBar from '~/Components/Assets/AppBar';
 import PageIndexContext from '~/Context/PageIndexContext';
-import Footer from '~/components/Layout/Footer';
+import Footer from '~/Components/Layout/Footer';
 function DefaultLayout({ children }) {
     const pageIndex = useContext(PageIndexContext);
     return (
