@@ -408,7 +408,7 @@ const OwningExams = () => {
                 content="Are you sure to delete this question?"
                 open={showDeleteDialog}
                 handleClose={handleCloseDeleteDialog}
-                handleClick={deleteQuestion}
+                handleClick={deleteQuestion(activeQuestion.id)}
             />
         </React.Fragment>
     );
