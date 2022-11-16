@@ -3,7 +3,7 @@ import ExamService from '~/Services/ExamService';
 import LocalStorageService from '~/Services/LocalStorageService';
 import LoginModalContext from '~/Context/LoginModalContext';
 import { Link, useNavigate } from 'react-router-dom';
-import { Alert, Button, Divider, Grid, Grow, IconButton, Stack, TextField, Typography } from '@mui/material';
+import { Alert, Button, Divider, Grid, Grow, IconButton, Stack, TextField, Tooltip, Typography } from '@mui/material';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
@@ -21,6 +21,7 @@ const OwningExams = () => {
     const [questions, setQuestions] = React.useState([]);
     const [answers, setAnswers] = React.useState([]);
     const [activeExam, setActiveExam] = React.useState({});
+    const [examNameInputValue, setExamNameInputValue] = React.useState('');
     const [activeQuestion, setActiveQuestion] = React.useState({});
     const [isEditQuestion, setIsEditQuestion] = React.useState(false);
     const [alert, setAlert] = React.useState({ title: '', isShowed: false });
@@ -28,6 +29,13 @@ const OwningExams = () => {
 
     const handleShowDeleteDialog = () => setShowDeleteDialog(true);
     const handleCloseDeleteDialog = () => setShowDeleteDialog(false);
+    const handleChangeExamNameInputValue = (e) => setExamNameInputValue(e.target.input);
+    const handleShowAlert = (title) => {
+        setAlert({ title: title, isShowed: true });
+        setTimeout(() => {
+            setAlert({ title: '', isShowed: false });
+        }, 2000);
+    };
 
     React.useEffect(() => {
         if (id === null) {
@@ -35,7 +43,10 @@ const OwningExams = () => {
             setOpenSignInModal(true);
             return;
         }
+        getExamsByEmail();
+    }, []);
 
+    const getExamsByEmail = () => {
         ExamService.getByEmail(
             email,
             (response) => {
@@ -48,17 +59,14 @@ const OwningExams = () => {
             },
             (_) => {},
         );
-    }, []);
+    };
 
     const updateQuestion = () => {
         QuestionService.update(
             activeQuestion.id,
             activeQuestion,
             (_) => {
-                setAlert({ title: 'Update question successfully!', isShowed: true });
-                setTimeout(() => {
-                    setAlert({ title: '', isShowed: false });
-                }, 2000);
+                handleShowAlert('Update question successfully!');
 
                 const newQuestions = questions.map((question) => {
                     if (question.id === activeQuestion.id) {
@@ -78,15 +86,11 @@ const OwningExams = () => {
             activeExam.id,
             activeQuestion,
             (_) => {
-                setAlert({ title: 'Create new question successfully!', isShowed: true });
-                setTimeout(() => {
-                    setAlert({ title: '', isShowed: false });
-                }, 2000);
+                handleShowAlert('Create new question successfully!');
 
                 ExamService.getById(
                     activeExam.id,
                     (response) => {
-                        console.log(response.data.data);
                         setQuestions(response.data.data.questions);
                         setAnswers([]);
                         setActiveQuestion({});
@@ -101,8 +105,24 @@ const OwningExams = () => {
     };
 
     const deleteQuestion = (questionId) => (_) => {
+        QuestionService.delete(
+            questionId,
+            (_) => {
+                handleShowAlert('Delete question successfully!');
+
+                ExamService.getById(
+                    activeExam.id,
+                    (response) => {
+                        setQuestions(response.data.data.questions);
+                        setAnswers([]);
+                        setActiveQuestion({});
+                    },
+                    (error) => console.log(error),
+                );
+            },
+            (error) => {},
+        );
         setShowDeleteDialog(false);
-        console.log(questionId);
     };
 
     const handleChangeExam = (exam) => {
@@ -116,6 +136,7 @@ const OwningExams = () => {
     const handleChangeQuestion = (question) => {
         setActiveQuestion(question);
         setAnswers(question.options.sort((a, b) => a.id - b.id));
+        setExamNameInputValue(activeExam.name);
         setIsEditQuestion(false);
     };
 
@@ -166,6 +187,12 @@ const OwningExams = () => {
 
     const handleUpdateQuestion = () => {
         updateQuestion();
+        setIsEditQuestion(false);
+    };
+
+    const handleCancelEditQuestion = () => {
+        let prevQuestion = questions.find((question) => question.id === activeQuestion.id);
+        setActiveQuestion(prevQuestion);
         setIsEditQuestion(false);
     };
 
@@ -264,7 +291,7 @@ const OwningExams = () => {
                                             size="small"
                                             color="error"
                                             disableElevation
-                                            onClick={() => setIsEditQuestion(false)}
+                                            onClick={handleCancelEditQuestion}
                                         >
                                             Cancel
                                         </Button>
@@ -297,51 +324,71 @@ const OwningExams = () => {
                         )}
                     </Stack>
                     <Divider />
+                    {JsonHelper.isNotEmpty(activeQuestion) && activeQuestion.id !== undefined && (
+                        <Tooltip title="Exam name">
+                            <TextField
+                                size="small"
+                                value={examNameInputValue}
+                                fullWidth
+                                disabled={!isEditQuestion && activeQuestion.id !== undefined}
+                                placeholder="Type exam name here..."
+                                inputProps={{ min: 0, style: { textAlign: 'center' } }}
+                                onChange={handleChangeExamNameInputValue}
+                                sx={{ mt: 1 }}
+                            />
+                        </Tooltip>
+                    )}
                     {JsonHelper.isNotEmpty(activeQuestion) && (
-                        <TextField
-                            size="small"
-                            value={activeQuestion.content}
-                            fullWidth
-                            disabled={!isEditQuestion && activeQuestion.id !== undefined}
-                            rows={4}
-                            multiline
-                            placeholder="Type your question here..."
-                            inputProps={{ min: 0, style: { textAlign: 'center' } }}
-                            onChange={handleChangeQuestionContent}
-                            sx={{ mt: 1 }}
-                        />
+                        <Tooltip title="Question name">
+                            <TextField
+                                size="small"
+                                value={activeQuestion.content}
+                                fullWidth
+                                disabled={!isEditQuestion && activeQuestion.id !== undefined}
+                                rows={4}
+                                multiline
+                                placeholder="Type your question here..."
+                                inputProps={{ min: 0, style: { textAlign: 'center' } }}
+                                onChange={handleChangeQuestionContent}
+                                sx={{ mt: 1 }}
+                            />
+                        </Tooltip>
                     )}
                     <Grid container mt={1} spacing={1}>
                         {JsonHelper.isNotEmpty(activeQuestion) &&
                             activeQuestion.options.map((answer, index) => (
-                                <Grid item xs={3}>
-                                    <TextField
-                                        size="small"
-                                        value={answer.content}
-                                        fullWidth
-                                        rows={4}
-                                        multiline
-                                        placeholder="Type an answer option here..."
-                                        disabled={!isEditQuestion && activeQuestion.id !== undefined}
-                                        inputProps={{ style: { textAlign: 'center' } }}
-                                        onChange={handleChangeAnswerValue(index)}
-                                    />
+                                <Grid item xs={12 / activeQuestion.options.length}>
+                                    <Tooltip title="Answer option">
+                                        <TextField
+                                            size="small"
+                                            value={answer.content}
+                                            fullWidth
+                                            rows={4}
+                                            multiline
+                                            placeholder="Type an answer option here..."
+                                            disabled={!isEditQuestion && activeQuestion.id !== undefined}
+                                            inputProps={{ style: { textAlign: 'center' } }}
+                                            onChange={handleChangeAnswerValue(index)}
+                                        />
+                                    </Tooltip>
                                 </Grid>
                             ))}
                     </Grid>
                     <Grid container mt={0.1} spacing={1}>
                         {answers.map((answer, index) => (
-                            <Grid item xs={3} key={answer.id}>
-                                <Button
-                                    variant={answer.isCorrect === true ? 'contained' : 'outlined'}
-                                    fullWidth
-                                    sx={{ textTransform: 'none' }}
-                                    disableElevation
-                                    disabled={!isEditQuestion && activeQuestion.id !== undefined}
-                                    onClick={handleChangeCorrectAnswer(index)}
-                                >
-                                    {answer.isCorrect === true ? 'Correct Answer' : 'Choose'}
-                                </Button>
+                            <Grid item xs={12 / answers.length} key={answer.id}>
+                                <Tooltip title="Choose correct answer">
+                                    <Button
+                                        variant={answer.isCorrect === true ? 'contained' : 'outlined'}
+                                        fullWidth
+                                        sx={{ textTransform: 'none' }}
+                                        disableElevation
+                                        disabled={!isEditQuestion && activeQuestion.id !== undefined}
+                                        onClick={handleChangeCorrectAnswer(index)}
+                                    >
+                                        {answer.isCorrect === true ? 'Correct Answer' : 'Choose'}
+                                    </Button>
+                                </Tooltip>
                             </Grid>
                         ))}
                     </Grid>
