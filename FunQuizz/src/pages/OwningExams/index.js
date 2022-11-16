@@ -29,7 +29,7 @@ const OwningExams = () => {
 
     const handleShowDeleteDialog = () => setShowDeleteDialog(true);
     const handleCloseDeleteDialog = () => setShowDeleteDialog(false);
-    const handleChangeExamNameInputValue = (e) => setExamNameInputValue(e.target.input);
+    const handleChangeExamNameInputValue = (e) => setExamNameInputValue(e.target.value);
     const handleShowAlert = (title) => {
         setAlert({ title: title, isShowed: true });
         setTimeout(() => {
@@ -51,7 +51,7 @@ const OwningExams = () => {
             email,
             (response) => {
                 let newExams = response.data.data;
-                setExams(newExams);
+                setExams(newExams.sort((a, b) => a.id - b.id));
                 if (newExams.length > 0) {
                     setQuestions(newExams[0].questions);
                     setActiveExam(newExams[0]);
@@ -62,6 +62,9 @@ const OwningExams = () => {
     };
 
     const updateQuestion = () => {
+        if (examNameInputValue !== activeExam.name) {
+            updateExamName();
+        }
         QuestionService.update(
             activeQuestion.id,
             activeQuestion,
@@ -81,6 +84,26 @@ const OwningExams = () => {
             },
         );
     };
+
+    const updateExamName = () => {
+        ExamService.update(
+            activeExam.id,
+            {
+                name: examNameInputValue,
+            },
+            (_) => {
+                const newExams = exams.map((exam) => {
+                    if (exam.id === activeExam.id) {
+                        exam.name = examNameInputValue;
+                    }
+                    return exam;
+                });
+                setExams(newExams);
+            },
+            (error) => console.log(error),
+        );
+    };
+
     const createQuestion = () => {
         QuestionService.create(
             activeExam.id,

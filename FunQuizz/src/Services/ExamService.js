@@ -56,8 +56,6 @@ class ExamService {
     }
 
     async update(examId, payload, onSuccess, onError) {
-        console.log(examId);
-        console.log(payload);
         try {
             const response = await axios.patch(
                 this.BASE_URL + '/' + examId,
