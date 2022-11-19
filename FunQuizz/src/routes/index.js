@@ -18,7 +18,7 @@ const publicRoutes = [
     { path: '/quiz/creator', component: NewQuestion, layout: null },
     { path: '/quiz/owning', component: OwningExams, layout: null },
     { path: '/quiz/detail/:id', component: ExamDetail, layout: null },
-    { path: '/quiz/wait-room/:id', component: WaitRoom, layout: null },
+    { path: '/quiz/wait-room/:userRole/:id', component: WaitRoom, layout: null },// :userRole = GUEST => :id mean id of room ; :userRole = HOST => :id mean id of exam
     // { path: '/activity', component: Activity, layout: null },
 ];
 

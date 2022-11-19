@@ -28,16 +28,16 @@ const ExamDetail = () => {
         );
     }, []);
 
+    const handleCreateRoom = (e) => {
+         navigate(`/quiz/wait-room/host/${params.id}`);
+    }
+
     const getCorrectAnswerQuantity = (question) => {
         return question.options.filter((option) => option.isCorrect === true).length;
     }
 
     const getTotalScore = (exam) => {
         return exam.questions.reduce((pre, cur) => pre + cur.score, 0);
-    }
-
-    const handleCreateRoom = () => {
-        navigate("/quiz/wait-room/22052000")
     }
 
     return (

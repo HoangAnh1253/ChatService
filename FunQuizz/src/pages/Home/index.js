@@ -8,14 +8,29 @@ import ExamCard from '~/Components/Assets/ExamCard';
 import NewQuizModal from '~/Components/Assets/NewQuizModal';
 import ExamService from '~/Services/ExamService';
 import { Link } from 'react-router-dom';
+import UserContext from '~/Context/UserContext';
+import { useNavigate } from 'react-router-dom';
+
 
 const Home = () => {
+    const { user, setUser } = React.useContext(UserContext);
     const [openNewQuizModal, setOpenNewQuizModal] = React.useState(false);
     const [exams, setExams] = React.useState([]);
+    const [roomId, setRoomId] = React.useState('');
+    const navigate = useNavigate();
 
     const handleCreateQuiz = () => {
         setOpenNewQuizModal(true);
     };
+
+    const handleChangeRoomId = (e) => {
+        setRoomId(e.target.value);
+    };
+
+    const handleJoinRoom = (e) => {
+        if(roomId)
+         navigate(`/quiz/wait-room/guest/${roomId}`);
+    }
 
     React.useEffect(() => {
         ExamService.getAll(
@@ -35,6 +50,8 @@ const Home = () => {
                             <Box sx={wrapperStyle}>
                                 <Stack direction="row" spacing={1}>
                                     <TextField
+                                        value={roomId}
+                                        onChange={handleChangeRoomId}
                                         variant="standard"
                                         placeholder="Enter a join code"
                                         fullWidth={true}
@@ -47,6 +64,7 @@ const Home = () => {
                                         InputProps={{ disableUnderline: true }}
                                     ></TextField>
                                     <Button
+                                        onClick={handleJoinRoom}
                                         variant="contained"
                                         color="primary"
                                         size="small"
