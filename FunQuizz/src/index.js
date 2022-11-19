@@ -9,6 +9,8 @@ import { UserContextProvider } from './Context/UserContext';
 import { createTheme } from '@mui/material';
 import { ThemeProvider } from '@emotion/react';
 import { LoginModalProvider } from './Context/LoginModalContext';
+import { SocketContextProvider } from './Context/SocketContext';
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
 const font = "'Quicksand', sans-serif";
@@ -27,9 +29,11 @@ root.render(
         <PageIndexProvider>
             <UserContextProvider>
                 <LoginModalProvider>
-                    <ThemeProvider theme={theme}>
-                        <App />
-                    </ThemeProvider>
+                    <SocketContextProvider>
+                        <ThemeProvider theme={theme}>
+                            <App />
+                        </ThemeProvider>
+                    </SocketContextProvider>
                 </LoginModalProvider>
             </UserContextProvider>
         </PageIndexProvider>
