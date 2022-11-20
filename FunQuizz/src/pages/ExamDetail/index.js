@@ -29,16 +29,16 @@ const ExamDetail = () => {
     }, []);
 
     const handleCreateRoom = (e) => {
-         navigate(`/quiz/wait-room/host/${params.id}`);
-    }
+        navigate(`/quiz/wait-room/host/${params.id}`);
+    };
 
     const getCorrectAnswerQuantity = (question) => {
         return question.options.filter((option) => option.isCorrect === true).length;
-    }
+    };
 
     const getTotalScore = (exam) => {
         return exam.questions.reduce((pre, cur) => pre + cur.score, 0);
-    }
+    };
 
     return (
         <React.Fragment>
@@ -54,7 +54,7 @@ const ExamDetail = () => {
                 sx={{ minHeight: '100vh' }}
             >
                 <Grid item xs={3}>
-                    <Card sx={{ minWidth: 400 }}>
+                    <Card variant='outlined' sx={cardStyle}>
                         <CardContent>
                             <Typography sx={{ fontSize: 14 }} color="text.secondary" textAlign="center" gutterBottom>
                                 Topic: English
@@ -68,9 +68,9 @@ const ExamDetail = () => {
                             >
                                 {exam.name}
                             </Typography>
-                            <Stack direction="row" spacing={3} mt={3}>
+                            <Stack direction="row" spacing={3} mt={3} justifyContent="space-between">
                                 <Typography color="red">{exam.questions.length} questions</Typography>
-                                <Typography color="orange">Time limit: {exam.timeLimit} min</Typography>
+                                <Typography color="orange">Limit: {exam.timeLimit} min</Typography>
                                 <Typography color="green">Total: {getTotalScore(exam)} score</Typography>
                             </Stack>
 
@@ -78,21 +78,29 @@ const ExamDetail = () => {
                                 Author: {exam.authorEmail}
                             </Typography>
                         </CardContent>
-                        <CardActions sx={{display: "flex", justifyContent: "center"}} onClick={handleCreateRoom}>
-                            <Button variant="contained" disableElevation>Create room</Button>
+                        <CardActions sx={{ display: 'flex', justifyContent: 'center' }} onClick={handleCreateRoom}>
+                            <Button variant="contained" disableElevation>
+                                Create room
+                            </Button>
                         </CardActions>
                     </Card>
                 </Grid>
 
-                <Grid container mt={3} spacing={2}>
+                <Grid container mt={3} spacing={1.5}>
                     {exam.questions.map((question) => (
                         <Grid item xs={3}>
-                            <Card>
+                            <Card variant="outlined" sx={{ borderRadius: 4 }}>
                                 <CardContent>
-                                    <Typography sx={{ fontSize: 12 }} color="text.secondary" gutterBottom>
+                                    <Typography sx={{ fontSize: 12 }} color="cornflowerblue" gutterBottom>
                                         {question.score} score
                                     </Typography>
-                                    <Typography gutterBottom variant="h5" component="div" fontSize={20}>
+                                    <Typography
+                                        gutterBottom
+                                        variant="h5"
+                                        component="div"
+                                        fontSize={20}
+                                        sx={contentTextStyle}
+                                    >
                                         {question.content}
                                     </Typography>
                                     <Typography sx={{ fontSize: 14, mt: 2 }} color="text.secondary">
@@ -109,6 +117,21 @@ const ExamDetail = () => {
             </Grid>
         </React.Fragment>
     );
+};
+
+const cardStyle = {
+    minWidth: 400,
+    borderRadius: 4,
+    boxShadow: 'rgba(33, 35, 38, 0.1) 10px 10px 10px 0px;',
+};
+
+const contentTextStyle = {
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    display: '-webkit-box',
+    WebkitLineClamp: '2',
+    WebkitBoxOrient: 'vertical',
+    height: '55px',
 };
 
 export default ExamDetail;
