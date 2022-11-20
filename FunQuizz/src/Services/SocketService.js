@@ -51,7 +51,7 @@ export default class SocketService {
     }
 
     // disconnect - used when unmounting
-    // disconnect () {
+    disconnect () {
     //     socket.disconnect();
-    // }
+    }
 }

@@ -27,7 +27,7 @@ root.render(
         <PageIndexProvider>
             <UserContextProvider>
                 <LoginModalProvider>
-                    <ThemeProvider theme={theme}>
+                    <ThemeProvider theme={theme} >
                         <App />
                     </ThemeProvider>
                 </LoginModalProvider>

@@ -27,7 +27,7 @@ function App() {
 
     return (
         <Router>
-            <div className="App">
+            <div className="App" style={{padding: 0, margin: 0}}>
                 <Routes>
                     {publicRoutes.map((route, index) => {
                         const Page = route.component;
@@ -45,7 +45,7 @@ function App() {
                                 path={route.path}
                                 element={
                                     <Layout>
-                                        <Container maxWidth="xl">
+                                        <Container maxWidth="xl" disableGutters>
                                             <Page />
                                         </Container>
                                     </Layout>
