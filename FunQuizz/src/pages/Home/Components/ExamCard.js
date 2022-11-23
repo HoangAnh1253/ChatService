@@ -14,12 +14,16 @@ const ExamCard = (props) => {
         navigate(`/quiz/detail/${exam.id}`);
     }
 
+    const getTimeLimit = () => {
+        return exam.questions.reduce((pre, cur) => pre + cur.timeLimit, 0);
+    };
+
     return (
         <Card variant="outlined" sx={cardStyle} onClick={handleNavigateExamDetail}>
             <CardActionArea color='primary' sx={{pb: 0}}>
                 <CardContent>
                     <Typography gutterBottom color="primary.main" align="left" fontSize={12} sx={{ mb: 1 }}>
-                        Topic: name
+                        Topic: {exam.topic}
                     </Typography>
                     <Typography
                         gutterBottom
@@ -39,7 +43,7 @@ const ExamCard = (props) => {
                             .
                         </Typography>
                         <Typography color="text.secondary" sx={smallTextStyle}>
-                            {exam.timeLimit} min
+                            {getTimeLimit()} min
                         </Typography>
                     </Stack>
                 </CardContent>

@@ -32,12 +32,12 @@ const ExamDetail = () => {
         navigate(`/quiz/wait-room/host/${params.id}`);
     };
 
-    const getCorrectAnswerQuantity = (question) => {
-        return question.options.filter((option) => option.isCorrect === true).length;
+    const getTotalScore = () => {
+        return exam.questions.reduce((pre, cur) => pre + cur.score, 0);
     };
 
-    const getTotalScore = (exam) => {
-        return exam.questions.reduce((pre, cur) => pre + cur.score, 0);
+    const getTimeLimit = () => {
+        return exam.questions.reduce((pre, cur) => pre + cur.timeLimit, 0);
     };
 
     return (
@@ -58,7 +58,7 @@ const ExamDetail = () => {
                     <Card variant='outlined' sx={cardStyle}>
                         <CardContent>
                             <Typography sx={{ fontSize: 14 }} color="text.secondary" textAlign="center" gutterBottom>
-                                Topic: English
+                                Topic: {exam.topic}
                             </Typography>
                             <Typography
                                 gutterBottom
@@ -71,8 +71,8 @@ const ExamDetail = () => {
                             </Typography>
                             <Stack direction="row" spacing={3} mt={3} justifyContent="space-between">
                                 <Typography color="red">{exam.questions.length} questions</Typography>
-                                <Typography color="orange">Limit: {exam.timeLimit} min</Typography>
-                                <Typography color="green">Total: {getTotalScore(exam)} score</Typography>
+                                <Typography color="orange">Limit: {getTimeLimit()} min</Typography>
+                                <Typography color="green">Total: {getTotalScore()} score</Typography>
                             </Stack>
 
                             <Typography variant="body2" mt={2} color="text.secondary">
@@ -108,7 +108,7 @@ const ExamDetail = () => {
                                         Total: {question.options.length} options
                                     </Typography>
                                     <Typography sx={{ fontSize: 14 }} color="text.secondary">
-                                        Have: {getCorrectAnswerQuantity(question)} correct answers
+                                        Limit: {question.timeLimit} min
                                     </Typography>
                                 </CardContent>
                             </Card>

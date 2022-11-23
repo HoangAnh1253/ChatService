@@ -28,12 +28,12 @@ const ToolBar = (props) => {
                                 component="span"
                                 variant="body1"
                                 color="white"
-                                fontSize={20}
+                                fontSize={22}
                                 sx={{ backgroundColor: 'transparent' }}
                             >
                                 {currentQuestionIndex + 1}
                             </Typography>
-                            <Typography component="span" variant="body1" color="white" fontSize={13}>
+                            <Typography component="span" variant="body1" color="white" fontSize={16}>
                                 /{exam.questions.length}
                             </Typography>
                         </Paper>

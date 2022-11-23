@@ -4,7 +4,7 @@ import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import { TextField, Button } from '@mui/material';
 import Stack from '@mui/system/Stack';
-import ExamCard from '~/Components/Assets/ExamCard';
+import ExamCard from '~/pages/Home/Components/ExamCard';
 import NewQuizModal from '~/Components/Assets/NewQuizModal';
 import ExamService from '~/Services/ExamService';
 import { Link } from 'react-router-dom';

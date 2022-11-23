@@ -2,11 +2,24 @@ import React from 'react';
 import CreateIcon from '@mui/icons-material/Create';
 import SaveIcon from '@mui/icons-material/Save';
 import { Link, useLocation } from 'react-router-dom';
-import { Alert, AppBar, Box, Button, Grid, Grow, IconButton, Stack, TextField, Toolbar } from '@mui/material';
+import {
+    Alert,
+    AppBar,
+    Box,
+    Button,
+    Grid,
+    Grow,
+    IconButton,
+    Stack,
+    TextField,
+    Toolbar,
+    Typography,
+} from '@mui/material';
 import ExamService from '~/Services/ExamService';
 import QuestionService from '~/Services/QuestionService';
 import { AnswerType, indexToAnswerType } from '~/Enums/AnswerType';
 import { Container } from '@mui/system';
+import Question from '~/Models/Question';
 
 const NewQuestion = () => {
     const location = useLocation();
@@ -19,6 +32,8 @@ const NewQuestion = () => {
     const [answerC, setAnswerC] = React.useState('');
     const [answerD, setAnswerD] = React.useState('');
     const [question, setQuestion] = React.useState('');
+    const [timeLimit, setTimeLimit] = React.useState(null);
+    const [score, setScore] = React.useState(null);
     const [alertTitle, setAlertTitle] = React.useState('');
     const [editName, setEditName] = React.useState(false);
     const [showAlert, setShowAlert] = React.useState(false);
@@ -67,6 +82,8 @@ const NewQuestion = () => {
 
     const fillValueAllField = (question) => {
         setQuestion(question.content);
+        setScore(question.score);
+        setTimeLimit(question.timeLimit);
         setAnswerA(question.options[0].content);
         setAnswerB(question.options[1].content);
         setAnswerC(question.options[2].content);
@@ -111,31 +128,30 @@ const NewQuestion = () => {
     };
 
     const handleSave = () => {
+        let questionPayload = new Question(question, score, timeLimit, []);
         if (activeQuestion === null) {
-            let payload = {
-                content: question,
-                options: [
-                    {
-                        content: answerA,
-                        isCorrect: correctAnswer == AnswerType.A,
-                    },
-                    {
-                        content: answerB,
-                        isCorrect: correctAnswer == AnswerType.B,
-                    },
-                    {
-                        content: answerC,
-                        isCorrect: correctAnswer == AnswerType.C,
-                    },
-                    {
-                        content: answerD,
-                        isCorrect: correctAnswer == AnswerType.D,
-                    },
-                ],
-            };
+            let options = [
+                {
+                    content: answerA,
+                    isCorrect: correctAnswer == AnswerType.A,
+                },
+                {
+                    content: answerB,
+                    isCorrect: correctAnswer == AnswerType.B,
+                },
+                {
+                    content: answerC,
+                    isCorrect: correctAnswer == AnswerType.C,
+                },
+                {
+                    content: answerD,
+                    isCorrect: correctAnswer == AnswerType.D,
+                },
+            ];
+            questionPayload.options = options;
             QuestionService.create(
                 instance.id,
-                payload,
+                questionPayload,
                 (_) => {
                     resetAllField();
                     setShowAlert(true);
@@ -149,34 +165,32 @@ const NewQuestion = () => {
                 (_) => {},
             );
         } else {
-            let payload = {
-                content: question,
-                options: [
-                    {
-                        id: activeQuestion.options[0].id,
-                        content: answerA,
-                        isCorrect: correctAnswer == AnswerType.A,
-                    },
-                    {
-                        id: activeQuestion.options[1].id,
-                        content: answerB,
-                        isCorrect: correctAnswer == AnswerType.B,
-                    },
-                    {
-                        id: activeQuestion.options[2].id,
-                        content: answerC,
-                        isCorrect: correctAnswer == AnswerType.C,
-                    },
-                    {
-                        id: activeQuestion.options[3].id,
-                        content: answerD,
-                        isCorrect: correctAnswer == AnswerType.D,
-                    },
-                ],
-            };
+            let options = [
+                {
+                    id: activeQuestion.options[0].id,
+                    content: answerA,
+                    isCorrect: correctAnswer == AnswerType.A,
+                },
+                {
+                    id: activeQuestion.options[1].id,
+                    content: answerB,
+                    isCorrect: correctAnswer == AnswerType.B,
+                },
+                {
+                    id: activeQuestion.options[2].id,
+                    content: answerC,
+                    isCorrect: correctAnswer == AnswerType.C,
+                },
+                {
+                    id: activeQuestion.options[3].id,
+                    content: answerD,
+                    isCorrect: correctAnswer == AnswerType.D,
+                },
+            ];
+            questionPayload.options = options;
             QuestionService.update(
                 activeQuestion.id,
-                payload,
+                questionPayload.toDto(),
                 (_) => {
                     refreshExam();
                     setActiveQuestion(null);
@@ -198,6 +212,8 @@ const NewQuestion = () => {
         setAnswerB('');
         setAnswerC('');
         setAnswerD('');
+        setScore('');
+        setTimeLimit('');
         setCorrectAnswer(AnswerType.A);
     };
 
@@ -248,7 +264,7 @@ const NewQuestion = () => {
                 </Toolbar>
             </AppBar>
 
-            <Box sx={{px: 2}}>
+            <Box sx={{ px: 2 }}>
                 <Stack direction="row">
                     {exam.questions.map((question) => (
                         <Button
@@ -273,6 +289,28 @@ const NewQuestion = () => {
                     </Button>
                 </Stack>
 
+                <Stack direction="row" spacing={2} alignItems="center" mt={2}>
+                    <Typography>Score </Typography>
+                    <TextField
+                        variant="outlined"
+                        size="small"
+                        placeholder="10"
+                        type="number"
+                        value={score}
+                        inputProps={{ min: 10, style: { textAlign: 'center' } }}
+                        onChange={(e) => setScore(e.target.value)}
+                    />
+                    <Typography>Time limit </Typography>
+                    <TextField
+                        variant="outlined"
+                        size="small"
+                        placeholder="10 min"
+                        type="number"
+                        value={timeLimit}
+                        inputProps={{ min: 10, style: { textAlign: 'center' } }}
+                        onChange={(e) => setTimeLimit(e.target.value)}
+                    />
+                </Stack>
                 <TextField
                     variant="outlined"
                     placeholder="Type your question here..."

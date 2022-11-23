@@ -20,7 +20,6 @@ const ExamRoom = () => {
     const socketService = React.useContext(SocketContext);
     const [score, setScore] = React.useState(0);
     const [yourAnswerChosen, setYourAnswerChosen] = React.useState(null);
-    const [progress, setProgress] = React.useState(0);
     const [currentQuestionIndex, setCurrentQuestionIndex] = React.useState(0);
     const [colorWhenChooseAnswer, setColorWhenChooseAnswer] = React.useState(null);
     const [finish, setFinish] = React.useState(false);
@@ -28,40 +27,34 @@ const ExamRoom = () => {
     const [correctAnswerId, setCorrectAnswerId] = React.useState(null);
     const [isShowNotificationDialog, setIsShowNotificationDialog] = React.useState(false);
     const [examResult, setExamResult] = React.useState(null);
+    const [timestampFromServer, setTimestampFromServer] = React.useState(firstTimestamp);
     const [remainingTime, setRemainingTime] = React.useState(TimeHelper.getRemainingTime(firstTimestamp, 10));
 
     const exam = React.useMemo(() => socketService.exam, []);
+    const timeLimit = React.useMemo(() => exam.questions[currentQuestionIndex].timeLimit, [currentQuestionIndex]);
 
     const handleCloseNotificationDialog = () => setIsShowNotificationDialog(false);
 
-    let remainingTimer;
+    let timer;
     React.useEffect(() => {
-        clearInterval(remainingTimer);
-        
-        remainingTimer = setInterval(() => {
+        timer = setInterval(() => {
             setRemainingTime((prev) => {
-                console.log('prev ', prev);
-                console.log('currentQuestionIndex ', currentQuestionIndex);
-
-                console.log('start at set RemainingTime ', currentQuestionTimestamp);
-
                 if (prev <= 0) {
-                    clearInterval(remainingTimer);
+                    clearInterval(timer);
                     setAnswerClassName('disable');
                     setYourAnswerChosen({ id: -1 });
                     setColorWhenChooseAnswer('green');
-                    console.log('before nextQuestion() ', currentQuestionTimestamp);
                     nextQuestion();
-                    console.log('after nextQuestion() ', currentQuestionTimestamp);
-                    return TimeHelper.getRemainingTime(Date.now(), 10);
+                    return timeLimit;
                 }
 
-                return TimeHelper.getRemainingTime(currentQuestionTimestamp, 10);
+                // return TimeHelper.getRemainingTime(currentQuestionTimestamp, timeLimit);
+                return prev - 1;
             });
-        }, 100);
-
+        }, 1000);
+        localStorage.setItem("timerId", timer.toString());
         return () => {
-            clearInterval(remainingTimer);
+            clearInterval(getTimerId());
         };
     }, [currentQuestionIndex]);
 
@@ -76,20 +69,22 @@ const ExamRoom = () => {
     React.useEffect(() => {
         socketService.socket.on(ListenType.START_QUESTION_SUCCESS, (data) => {
             // setRemainingTime(10);
-            clearInterval(remainingTimer);
+            clearInterval(getTimerId());
             console.log('Time: ', data);
-            nextQuestion();
-            setRemainingTime(TimeHelper.getRemainingTime(data.startTime, 10));
+            setTimestampFromServer(data);
+            // setCurrentQuestionIndex(prev => prev + 1);
             setCurrentQuestionTimestamp(data.startTime);
+            nextQuestion();
         });
     }, []);
 
     React.useEffect(() => {
         socketService.socket.on(ListenType.CORRECT_ANSWER, (response) => {
+            clearInterval(parseInt(localStorage.getItem("timerId")));
             console.log('correct answer: ', response);
-            clearInterval(remainingTimer);
             setScore(response.totalScore);
             setColorWhenChooseAnswer('green');
+            // socketService.nextQuestion();
         });
     }, []);
 
@@ -101,7 +96,6 @@ const ExamRoom = () => {
             setAnswerClassName('disable');
             setColorWhenChooseAnswer('green');
             setIsShowNotificationDialog(true);
-            //nextQuestion();
         });
     }, []);
 
@@ -123,16 +117,20 @@ const ExamRoom = () => {
         socketService.chooseAnswer(exam.questions[currentQuestionIndex].id, answer.id);
     };
 
+    const getTimerId = () => {
+        return parseInt(localStorage.getItem("timerId"));
+    }
+
     function nextQuestion() {
+        setCurrentQuestionTimestamp(Date.now());
         sleep(1500).then(() => {
             setColorWhenChooseAnswer(null);
             setAnswerClassName('');
             sleep(200).then(() => {
-                setCurrentQuestionTimestamp(Date.now());
-
                 setYourAnswerChosen(null);
                 setIsShowNotificationDialog(false);
-
+                setRemainingTime(exam.questions[currentQuestionIndex].timeLimit);
+                
                 setCurrentQuestionIndex((prev) => {
                     if (prev + 1 >= exam.questions.length) {
                         setFinish(true);
