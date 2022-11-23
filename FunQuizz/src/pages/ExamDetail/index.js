@@ -42,7 +42,7 @@ const ExamDetail = () => {
 
     return (
         <React.Fragment>
-            <Button startIcon={<ArrowBackIosIcon />} sx={{ my: 2, textTransform: 'none' }} component={Link} to="/">
+            <Button startIcon={<ArrowBackIosIcon />} sx={{ m: 2, textTransform: 'none' }} component={Link} to="/">
                 Home
             </Button>
             <Grid
@@ -51,6 +51,7 @@ const ExamDetail = () => {
                 direction="column"
                 alignItems="center"
                 justify="center"
+                paddingX={2}
                 sx={{ minHeight: '100vh' }}
             >
                 <Grid item xs={3}>

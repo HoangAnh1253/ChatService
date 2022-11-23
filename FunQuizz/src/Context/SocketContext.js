@@ -7,10 +7,7 @@ import SocketService from '~/Services/SocketService';
 const SocketContext = createContext(null);
 
 export const SocketContextProvider = ({ children }) => {
-
-    const { user, setUser } = React.useContext(UserContext);
-
-    const socketService = new SocketService(user);
+    const socketService = new SocketService();
 
     return (
         <SocketContext.Provider value={socketService}>

@@ -1,6 +1,4 @@
 import axios from "axios";
-import LocalStorageKey from "~/Constants/LocalStorageKey";
-
 class CredentialService {
     BASE_URL = 'http://acme.com/auth';
     ACCESS_CONTROL_HEADER = { 'Access-Control-Allow-Origin': true }

@@ -13,10 +13,12 @@ import CredentialService from '~/Services/CredentialService';
 import LocalStorageKey from '~/Constants/LocalStorageKey';
 import UserService from '~/Services/UserService';
 import UserContext from '~/Context/UserContext';
+import SocketContext from '~/Context/SocketContext';
 
 const SignInModal = (props) => {
     const { isOpen, handleClose, handleOpenSignUpModal } = props;
 
+    const socketService = React.useContext(SocketContext);
     const { user, setUser } = React.useContext(UserContext);
     const [email, setEmail] = React.useState('');
     const [password, setPassword] = React.useState('');
@@ -33,11 +35,11 @@ const SignInModal = (props) => {
             (response) => {
                 localStorage.setItem(LocalStorageKey.ACCESS_TOKEN, response.data.accessToken);
                 localStorage.setItem(LocalStorageKey.CURRENT_USER_EMAIL, response.data.email);
-                
+                socketService.currentEmail = response.data.email;
                 fetchUser(response.data.email);
             },
             (error) => {
-                setError(error.response.data);
+                setError(error);
             },
         );
     };

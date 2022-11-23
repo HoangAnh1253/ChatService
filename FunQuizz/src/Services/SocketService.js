@@ -1,64 +1,102 @@
 import io from 'socket.io-client';
 import { EmitType } from '~/Enums/EmitType';
 import { ListenType } from '~/Enums/ListenType';
+import ExamService from './ExamService';
+import LocalStorageService from './LocalStorageService';
 
-const ENDPOINT = 'http://acme.com';
+// const ENDPOINT = 'http://acme.com';
+const ENDPOINT = 'localhost:3005';
 
-export default  class SocketService {
-    
+export default class SocketService {
     roomId = '';
 
     socket = {};
 
-    currentUser = null;
+    currentEmail = null;
+
+    exam = null;
 
     roomMembers = [];
 
-    constructor(user) {
-        this.currentUser = user;
+    constructor() {
+        const { email } = LocalStorageService.get();
+        this.currentEmail = email;
         console.log('Connecting to socketio');
         this.socket = io.connect(ENDPOINT);
 
         this.socket.on(ListenType.CREATE_ROOM_SUCCESS, (message) => {
-            console.log("Success to create room: " + message.roomId)
-            this.roomId =  message.roomId;
-            this.socket.emit(EmitType.JOIN_ROOM, { email: this.currentUser.email, roomId: message.roomId });
+            console.log('Success to create room: ' + message.roomId);
+            this.roomId = message.roomId;
+            this.socket.emit(EmitType.JOIN_ROOM, { email: this.currentEmail, roomId: message.roomId });
         });
-
-        this.socket.on(ListenType.SERVER_UPDATE_USER, ({ room, users }) => {
-            this.roomMembers = users;
-            console.log(`room: ${room} has users:`);
-            console.log(this.roomMembers);
-            console.log(users);
-
-        });
-        console.log('Register message');
     }
 
-    isConnected(){
-        return this.socket.connected
+    isConnected() {
+        return this.socket.connected;
     }
 
-    reconnect(){
+    reconnect() {
         this.socket.connect();
     }
 
-    send = (message) => {
-        this.socket.emit(EmitType.USER_SEND_MESSAGE, message)
+    startExam() {
+        console.log("start quiz...");
+        this.socket.emit(EmitType.START_EXAM);
     }
+
+    nextQuestion(){
+        console.log("Moving to next question...");
+        this.socket.emit(EmitType.START_QUESTION)
+    }
+
+    send = (message) => {
+        this.socket.emit(EmitType.USER_SEND_MESSAGE, message);
+    };
 
     joinRoom = (roomId) => {
-        console.log("joining room" + roomId)
-        this.socket.emit(EmitType.JOIN_ROOM, { email: this.currentUser.email, roomId: roomId });
-    }
+        console.log('joining room' + roomId);
+        this.socket.emit(EmitType.JOIN_ROOM, { email: this.currentEmail, roomId: roomId });
+        let examId = roomId.split('_').at(-1);
+        console.log("exam Id: ", examId);
+        
+        ExamService.getById(
+            examId,
+            (response) => {
+                this.exam = response.data.data;
+                console.log("exam ne: ", this.exam);
+            },
+            (error) => console.log(error),
+        );
+    };
 
     createRoom = (examId) => {
-        console.log("creating room" + examId)
-        this.socket.emit(EmitType.CREATE_ROOM, { email: this.currentUser.email, examId: examId });
+        console.log('creating room' + examId);
+        this.socket.emit(EmitType.CREATE_ROOM, { email: this.currentEmail, examId: examId });
+
+        ExamService.getById(
+            examId,
+            (response) => {
+                this.exam = response.data.data;
+                console.log("exam ne: ", this.exam);
+            },
+            (error) => console.log(error),
+        );
+    };
+
+    chooseAnswer = (questionId, answerId) => {
+        console.log('choose an answer id: ' + answerId + ' with question id: ' + questionId);
+        this.socket.emit(EmitType.USER_CHOOSE_OPTION, {
+            questionId: questionId,
+            optionId: answerId,
+        });
+    };
+
+    submitExam = ()=>{
+        this.socket.emit(EmitType.SUBMIT_TEST)
     }
 
     // disconnect - used when unmounting
-    disconnect () {
+    disconnect() {
         this.socket.disconnect();
     }
 }

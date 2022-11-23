@@ -1,5 +1,7 @@
 export const EmitType = {
     CREATE_ROOM: "create-room",
+    START_EXAM: "start-exam",
+    START_QUESTION: "start-question",
     JOIN_ROOM: "user-join-room",
     USER_CONNECT: "connection",
     USER_CHOOSE_OPTION: "user-choose-option",

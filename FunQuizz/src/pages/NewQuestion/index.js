@@ -2,10 +2,11 @@ import React from 'react';
 import CreateIcon from '@mui/icons-material/Create';
 import SaveIcon from '@mui/icons-material/Save';
 import { Link, useLocation } from 'react-router-dom';
-import { Alert, AppBar, Button, Grid, Grow, IconButton, Stack, TextField, Toolbar } from '@mui/material';
+import { Alert, AppBar, Box, Button, Grid, Grow, IconButton, Stack, TextField, Toolbar } from '@mui/material';
 import ExamService from '~/Services/ExamService';
 import QuestionService from '~/Services/QuestionService';
 import { AnswerType, indexToAnswerType } from '~/Enums/AnswerType';
+import { Container } from '@mui/system';
 
 const NewQuestion = () => {
     const location = useLocation();
@@ -247,45 +248,45 @@ const NewQuestion = () => {
                 </Toolbar>
             </AppBar>
 
-            <Stack direction="row">
-                {exam.questions.map((question) => (
+            <Box sx={{px: 2}}>
+                <Stack direction="row">
+                    {exam.questions.map((question) => (
+                        <Button
+                            variant={activeQuestion == question ? 'contained' : 'outlined'}
+                            size="small"
+                            key={question.id}
+                            sx={{ mr: 1, mt: 1, textTransform: 'none', borderRadius: 15 }}
+                            disableElevation
+                            onClick={handleSwitchQuestion(question)}
+                        >
+                            {question.content}
+                        </Button>
+                    ))}
                     <Button
-                        variant={activeQuestion == question ? 'contained' : 'outlined'}
+                        variant={activeQuestion === null ? 'contained' : 'outlined'}
                         size="small"
-                        key={question.id}
                         sx={{ mr: 1, mt: 1, textTransform: 'none', borderRadius: 15 }}
                         disableElevation
-                        onClick={handleSwitchQuestion(question)}
+                        onClick={handleSwitchQuestion(null)}
                     >
-                        {question.content}
+                        Empty
                     </Button>
-                ))}
-                <Button
-                    variant={activeQuestion === null ? 'contained' : 'outlined'}
-                    size="small"
-                    sx={{ mr: 1, mt: 1, textTransform: 'none', borderRadius: 15 }}
-                    disableElevation
-                    onClick={handleSwitchQuestion(null)}
-                >
-                    Empty
-                </Button>
-            </Stack>
+                </Stack>
 
-            <TextField
-                variant="outlined"
-                placeholder="Type your question here..."
-                multiline
-                rows={5}
-                inputProps={{ min: 0, style: { textAlign: 'center' } }}
-                fullWidth
-                sx={{ mt: 2 }}
-                value={question}
-                onChange={(e) => setQuestion(e.target.value)}
-            />
-            <Grid container spacing={1.5}>
-                {answers.map((answer) => (
-                    <Grid item xs={3} key={answer.type}>
-                        <Stack>
+                <TextField
+                    variant="outlined"
+                    placeholder="Type your question here..."
+                    multiline
+                    rows={5}
+                    inputProps={{ min: 0, style: { textAlign: 'center' } }}
+                    fullWidth
+                    sx={{ mt: 2 }}
+                    value={question}
+                    onChange={(e) => setQuestion(e.target.value)}
+                />
+                <Grid container spacing={1.5}>
+                    {answers.map((answer) => (
+                        <Grid item xs={3} key={answer.type}>
                             <TextField
                                 variant="outlined"
                                 placeholder="Type your question here..."
@@ -297,31 +298,43 @@ const NewQuestion = () => {
                                 value={answer.value}
                                 onChange={(event) => handleChangeAnswer(event, answer)}
                             />
+                        </Grid>
+                    ))}
+                </Grid>
+                <Grid container spacing={1.5}>
+                    {answers.map((answer) => (
+                        <Grid item xs={3} key={answer.type}>
                             <Button
                                 variant={correctAnswer == answer.type ? 'contained' : 'outlined'}
                                 onClick={() => handleChooseCorrectAnswer(answer.type)}
                                 sx={{ textTransform: 'none' }}
                                 disableElevation
+                                fullWidth
                             >
                                 {correctAnswer == answer.type ? 'Correct Answer' : 'Choose'}
                             </Button>
-                        </Stack>
-                    </Grid>
-                ))}
-            </Grid>
+                        </Grid>
+                    ))}
+                </Grid>
 
-            <Grid container justifyContent="flex-end" spacing={1} mt={2}>
-                <Grid item>
-                    <Button component={Link} to="/" variant="outlined">
-                        Cancel
-                    </Button>
+                <Grid container justifyContent="flex-end" spacing={1} mt={2}>
+                    <Grid item>
+                        <Button component={Link} to="/" variant="outlined">
+                            Cancel
+                        </Button>
+                    </Grid>
+                    <Grid item>
+                        <Button
+                            variant="contained"
+                            startIcon={<SaveIcon />}
+                            disabled={isAnyNullField}
+                            onClick={handleSave}
+                        >
+                            Save
+                        </Button>
+                    </Grid>
                 </Grid>
-                <Grid item>
-                    <Button variant="contained" startIcon={<SaveIcon />} disabled={isAnyNullField} onClick={handleSave}>
-                        Save
-                    </Button>
-                </Grid>
-            </Grid>
+            </Box>
             <Grow in={showAlert}>
                 <Alert
                     variant="filled"

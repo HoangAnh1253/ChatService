@@ -234,10 +234,10 @@ const OwningExams = () => {
 
     return (
         <React.Fragment>
-            <Button startIcon={<ArrowBackIosIcon />} sx={{ my: 2, textTransform: 'none' }} component={Link} to="/">
+            <Button startIcon={<ArrowBackIosIcon />} sx={{ m: 2, textTransform: 'none' }} component={Link} to="/">
                 Home
             </Button>
-            <Grid container spacing={1} justifyContent="center">
+            <Grid container spacing={1} justifyContent="center" px={2}>
                 <Grid item xs={2}>
                     <Typography variant="h6" pl={1}>
                         Exams
