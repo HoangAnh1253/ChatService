@@ -10,6 +10,7 @@ import './style.scss';
 import Ranking from './Components/Ranking';
 import { useLocation } from 'react-router-dom';
 import TimeHelper from '~/Helpers/TimeHelper';
+import { sleep } from '~/Helpers/GlobalHelper';
 
 const ExamRoom = () => {
     const location = useLocation();
@@ -47,12 +48,12 @@ const ExamRoom = () => {
                     nextQuestion();
                     return timeLimit;
                 }
-
                 // return TimeHelper.getRemainingTime(currentQuestionTimestamp, timeLimit);
                 return prev - 1;
             });
         }, 1000);
-        localStorage.setItem("timerId", timer.toString());
+        // localStorage.setItem("timerId", timer.toString());
+        
         return () => {
             clearInterval(getTimerId());
         };
@@ -76,11 +77,16 @@ const ExamRoom = () => {
             setCurrentQuestionTimestamp(data.startTime);
             nextQuestion();
         });
-    }, []);
+
+        return(() => {
+            socketService.socket.off(ListenType.START_QUESTION_SUCCESS);
+        });
+
+    }, [currentQuestionIndex]);
 
     React.useEffect(() => {
         socketService.socket.on(ListenType.CORRECT_ANSWER, (response) => {
-            clearInterval(parseInt(localStorage.getItem("timerId")));
+            clearInterval(getTimerId());
             console.log('correct answer: ', response);
             setScore(response.totalScore);
             setColorWhenChooseAnswer('green');
@@ -106,8 +112,9 @@ const ExamRoom = () => {
         });
     }, []);
 
-    function sleep(ms) {
-        return new Promise((resolve) => setTimeout(resolve, ms));
+    const getTimerId = () => {
+        // return parseInt(localStorage.getItem("timerId"));
+        return timer;
     }
 
     const handleChooseAnswer = (answer) => (_) => {
@@ -116,10 +123,6 @@ const ExamRoom = () => {
 
         socketService.chooseAnswer(exam.questions[currentQuestionIndex].id, answer.id);
     };
-
-    const getTimerId = () => {
-        return parseInt(localStorage.getItem("timerId"));
-    }
 
     function nextQuestion() {
         setCurrentQuestionTimestamp(Date.now());
@@ -130,7 +133,7 @@ const ExamRoom = () => {
                 setYourAnswerChosen(null);
                 setIsShowNotificationDialog(false);
                 setRemainingTime(exam.questions[currentQuestionIndex].timeLimit);
-                
+
                 setCurrentQuestionIndex((prev) => {
                     if (prev + 1 >= exam.questions.length) {
                         setFinish(true);
