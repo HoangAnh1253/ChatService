@@ -79,7 +79,7 @@ const Ranking = (props) => {
                     ))}
                 </Box>
             </Box>
-            <Box sx={{ ...container, mt: 2 }}>
+            <Box sx={{ ...container, mt: 2, py: 0.5 }}>
                 <Grid container justifyContent="center" alignItems="center">
                     <Grid item xs={2}>
                         <Paper sx={paperStyle} elevation={0}>

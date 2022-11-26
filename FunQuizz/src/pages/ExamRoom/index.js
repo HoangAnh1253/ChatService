@@ -11,6 +11,8 @@ import Ranking from './Components/Ranking';
 import { useLocation } from 'react-router-dom';
 import TimeHelper from '~/Helpers/TimeHelper';
 import { sleep } from '~/Helpers/GlobalHelper';
+import CorrectAnswerDialog from './Components/CorrectAnswerDialog';
+import WrongAnswerDialog from './Components/WrongAnswerDialog';
 
 const ExamRoom = () => {
     const location = useLocation();
@@ -27,6 +29,8 @@ const ExamRoom = () => {
     const [answerClassName, setAnswerClassName] = React.useState('');
     const [correctAnswerId, setCorrectAnswerId] = React.useState(null);
     const [isShowNotificationDialog, setIsShowNotificationDialog] = React.useState(false);
+    const [isShowCorrectAnswerDialog, setIsShowCorrectAnswerDialog] = React.useState(false);
+    const [isShowWrongAnswerDialog, setIsShowWrongAnswerDialog] = React.useState(false);
     const [examResult, setExamResult] = React.useState(null);
     const [timestampFromServer, setTimestampFromServer] = React.useState(firstTimestamp);
     const [remainingTime, setRemainingTime] = React.useState(TimeHelper.getRemainingTime(firstTimestamp, 10));
@@ -34,7 +38,8 @@ const ExamRoom = () => {
     const exam = React.useMemo(() => socketService.exam, []);
     const timeLimit = React.useMemo(() => exam.questions[currentQuestionIndex].timeLimit, [currentQuestionIndex]);
 
-    const handleCloseNotificationDialog = () => setIsShowNotificationDialog(false);
+    const handleCloseWrongAnswerDialog = () => setIsShowWrongAnswerDialog(false);
+    const handleCloseCorrectAnswerDialog = () => setIsShowCorrectAnswerDialog(false);
 
     let timer;
     React.useEffect(() => {
@@ -69,11 +74,9 @@ const ExamRoom = () => {
 
     React.useEffect(() => {
         socketService.socket.on(ListenType.START_QUESTION_SUCCESS, (data) => {
-            // setRemainingTime(10);
             clearInterval(getTimerId());
             console.log('Time: ', data);
             setTimestampFromServer(data);
-            // setCurrentQuestionIndex(prev => prev + 1);
             setCurrentQuestionTimestamp(data.startTime);
             nextQuestion();
         });
@@ -87,6 +90,7 @@ const ExamRoom = () => {
     React.useEffect(() => {
         socketService.socket.on(ListenType.CORRECT_ANSWER, (response) => {
             clearInterval(getTimerId());
+            setIsShowCorrectAnswerDialog(true);
             console.log('correct answer: ', response);
             setScore(response.totalScore);
             setColorWhenChooseAnswer('green');
@@ -107,6 +111,7 @@ const ExamRoom = () => {
 
     React.useEffect(() => {
         socketService.socket.on(ListenType.WRON_ANSWER, (response) => {
+            setIsShowWrongAnswerDialog(true);
             console.log('wrong answer: ', response);
             setColorWhenChooseAnswer('red');
         });
@@ -132,6 +137,8 @@ const ExamRoom = () => {
             sleep(200).then(() => {
                 setYourAnswerChosen(null);
                 setIsShowNotificationDialog(false);
+                setIsShowCorrectAnswerDialog(false);
+                setIsShowWrongAnswerDialog(false);
                 setRemainingTime(exam.questions[currentQuestionIndex].timeLimit);
 
                 setCurrentQuestionIndex((prev) => {
@@ -214,7 +221,9 @@ const ExamRoom = () => {
                     </Grid>
                 )}
             </Paper>
-            <NotificationDialog open={isShowNotificationDialog} handleClose={handleCloseNotificationDialog} />
+            <NotificationDialog open={isShowNotificationDialog} />
+            <CorrectAnswerDialog open={isShowCorrectAnswerDialog} handleClose={handleCloseCorrectAnswerDialog} />
+            <WrongAnswerDialog open={isShowWrongAnswerDialog} handleClose={handleCloseWrongAnswerDialog} />
         </React.Fragment>
     );
 };

@@ -39,7 +39,10 @@ const ToolBar = (props) => {
                         </Paper>
                         <Paper component="span" sx={paperStyle}>
                             <Typography component="span" variant="body1" color="white" fontSize={18}>
-                                Score: {currentScore}
+                                Total:
+                            </Typography>
+                            <Typography component="span" variant="body1" color="white" ml={1} fontSize={22}>
+                                {currentScore}
                             </Typography>
                         </Paper>
                     </Stack>
@@ -51,6 +54,14 @@ const ToolBar = (props) => {
                                 {remainingTime}
                             </Typography>
                         </Box>
+                        <Paper
+                            component="span"
+                            sx={{ ...paperStyle, width: '110px', height: '53.84px', ...centerEverything }}
+                        >
+                            <Typography color="white" variant="body1">
+                                Score: {exam.questions[currentQuestionIndex].score}
+                            </Typography>
+                        </Paper>
                         <Paper component="span" sx={paperStyle}>
                             <IconButton size="small" sx={{ color: 'white' }} onClick={handlePausePlayClick}>
                                 {isMusicPlayed ? <MusicOffIcon /> : <MusicNoteIcon />}
@@ -71,7 +82,7 @@ const paperStyle = {
     backgroundColor: '#1a1a1a',
     borderRadius: 2,
     px: 1.5,
-    py: 1.1,
+    py: 0.9,
 };
 
 const circleBorder = {
@@ -82,6 +93,13 @@ const circleBorder = {
     justifyContent: 'center',
     alignItems: 'center',
     border: '1px white solid',
+};
+
+const centerEverything = {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    textAlign: 'center',
 };
 
 export default ToolBar;

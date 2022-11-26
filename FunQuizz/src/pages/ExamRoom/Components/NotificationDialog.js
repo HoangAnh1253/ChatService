@@ -3,7 +3,7 @@ import React from "react";
 
 const NotificationDialog = (props) => {
 
-    const { open, handleClose } = props;
+    const { open } = props;
     
     return (
         <Dialog open={open}>

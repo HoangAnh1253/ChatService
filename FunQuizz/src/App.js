@@ -9,25 +9,29 @@ import { Container } from '@mui/material';
 import LocalStorageKey from './Constants/LocalStorageKey';
 import UserService from './Services/UserService';
 import UserContext, { UserContextProvider } from './Context/UserContext';
+import LocalStorageService from './Services/LocalStorageService';
 
 function App() {
     // const socket = io.connect("http://localhost:4000");
     const { setUser } = React.useContext(UserContext);
 
     React.useEffect(() => {
-        const accessToken = localStorage.getItem(LocalStorageKey.ACCESS_TOKEN);
+        const { email } = LocalStorageService.get();
 
-        if (accessToken !== null) {
-            const userEmail = localStorage.getItem(LocalStorageKey.CURRENT_USER_EMAIL);
-            UserService.get(userEmail, (response) => {
-                setUser(response.data.data);
-            });
+        if (email !== null) {
+            UserService.get(
+                email,
+                (response) => {
+                    setUser(response.data.data);
+                },
+                (error) => console.log(error),
+            );
         }
     }, []);
 
     return (
         <Router>
-            <div className="App" style={{padding: 0, margin: 0}}>
+            <div className="App" style={{ padding: 0, margin: 0 }}>
                 <Routes>
                     {publicRoutes.map((route, index) => {
                         const Page = route.component;
