@@ -58,7 +58,7 @@ const ExamRoom = () => {
             });
         }, 1000);
         // localStorage.setItem("timerId", timer.toString());
-        
+
         return () => {
             clearInterval(getTimerId());
         };
@@ -73,6 +73,10 @@ const ExamRoom = () => {
     }, []);
 
     React.useEffect(() => {
+        socketService.startExam();
+    }, []);
+
+    React.useEffect(() => {
         socketService.socket.on(ListenType.START_QUESTION_SUCCESS, (data) => {
             clearInterval(getTimerId());
             console.log('Time: ', data);
@@ -81,10 +85,9 @@ const ExamRoom = () => {
             nextQuestion();
         });
 
-        return(() => {
+        return () => {
             socketService.socket.off(ListenType.START_QUESTION_SUCCESS);
-        });
-
+        };
     }, [currentQuestionIndex]);
 
     React.useEffect(() => {
@@ -120,13 +123,13 @@ const ExamRoom = () => {
     const getTimerId = () => {
         // return parseInt(localStorage.getItem("timerId"));
         return timer;
-    }
+    };
 
     const handleChooseAnswer = (answer) => (_) => {
         setAnswerClassName('');
         setYourAnswerChosen(answer);
-
-        socketService.chooseAnswer(exam.questions[currentQuestionIndex].id, answer.id);
+        const totalTime = (Date.now() - currentQuestionTimestamp) / 1000;
+        socketService.chooseAnswer(exam.questions[currentQuestionIndex].id, answer.id, totalTime);
     };
 
     function nextQuestion() {

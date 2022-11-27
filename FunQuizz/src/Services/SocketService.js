@@ -40,13 +40,13 @@ export default class SocketService {
     }
 
     startExam() {
-        console.log("start quiz...");
+        console.log('start quiz...');
         this.socket.emit(EmitType.START_EXAM);
     }
 
-    nextQuestion(){
-        console.log("Moving to next question...");
-        this.socket.emit(EmitType.START_QUESTION)
+    nextQuestion() {
+        console.log('Moving to next question...');
+        this.socket.emit(EmitType.START_QUESTION);
     }
 
     send = (message) => {
@@ -57,13 +57,13 @@ export default class SocketService {
         console.log('joining room' + roomId);
         this.socket.emit(EmitType.JOIN_ROOM, { email: this.currentEmail, roomId: roomId });
         let examId = roomId.split('_').at(-1);
-        console.log("exam Id: ", examId);
-        
+        console.log('exam Id: ', examId);
+
         ExamService.getById(
             examId,
             (response) => {
                 this.exam = response.data.data;
-                console.log("exam ne: ", this.exam);
+                console.log('exam ne: ', this.exam);
             },
             (error) => console.log(error),
         );
@@ -77,23 +77,24 @@ export default class SocketService {
             examId,
             (response) => {
                 this.exam = response.data.data;
-                console.log("exam ne: ", this.exam);
+                console.log('exam ne: ', this.exam);
             },
             (error) => console.log(error),
         );
     };
 
-    chooseAnswer = (questionId, answerId) => {
+    chooseAnswer = (questionId, answerId, totalTime) => {
         console.log('choose an answer id: ' + answerId + ' with question id: ' + questionId);
         this.socket.emit(EmitType.USER_CHOOSE_OPTION, {
             questionId: questionId,
             optionId: answerId,
+            totalTime,
         });
     };
 
-    submitExam = ()=>{
-        this.socket.emit(EmitType.SUBMIT_TEST)
-    }
+    submitExam = () => {
+        this.socket.emit(EmitType.SUBMIT_TEST);
+    };
 
     // disconnect - used when unmounting
     disconnect() {
