@@ -13,10 +13,12 @@ import { sleep } from '~/Helpers/GlobalHelper';
 import CorrectOrWrongAnswerDialog from './Components/CorrectOrWrongAnswerDialog';
 import StreakContext, { StreakProvider } from '~/Context/StreakContext';
 
+export const ExamContext = React.createContext(null);
+
 const ExamRoom = () => {
     const location = useLocation();
     const firstTimestamp = location.state.timestamp;
-    
+
     const socketService = React.useContext(SocketContext);
     const { setStreak } = React.useContext(StreakContext);
 
@@ -56,7 +58,6 @@ const ExamRoom = () => {
                     setYourAnswerChosen({ id: -1 });
                     setColorWhenChooseAnswer('green');
                     socketService.questionTimeout(exam.questions[currentQuestionIndex].id);
-                    console.log("id ne: ", exam.questions[currentQuestionIndex]);
                     nextQuestion();
                     return timeLimit;
                 }
@@ -71,7 +72,7 @@ const ExamRoom = () => {
 
     React.useEffect(() => {
         socketService.socket.on(ListenType.EXAM_RESULT, (data) => {
-            console.log('exam result: ', data);
+            console.log('Response of EXAM_RESULT event: ', data);
             const result = data.users.sort((a, b) => b.totalScore - a.totalScore);
             setExamResult(result);
         });
@@ -154,7 +155,7 @@ const ExamRoom = () => {
     const handleUpdateStreak = (isChosenCorrectAnswer, streakInfo) => {
         if (isChosenCorrectAnswer) {
             setStreak((prev) => {
-                if(prev.length > currentQuestionIndex) {
+                if (prev.length > currentQuestionIndex) {
                     return prev;
                 }
                 return [...prev, true];
@@ -167,7 +168,7 @@ const ExamRoom = () => {
             });
         } else {
             setStreak((prev) => {
-                if(prev.length > currentQuestionIndex) {
+                if (prev.length > currentQuestionIndex) {
                     return prev;
                 }
                 return [...prev, false];
@@ -198,6 +199,7 @@ const ExamRoom = () => {
                     socketService.submitExam();
                     return prev;
                 }
+                handleUpdateStreak(false);
                 return prev + 1;
             });
         });
@@ -213,26 +215,28 @@ const ExamRoom = () => {
                     remainingTime={remainingTime}
                 />
 
-                <Paper
-                    sx={{
-                        width: 1,
-                        height: finish ? '90%' : '50%',
-                        bgcolor: '#461a42',
-                        borderRadius: 4,
-                        mt: 1,
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                    }}
-                >
-                    {finish ? (
-                        examResult !== null && <Ranking examResult={examResult} />
-                    ) : (
-                        <Typography variant="body1" fontSize={30} align="center" color="white">
-                            {exam.questions[currentQuestionIndex].content}
-                        </Typography>
-                    )}
-                </Paper>
+                <ExamContext.Provider value={{exam}}>
+                    <Paper
+                        sx={{
+                            width: 1,
+                            height: finish ? '90%' : '50%',
+                            bgcolor: '#461a42',
+                            borderRadius: 4,
+                            mt: 1,
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                        }}
+                    >
+                        {finish ? (
+                            examResult !== null && <Ranking examResult={examResult} />
+                        ) : (
+                            <Typography variant="body1" fontSize={30} align="center" color="white">
+                                {exam.questions[currentQuestionIndex].content}
+                            </Typography>
+                        )}
+                    </Paper>
+                </ExamContext.Provider>
                 {!finish && (
                     <Grid container item height="30%" mt={0.1} spacing={1}>
                         {exam.questions[currentQuestionIndex].options.map((answer, index) => {

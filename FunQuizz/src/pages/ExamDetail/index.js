@@ -4,14 +4,16 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import ExamService from '~/Services/ExamService';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import { Button, Card, CardActions, CardContent, Grid, Typography, Stack } from '@mui/material';
+import ModeDialog from './Components/ModeDialog';
 
 const ExamDetail = () => {
     const params = useParams();
-    const navigate = useNavigate();
-    const [exam, setExam] = React.useState({
-        questions: [],
-    });
-    const [score, setScore] = React.useState(0);
+
+    const [exam, setExam] = React.useState({ questions: [] });
+    const [openModeModal, setOpenModeModal] = React.useState(false);
+
+    const handleOpenModeModal = () => setOpenModeModal(true);
+    const handleCloseModeModal = () => setOpenModeModal(false);
 
     React.useEffect(() => {
         ExamService.getById(
@@ -20,17 +22,10 @@ const ExamDetail = () => {
                 let _exam = response.data.data;
                 setExam(_exam);
                 console.log(_exam);
-
-                let scores = _exam.questions.reduce((pre, cur) => pre.score + cur.score, 0);
-                setScore(scores);
             },
             (_) => {},
         );
     }, []);
-
-    const handleCreateRoom = (e) => {
-        navigate(`/quiz/wait-room/host/${params.id}`);
-    };
 
     const getTotalScore = () => {
         return exam.questions.reduce((pre, cur) => pre + cur.score, 0);
@@ -55,7 +50,7 @@ const ExamDetail = () => {
                 sx={{ minHeight: '100vh' }}
             >
                 <Grid item xs={3}>
-                    <Card variant='outlined' sx={cardStyle}>
+                    <Card variant="outlined" sx={cardStyle}>
                         <CardContent>
                             <Typography sx={{ fontSize: 14 }} color="text.secondary" textAlign="center" gutterBottom>
                                 Topic: {exam.topic}
@@ -79,7 +74,7 @@ const ExamDetail = () => {
                                 Author: {exam.authorEmail}
                             </Typography>
                         </CardContent>
-                        <CardActions sx={{ display: 'flex', justifyContent: 'center' }} onClick={handleCreateRoom}>
+                        <CardActions sx={{ display: 'flex', justifyContent: 'center' }} onClick={handleOpenModeModal}>
                             <Button variant="contained" disableElevation>
                                 Create room
                             </Button>
@@ -116,6 +111,7 @@ const ExamDetail = () => {
                     ))}
                 </Grid>
             </Grid>
+            <ModeDialog open={openModeModal} handleClose={handleCloseModeModal} roomId={params.id}/>
         </React.Fragment>
     );
 };

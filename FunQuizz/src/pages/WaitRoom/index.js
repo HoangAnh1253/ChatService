@@ -1,24 +1,25 @@
 import React from 'react';
-import { Box, Button, Card, Grid, Paper, Typography } from '@mui/material';
+import { Box, Button, Card, Grid, Paper, Stack, Typography } from '@mui/material';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import LocalStorageService from '~/Services/LocalStorageService';
 import LoginModalContext from '~/Context/LoginModalContext';
 import { UserRole } from '~/Enums/UserRole';
 import SocketContext from '~/Context/SocketContext';
 import { ListenType } from '~/Enums/ListenType';
-import UserService from '~/Services/UserService';
+import KeyIcon from '@mui/icons-material/Key';
 
 const WaitRoom = () => {
     const socketService = React.useContext(SocketContext);
 
-    const { setOpenSignInModal } = React.useContext(LoginModalContext);
-    const [roomId, setRoomId] = React.useState('');
     const navigate = useNavigate();
     const params = useParams();
     const userRole = params.userRole;
     const paramId = params.id; // be careful of this paramId (it can be examId or roomId) hehe (kinda dirty but work)
     const { email } = LocalStorageService.get();
+
+    const { setOpenSignInModal } = React.useContext(LoginModalContext);
 
     const [usersInRoom, setUsersInRoom] = React.useState([]);
 
@@ -57,11 +58,11 @@ const WaitRoom = () => {
 
     React.useEffect(() => {
         socketService.socket.on(ListenType.START_EXAM_SUCCESS, (timestamp) => {
-            console.log("first timestamp: ", timestamp);
+            console.log('first timestamp: ', timestamp);
             navigate('/examRoom', {
                 state: {
                     timestamp: timestamp.startTime,
-                }
+                },
             });
         });
     }, []);
@@ -70,29 +71,63 @@ const WaitRoom = () => {
         socketService.startExam();
     };
 
-    const handleReturnHome = () => {
+    const handleBackToPrevPage = () => {
         socketService.disconnect();
-        navigate('/');
+        navigate(-1);
     };
     return (
         <React.Fragment>
-            <Button startIcon={<ArrowBackIosIcon />} sx={{ m: 2, textTransform: 'none' }} onClick={handleReturnHome}>
-                Home
+            <Button startIcon={<ArrowBackIosIcon />} sx={{ m: 2, textTransform: 'none' }} onClick={handleBackToPrevPage}>
+                {userRole === UserRole.HOST ? "Exam detail" : "Home"}
             </Button>
-            <Box px={2}>
-                <Typography>
-                    {socketService.currentEmail} is {userRole} of room: {roomId}
-                </Typography>
-                {userRole === UserRole.GUEST && <Typography>Waiting host to start</Typography>}
 
-                {userRole === UserRole.HOST && (
-                    <Button variant="contained" disableElevation onClick={handleStartQuiz}>
-                        Start
-                    </Button>
-                )}
-            </Box>
+            <Paper sx={{ width: '50%', mx: 'auto', p: 1, mb: 2 }} variant="outlined">
+                <Stack direction="row" justifyContent="space-between" alignItems="center">
+                    <Box display="flex" alignItems="center">
+                        {userRole === UserRole.HOST && (
+                            <Box
+                                sx={{ bgcolor: 'primary.main', p: 1, borderRadius: 1, display: 'inline-flex' }}
+                                component="span"
+                            >
+                                <KeyIcon sx={{ color: 'white' }} fontSize="small" />
+                            </Box>
+                        )}
+
+                        <Typography component="span" variant="h5" fontSize={20} p={1} fontWeight="bold">
+                            Room ID:
+                        </Typography>
+                        <Typography component="span">
+                            {userRole === UserRole.HOST ? socketService.roomId : paramId}
+                        </Typography>
+                    </Box>
+                    {userRole === UserRole.HOST && (
+                        <Button
+                            endIcon={<ArrowForwardIosIcon />}
+                            variant="outlined"
+                            disableElevation
+                            sx={{ textTransform: 'none' }}
+                            onClick={handleStartQuiz}
+                        >
+                            Start
+                        </Button>
+                    )}
+                    {userRole === UserRole.GUEST && (
+                        <Typography variant="caption" fontStyle="italic" color="primary.main">
+                            Waiting host to start
+                        </Typography>
+                    )}
+                </Stack>
+            </Paper>
             <Paper sx={{ width: '50%', mx: 'auto', p: 1, mt: 1 }}>
-                <Typography variant="h5" fontSize={20} p={2} color="#F49D1A" fontWeight="bold" align="center">
+                <Typography
+                    variant="h5"
+                    fontSize={20}
+                    p={2}
+                    color="primary"
+                    fontWeight="bold"
+                    align="center"
+                    sx={{ textDecoration: 'underline' }}
+                >
                     Members
                 </Typography>
                 <Box sx={{ mt: 2, px: 1 }}>

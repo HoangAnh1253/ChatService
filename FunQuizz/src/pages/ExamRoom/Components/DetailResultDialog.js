@@ -22,160 +22,20 @@ import {
     Typography,
 } from '@mui/material';
 import StringHelper from '~/Helpers/StringHelper';
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import { ExamContext } from '..';
 
 const DetailResultDialog = (props) => {
     const { open, handleClose, examResult } = props;
 
-    const { email } = LocalStorageService.get();
-
-    const [collapse, setCollapse] = React.useState(false);
-    const toggleCollapse = () => setCollapse(!collapse);
-
-    console.log('result of exams: ', examResult);
-
-    // return (
-    //     <Dialog open={open} onClose={handleClose} fullScreen>
-    //         <DialogContent>
-    //             <Button startIcon={<ArrowBackIosIcon />} sx={{ textTransform: 'none', mb: 2 }} onClick={handleClose}>
-    //                 Back
-    //             </Button>
-    //             <TableContainer component={Paper}>
-    //                 <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
-    //                     <TableHead>
-    //                         <TableRow>
-    //                             <TableCell sx={{ fontWeight: 'bold', color: '#F49D1A' }}>Rank</TableCell>
-    //                             <TableCell sx={{ fontWeight: 'bold' }}>Username</TableCell>
-    //                             <TableCell align="center" sx={{ fontWeight: 'bold' }}>
-    //                                 Answers
-    //                             </TableCell>
-    //                             <TableCell align="center" sx={{ fontWeight: 'bold', color: 'orangered' }}>
-    //                                 Streak
-    //                             </TableCell>
-    //                             <TableCell align="center" sx={{ fontWeight: 'bold' }}>
-    //                                 Score
-    //                             </TableCell>
-    //                             <TableCell align="center" sx={{ fontWeight: 'bold' }}>
-    //                                 Bonus
-    //                             </TableCell>
-    //                             <TableCell align="right" sx={{ fontWeight: 'bold', color: 'green' }}>
-    //                                 Total
-    //                             </TableCell>
-    //                             <TableCell/>
-    //                         </TableRow>
-    //                     </TableHead>
-    //                     <TableBody>
-    //                         {examResult.map((exam, index) => (
-    //                             <TableRow
-    //                                 key={exam.username}
-    //                                 sx={{
-    //                                     '&:last-child td, &:last-child th': { border: 0 },
-    //                                     bgcolor: email === exam.username ? '#F9F9F9' : 'transparent',
-    //                                 }}
-    //                             >
-    //                                 <TableCell component="th" scope="row">
-    //                                     {index + 1}
-    //                                 </TableCell>
-    //                                 <TableCell component="th" scope="row">
-    //                                     {exam.username}
-    //                                 </TableCell>
-    //                                 <TableCell align="center">
-    //                                     {exam.answerResults.map((isCorrect) => {
-    //                                         return getStreakIcon(isCorrect);
-    //                                     })}
-    //                                 </TableCell>
-    //                                 <TableCell align="center" sx={{ color: 'orangered' }}>
-    //                                     {exam.maxCorrectStreak}
-    //                                 </TableCell>
-    //                                 <TableCell align="center">{exam.totalScore - exam.totalBonusScore}</TableCell>
-    //                                 <TableCell align="center">{exam.totalBonusScore}</TableCell>
-    //                                 <TableCell align="right" sx={{ color: 'green' }}>
-    //                                     {exam.totalScore}
-    //                                 </TableCell>
-    //                                 <TableCell>
-    //                                     <IconButton aria-label="expand row" size="small" onClick={toggleCollapse}>
-    //                                         {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-    //                                     </IconButton>
-    //                                 </TableCell>
-    //                             </TableRow>
-    //                         ))}
-    //                     </TableBody>
-    //                     <TableRow>
-    //                         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-    //                             <Collapse in={open} timeout="auto" unmountOnExit>
-    //                                 <Box sx={{ margin: 1 }}>
-    //                                     <Typography variant="h6" gutterBottom component="div">
-    //                                         History
-    //                                     </Typography>
-    //                                     <Table size="small" aria-label="purchases">
-    //                                         <TableHead>
-    //                                             <TableRow>
-    //                                                 <TableCell>Date</TableCell>
-    //                                                 <TableCell>Customer</TableCell>
-    //                                                 <TableCell align="right">Amount</TableCell>
-    //                                                 <TableCell align="right">Total price ($)</TableCell>
-    //                                             </TableRow>
-    //                                         </TableHead>
-    //                                         <TableBody>
-    //                                             {examResult.map((exam, index) => (
-    //                                                 <TableRow
-    //                                                     key={exam.username}
-    //                                                     sx={{
-    //                                                         '&:last-child td, &:last-child th': { border: 0 },
-    //                                                         bgcolor:
-    //                                                             email === exam.username ? '#F9F9F9' : 'transparent',
-    //                                                     }}
-    //                                                 >
-    //                                                     <TableCell component="th" scope="row">
-    //                                                         {index + 1}
-    //                                                     </TableCell>
-    //                                                     <TableCell component="th" scope="row">
-    //                                                         {exam.username}
-    //                                                     </TableCell>
-    //                                                     <TableCell align="center">
-    //                                                         {exam.answerResults.map((isCorrect) => {
-    //                                                             return getStreakIcon(isCorrect);
-    //                                                         })}
-    //                                                     </TableCell>
-    //                                                     <TableCell align="center" sx={{ color: 'orangered' }}>
-    //                                                         {exam.maxCorrectStreak}
-    //                                                     </TableCell>
-    //                                                     <TableCell align="center">
-    //                                                         {exam.totalScore - exam.totalBonusScore}
-    //                                                     </TableCell>
-    //                                                     <TableCell align="center">{exam.totalBonusScore}</TableCell>
-    //                                                     <TableCell align="right" sx={{ color: 'green' }}>
-    //                                                         {exam.totalScore}
-    //                                                     </TableCell>
-    //                                                     <TableCell>
-    //                                                         <IconButton
-    //                                                             aria-label="expand row"
-    //                                                             size="small"
-    //                                                             onClick={toggleCollapse}
-    //                                                         >
-    //                                                             {open ? (
-    //                                                                 <KeyboardArrowUpIcon />
-    //                                                             ) : (
-    //                                                                 <KeyboardArrowDownIcon />
-    //                                                             )}
-    //                                                         </IconButton>
-    //                                                     </TableCell>
-    //                                                 </TableRow>
-    //                                             ))}
-    //                                         </TableBody>
-    //                                     </Table>
-    //                                 </Box>
-    //                             </Collapse>
-    //                         </TableCell>
-    //                     </TableRow>
-    //                 </Table>
-    //             </TableContainer>
-    //         </DialogContent>
-    //     </Dialog>
-    // );
+    console.log('--Detail Result Exams: ', examResult);
 
     return (
         <Dialog open={open} onClose={handleClose} fullScreen>
             <DialogContent>
+                <Button startIcon={<ArrowBackIosIcon />} sx={{ textTransform: 'none', mb: 2 }} onClick={handleClose}>
+                    Back
+                </Button>
                 <TableContainer component={Paper}>
                     <Table aria-label="collapsible table">
                         <TableHead>
@@ -194,7 +54,7 @@ const DetailResultDialog = (props) => {
                                 <TableCell align="center" sx={{ fontWeight: 'bold' }}>
                                     Bonus
                                 </TableCell>
-                                <TableCell align="right" sx={{ fontWeight: 'bold', color: 'green' }}>
+                                <TableCell align="center" sx={{ fontWeight: 'bold', color: 'green' }}>
                                     Total
                                 </TableCell>
                                 <TableCell />
@@ -217,11 +77,16 @@ function Row(props) {
 
     const { email } = LocalStorageService.get();
 
+    const { exam } = React.useContext(ExamContext);
+
     const [collapse, setCollapse] = React.useState(false);
 
+    const score = React.useMemo(() => userExam.totalScore - userExam.totalBonusScore, []);
+    const bonusScore = React.useMemo(() => userExam.totalBonusScore, []);
+    
     const toggleCollapse = () => setCollapse(!collapse);
 
-    console.log('user exam: ', userExam);
+    console.log('--Detail User Exam: ', userExam);
 
     return (
         <React.Fragment>
@@ -232,7 +97,7 @@ function Row(props) {
                     bgcolor: email === userExam.username ? '#F9F9F9' : 'transparent',
                 }}
             >
-                <TableCell component="th" scope="row">
+                <TableCell component="th" scope="row" sx={{ color: '#F49D1A' }}>
                     {index + 1}
                 </TableCell>
                 <TableCell component="th" scope="row">
@@ -246,9 +111,9 @@ function Row(props) {
                 <TableCell align="center" sx={{ color: 'orangered' }}>
                     {userExam.maxCorrectStreak}
                 </TableCell>
-                <TableCell align="center">{userExam.totalScore - userExam.totalBonusScore}</TableCell>
-                <TableCell align="center">{userExam.totalBonusScore}</TableCell>
-                <TableCell align="right" sx={{ color: 'green' }}>
+                <TableCell align="center">{score}</TableCell>
+                <TableCell align="center">{bonusScore}</TableCell>
+                <TableCell align="center" sx={{ color: 'green' }}>
                     {userExam.totalScore}
                 </TableCell>
                 <TableCell>
@@ -261,16 +126,18 @@ function Row(props) {
                 <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={12}>
                     <Collapse in={collapse} timeout="auto" unmountOnExit>
                         <Box>
-                            <Typography variant="body1" component="div" mt={2}>
-                                Details
+                            <Typography variant="body2" component="div" color="text.secondary" mt={2}>
+                                --Details--
                             </Typography>
                             <Table size="small" aria-label="purchases">
                                 <TableHead>
                                     <TableRow>
                                         <TableCell sx={{ fontWeight: 'bold' }}>Questions</TableCell>
-                                        <TableCell align="center" sx={{ fontWeight: 'bold' }}>Your answer</TableCell>
-                                        <TableCell align="center" sx={{ fontWeight: 'bold', color: 'orangered' }}>
-                                            Answer time
+                                        <TableCell align="center" sx={{ fontWeight: 'bold' }}>
+                                            Your answer
+                                        </TableCell>
+                                        <TableCell align="center" sx={{ fontWeight: 'bold' }}>
+                                            Answer time (s)
                                         </TableCell>
                                         <TableCell align="center" sx={{ fontWeight: 'bold' }}>
                                             Result
@@ -280,6 +147,8 @@ function Row(props) {
                                 <TableBody>
                                     {userExam.answers.map((answer, answerIndex) => {
                                         const answerResult = userExam.answerResults[answerIndex];
+                                        const question = exam.questions.find((question) => question.id === answer.questionId);
+                                        const userAnswer = question.options.find((option) => option.id === answer.optionId);
                                         return (
                                             <TableRow
                                                 key={answer.questionId}
@@ -288,13 +157,13 @@ function Row(props) {
                                                 }}
                                             >
                                                 <TableCell component="th" scope="row">
-                                                    {answer.questionId}
+                                                    {question.content}
                                                 </TableCell>
                                                 <TableCell align="center" component="th" scope="row">
-                                                    {StringHelper.checkNullAndDefault(answer.optionId, "-")}
+                                                    {StringHelper.checkNullAndDefault(userAnswer?.content, '-')}
                                                 </TableCell>
                                                 <TableCell align="center" component="th" scope="row">
-                                                    {StringHelper.checkNullAndDefault(answer.totalTime, "-")}
+                                                    {StringHelper.checkNullAndDefault(answer.totalTime, '-')}
                                                 </TableCell>
                                                 <TableCell align="center" component="th" scope="row">
                                                     {getCorrectOrWrongIcon(answerResult)}
@@ -313,12 +182,12 @@ function Row(props) {
 }
 
 const getCorrectOrWrongIcon = (isCorrectAnswer) => {
-    if(!isCorrectAnswer) {
-        return <CloseIcon fontSize='small' color='error' />
+    if (!isCorrectAnswer) {
+        return <CloseIcon fontSize="small" color="error" />;
     }
 
-    return <CheckIcon fontSize='small' color='success' />
-}
+    return <CheckIcon fontSize="small" color="success" />;
+};
 
 const getStreakIcon = (isCorrect) => {
     if (isCorrect) {
