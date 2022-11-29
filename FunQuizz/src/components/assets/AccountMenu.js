@@ -6,16 +6,15 @@ import MenuItem from '@mui/material/MenuItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
 import Tooltip from '@mui/material/Tooltip';
-import PersonAdd from '@mui/icons-material/PersonAdd';
 import Settings from '@mui/icons-material/Settings';
 import Logout from '@mui/icons-material/Logout';
 import DensityMediumIcon from '@mui/icons-material/DensityMedium';
 import CredentialService from '~/Services/CredentialService';
 import UserContext from '~/Context/UserContext';
-import { InsertInvitation } from '@mui/icons-material';
+import HistoryIcon from '@mui/icons-material/History';
 import { Link, useNavigate } from 'react-router-dom';
+
 const AccountMenu = () => {
     const { user, setUser } = React.useContext(UserContext);
     const userContext = React.useContext(UserContext);
@@ -97,6 +96,14 @@ const AccountMenu = () => {
                             <Settings fontSize="small" />
                         </ListItemIcon>
                         Settings
+                    </MenuItem>
+                </Link>
+                <Link to="/history/attemp" style={{ textDecoration: 'none', color: 'black' }}>
+                <MenuItem sx={{ fontSize: 14 }}>
+                        <ListItemIcon>
+                            <HistoryIcon fontSize="small" />
+                        </ListItemIcon>
+                        History
                     </MenuItem>
                 </Link>
                 <MenuItem sx={{ fontSize: 14, color: 'red' }} onClick={handleLogOut}>

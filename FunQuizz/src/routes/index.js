@@ -9,6 +9,7 @@ import OwningExams from '~/pages/OwningExams';
 import ExamDetail from '~/pages/ExamDetail';
 import WaitRoom from '~/pages/WaitRoom';
 import ExamRoom from '~/pages/ExamRoom';
+import AttemptHistory from '~/pages/AttemptHistory';
 
 // Public routes
 const publicRoutes = [
@@ -21,6 +22,7 @@ const publicRoutes = [
     { path: '/quiz/detail/:id', component: ExamDetail, layout: null },
     { path: '/quiz/wait-room/:userRole/:id', component: WaitRoom, layout: null },// :userRole = GUEST => :id mean id of room ; :userRole = HOST => :id mean id of exam
     { path: '/examRoom', component: ExamRoom, layout: null },
+    { path: '/history/attemp', component: AttemptHistory, layout: null },
 ];
 
 const privateRoutes = [];

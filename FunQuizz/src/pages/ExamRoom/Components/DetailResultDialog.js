@@ -1,10 +1,12 @@
 import React from 'react';
-import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment';
 import LocalStorageService from '~/Services/LocalStorageService';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import CheckIcon from '@mui/icons-material/Check';
-import CloseIcon from '@mui/icons-material/Close';
+import IosShareIcon from '@mui/icons-material/IosShare';
+import StringHelper from '~/Helpers/StringHelper';
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import { ExamContext } from '..';
+import { getCorrectOrWrongIcon, getStreakIcon } from '~/Helpers/GlobalHelper';
 import {
     Box,
     Button,
@@ -21,9 +23,7 @@ import {
     TableRow,
     Typography,
 } from '@mui/material';
-import StringHelper from '~/Helpers/StringHelper';
-import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
-import { ExamContext } from '..';
+import { Stack } from '@mui/system';
 
 const DetailResultDialog = (props) => {
     const { open, handleClose, examResult } = props;
@@ -36,6 +36,19 @@ const DetailResultDialog = (props) => {
                 <Button startIcon={<ArrowBackIosIcon />} sx={{ textTransform: 'none', mb: 2 }} onClick={handleClose}>
                     Back
                 </Button>
+
+                <Stack direction="row" justifyContent="space-between" mb={1}>
+                    <Box></Box>
+                    <Button
+                        startIcon={<IosShareIcon />}
+                        variant="contained"
+                        color="success"
+                        disableElevation
+                        sx={{ textTransform: 'none' }}
+                    >
+                        Export to Excel
+                    </Button>
+                </Stack>
                 <TableContainer component={Paper}>
                     <Table aria-label="collapsible table">
                         <TableHead>
@@ -83,7 +96,7 @@ function Row(props) {
 
     const score = React.useMemo(() => userExam.totalScore - userExam.totalBonusScore, []);
     const bonusScore = React.useMemo(() => userExam.totalBonusScore, []);
-    
+
     const toggleCollapse = () => setCollapse(!collapse);
 
     console.log('--Detail User Exam: ', userExam);
@@ -147,8 +160,12 @@ function Row(props) {
                                 <TableBody>
                                     {userExam.answers.map((answer, answerIndex) => {
                                         const answerResult = userExam.answerResults[answerIndex];
-                                        const question = exam.questions.find((question) => question.id === answer.questionId);
-                                        const userAnswer = question.options.find((option) => option.id === answer.optionId);
+                                        const question = exam.questions.find(
+                                            (question) => question.id === answer.questionId,
+                                        );
+                                        const userAnswer = question.options.find(
+                                            (option) => option.id === answer.optionId,
+                                        );
                                         return (
                                             <TableRow
                                                 key={answer.questionId}
@@ -180,21 +197,5 @@ function Row(props) {
         </React.Fragment>
     );
 }
-
-const getCorrectOrWrongIcon = (isCorrectAnswer) => {
-    if (!isCorrectAnswer) {
-        return <CloseIcon fontSize="small" color="error" />;
-    }
-
-    return <CheckIcon fontSize="small" color="success" />;
-};
-
-const getStreakIcon = (isCorrect) => {
-    if (isCorrect) {
-        return <LocalFireDepartmentIcon sx={{ color: 'orangered' }} />;
-    } else {
-        return <LocalFireDepartmentIcon sx={{ color: 'grey' }} />;
-    }
-};
 
 export default DetailResultDialog;
