@@ -10,6 +10,7 @@ import { createTheme } from '@mui/material';
 import { ThemeProvider } from '@emotion/react';
 import { LoginModalProvider } from './Context/LoginModalContext';
 import { SocketContextProvider } from './Context/SocketContext';
+import { StreakProvider } from './Context/StreakContext';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -30,9 +31,11 @@ root.render(
             <UserContextProvider>
                 <LoginModalProvider>
                     <SocketContextProvider>
-                        <ThemeProvider theme={theme}>
-                            <App />
-                        </ThemeProvider>
+                        <StreakProvider>
+                            <ThemeProvider theme={theme}>
+                                <App />
+                            </ThemeProvider>
+                        </StreakProvider>
                     </SocketContextProvider>
                 </LoginModalProvider>
             </UserContextProvider>

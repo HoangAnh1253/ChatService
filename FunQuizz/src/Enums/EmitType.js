@@ -10,5 +10,6 @@ export const EmitType = {
     USER_SEND_MESSAGE: "user-send-message",
     SERVER_UPDATE_USER: "server-update-user",
     SUBMIT_TEST: "submit-test",
+    QUESTION_TIMEOUT: "question-timeout",
     empty: "",
 };

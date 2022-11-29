@@ -96,6 +96,10 @@ export default class SocketService {
         this.socket.emit(EmitType.SUBMIT_TEST);
     };
 
+    questionTimeout = (questionId) => {
+        this.socket.emit(EmitType.QUESTION_TIMEOUT, questionId);
+    }
+
     // disconnect - used when unmounting
     disconnect() {
         this.socket.disconnect();

@@ -5,22 +5,21 @@ import { ListenType } from '~/Enums/ListenType';
 import SocketContext from '~/Context/SocketContext';
 import NotificationDialog from './Components/NotificationDialog';
 import ExamRoomToolBar from './Components/ToolBar';
-import ExamRoomRanking from './Components/Ranking';
 import './style.scss';
 import Ranking from './Components/Ranking';
 import { useLocation } from 'react-router-dom';
 import TimeHelper from '~/Helpers/TimeHelper';
 import { sleep } from '~/Helpers/GlobalHelper';
-import CorrectAnswerDialog from './Components/CorrectAnswerDialog';
-import WrongAnswerDialog from './Components/WrongAnswerDialog';
+import CorrectOrWrongAnswerDialog from './Components/CorrectOrWrongAnswerDialog';
+import StreakContext, { StreakProvider } from '~/Context/StreakContext';
 
 const ExamRoom = () => {
     const location = useLocation();
     const firstTimestamp = location.state.timestamp;
-    const [currentQuestionTimestamp, setCurrentQuestionTimestamp] = React.useState(firstTimestamp);
-
-    const colors = ['#306dae', '#2c9ca6', '#eca82b', '#d4546a'];
+    
     const socketService = React.useContext(SocketContext);
+    const { setStreak } = React.useContext(StreakContext);
+
     const [score, setScore] = React.useState(0);
     const [yourAnswerChosen, setYourAnswerChosen] = React.useState(null);
     const [currentQuestionIndex, setCurrentQuestionIndex] = React.useState(0);
@@ -29,17 +28,23 @@ const ExamRoom = () => {
     const [answerClassName, setAnswerClassName] = React.useState('');
     const [correctAnswerId, setCorrectAnswerId] = React.useState(null);
     const [isShowNotificationDialog, setIsShowNotificationDialog] = React.useState(false);
-    const [isShowCorrectAnswerDialog, setIsShowCorrectAnswerDialog] = React.useState(false);
-    const [isShowWrongAnswerDialog, setIsShowWrongAnswerDialog] = React.useState(false);
+    const [isShowCorrectOrWrongAnswerDialog, setIsShowCorrectOrWrongAnswerDialog] = React.useState(false);
+    const [isChosenCorrectAnswer, setIsChosenCorrectAnswer] = React.useState(null);
     const [examResult, setExamResult] = React.useState(null);
-    const [timestampFromServer, setTimestampFromServer] = React.useState(firstTimestamp);
+    const [currentQuestionTimestamp, setCurrentQuestionTimestamp] = React.useState(firstTimestamp);
     const [remainingTime, setRemainingTime] = React.useState(TimeHelper.getRemainingTime(firstTimestamp, 10));
+    const [notificationPayload, setNotificationPayload] = React.useState({
+        score: null,
+        bonus: null,
+        correctStreak: 0,
+    });
 
     const exam = React.useMemo(() => socketService.exam, []);
     const timeLimit = React.useMemo(() => exam.questions[currentQuestionIndex].timeLimit, [currentQuestionIndex]);
+    const colors = React.useMemo(() => ['#306dae', '#2c9ca6', '#eca82b', '#d4546a'], []);
 
-    const handleCloseWrongAnswerDialog = () => setIsShowWrongAnswerDialog(false);
-    const handleCloseCorrectAnswerDialog = () => setIsShowCorrectAnswerDialog(false);
+    const handleOpenCorrectOrWrongAnswerDialog = () => setIsShowCorrectOrWrongAnswerDialog(true);
+    const handleCloseCorrectOrWrongAnswerDialog = () => setIsShowCorrectOrWrongAnswerDialog(false);
 
     let timer;
     React.useEffect(() => {
@@ -50,14 +55,14 @@ const ExamRoom = () => {
                     setAnswerClassName('disable');
                     setYourAnswerChosen({ id: -1 });
                     setColorWhenChooseAnswer('green');
+                    socketService.questionTimeout(exam.questions[currentQuestionIndex].id);
+                    console.log("id ne: ", exam.questions[currentQuestionIndex]);
                     nextQuestion();
                     return timeLimit;
                 }
-                // return TimeHelper.getRemainingTime(currentQuestionTimestamp, timeLimit);
                 return prev - 1;
             });
         }, 1000);
-        // localStorage.setItem("timerId", timer.toString());
 
         return () => {
             clearInterval(getTimerId());
@@ -78,9 +83,8 @@ const ExamRoom = () => {
 
     React.useEffect(() => {
         socketService.socket.on(ListenType.START_QUESTION_SUCCESS, (data) => {
+            console.log('Reponse of START_QUESTION_SUCCESS event: ', data);
             clearInterval(getTimerId());
-            console.log('Time: ', data);
-            setTimestampFromServer(data);
             setCurrentQuestionTimestamp(data.startTime);
             nextQuestion();
         });
@@ -92,36 +96,51 @@ const ExamRoom = () => {
 
     React.useEffect(() => {
         socketService.socket.on(ListenType.CORRECT_ANSWER, (response) => {
+            console.log('Reponse of CORRECT_ANSWER event: ', response);
+            handleUpdateStreak(true, response);
+            setIsChosenCorrectAnswer(true);
+            handleOpenCorrectOrWrongAnswerDialog();
             clearInterval(getTimerId());
-            setIsShowCorrectAnswerDialog(true);
-            console.log('correct answer: ', response);
             setScore(response.totalScore);
             setColorWhenChooseAnswer('green');
-            // socketService.nextQuestion();
         });
-    }, []);
+
+        return () => {
+            socketService.socket.off(ListenType.CORRECT_ANSWER);
+        };
+    }, [currentQuestionIndex]);
 
     React.useEffect(() => {
         socketService.socket.on(ListenType.CORRECT_ANSWER_BY_SOE, (response) => {
-            console.log('correct answer by someone: ', response);
+            console.log('Reponse of CORRECT_ANSWER_BY_SOE event: ', response);
+            handleUpdateStreak(false);
             setCorrectAnswerId(response.correctAnswer);
             setYourAnswerChosen({ id: response.correctAnswer });
             setAnswerClassName('disable');
             setColorWhenChooseAnswer('green');
             setIsShowNotificationDialog(true);
         });
-    }, []);
+
+        return () => {
+            socketService.socket.off(ListenType.CORRECT_ANSWER_BY_SOE);
+        };
+    }, [currentQuestionIndex]);
 
     React.useEffect(() => {
         socketService.socket.on(ListenType.WRON_ANSWER, (response) => {
-            setIsShowWrongAnswerDialog(true);
-            console.log('wrong answer: ', response);
+            console.log('Reponse of WRON_ANSWER event: ', response);
+            setIsChosenCorrectAnswer(false);
+            handleUpdateStreak(false);
+            handleOpenCorrectOrWrongAnswerDialog();
             setColorWhenChooseAnswer('red');
         });
-    }, []);
+
+        return () => {
+            socketService.socket.off(ListenType.WRON_ANSWER);
+        };
+    }, [currentQuestionIndex]);
 
     const getTimerId = () => {
-        // return parseInt(localStorage.getItem("timerId"));
         return timer;
     };
 
@@ -132,26 +151,54 @@ const ExamRoom = () => {
         socketService.chooseAnswer(exam.questions[currentQuestionIndex].id, answer.id, totalTime);
     };
 
+    const handleUpdateStreak = (isChosenCorrectAnswer, streakInfo) => {
+        if (isChosenCorrectAnswer) {
+            setStreak((prev) => {
+                if(prev.length > currentQuestionIndex) {
+                    return prev;
+                }
+                return [...prev, true];
+            });
+
+            setNotificationPayload({
+                score: streakInfo.score,
+                bonus: streakInfo.bonusScore,
+                correctStreak: streakInfo.correctStreak,
+            });
+        } else {
+            setStreak((prev) => {
+                if(prev.length > currentQuestionIndex) {
+                    return prev;
+                }
+                return [...prev, false];
+            });
+
+            setNotificationPayload({
+                score: null,
+                bonus: null,
+                correctStreak: 0,
+            });
+        }
+    };
+
     function nextQuestion() {
         setCurrentQuestionTimestamp(Date.now());
-        sleep(1500).then(() => {
+        sleep(3000).then(() => {
             setColorWhenChooseAnswer(null);
             setAnswerClassName('');
-            sleep(200).then(() => {
-                setYourAnswerChosen(null);
-                setIsShowNotificationDialog(false);
-                setIsShowCorrectAnswerDialog(false);
-                setIsShowWrongAnswerDialog(false);
-                setRemainingTime(exam.questions[currentQuestionIndex].timeLimit);
+            setYourAnswerChosen(null);
+            setIsShowNotificationDialog(false);
+            setIsChosenCorrectAnswer(null);
+            handleCloseCorrectOrWrongAnswerDialog();
+            setRemainingTime(exam.questions[currentQuestionIndex].timeLimit);
 
-                setCurrentQuestionIndex((prev) => {
-                    if (prev + 1 >= exam.questions.length) {
-                        setFinish(true);
-                        socketService.submitExam();
-                        return prev;
-                    }
-                    return prev + 1;
-                });
+            setCurrentQuestionIndex((prev) => {
+                if (prev + 1 >= exam.questions.length) {
+                    setFinish(true);
+                    socketService.submitExam();
+                    return prev;
+                }
+                return prev + 1;
             });
         });
     }
@@ -224,9 +271,18 @@ const ExamRoom = () => {
                     </Grid>
                 )}
             </Paper>
+
             <NotificationDialog open={isShowNotificationDialog} />
-            <CorrectAnswerDialog open={isShowCorrectAnswerDialog} handleClose={handleCloseCorrectAnswerDialog} />
-            <WrongAnswerDialog open={isShowWrongAnswerDialog} handleClose={handleCloseWrongAnswerDialog} />
+
+            {isChosenCorrectAnswer !== null && (
+                <CorrectOrWrongAnswerDialog
+                    isCorrect={isChosenCorrectAnswer}
+                    open={isShowCorrectOrWrongAnswerDialog}
+                    handleClose={handleCloseCorrectOrWrongAnswerDialog}
+                    exam={exam}
+                    notificationPayload={notificationPayload}
+                />
+            )}
         </React.Fragment>
     );
 };
