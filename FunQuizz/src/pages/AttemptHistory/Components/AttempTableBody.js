@@ -67,24 +67,9 @@ function AttemptTableBody(props) {
             </TableRow>
             <TableRow>
                 <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={12}>
-                    <Collapse in={collapse} timeout="auto" unmountOnExit>
+                    <Collapse in={collapse} timeout="auto">
                         <Box mt={2}>
-                            <Stack direction="row" alignItems="end" mb={1}>
-                                <Typography variant="body2" mr={2}>
-                                    All answers:{' '}
-                                </Typography>
-                                {userAnswers.map((userAnswers) => {
-                                    return getStreakIcon(userAnswers.option.isCorrect);
-                                })}
-                            </Stack>
-                            <Typography variant="body2" gutterBottom>
-                                Start time: {formatDateTime(startDateTime)}
-                            </Typography>
-
-                            <Typography variant="body2" gutterBottom>
-                                Finish time: {formatDateTime(finishDateTime)}
-                            </Typography>
-                            <Table size="small" aria-label="purchases">
+                            <Table className="detail-attempt-history-table" size="small" aria-label="purchases">
                                 <TableHead>
                                     <TableRow>
                                         <TableCell sx={{ fontWeight: 'bold' }}>Questions</TableCell>
@@ -141,6 +126,41 @@ function AttemptTableBody(props) {
                                             </TableRow>
                                         );
                                     })}
+                                    <TableRow>
+                                        {/* <TableCell rowSpan={4} colSpan={4}/> */}
+                                        <TableCell>
+                                            <Typography variant="body2">All answers:</Typography>
+                                        </TableCell>
+                                        <TableCell align="right">
+                                            {userAnswers.map((userAnswers) => {
+                                                return getStreakIcon(userAnswers.option.isCorrect);
+                                            })}
+                                        </TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                        <TableCell>
+                                            <Typography component="span" variant="body2" gutterBottom>
+                                                Start time:
+                                            </Typography>
+                                        </TableCell>
+                                        <TableCell align="right">
+                                            <Typography component="span" variant="body2" gutterBottom>
+                                                {formatDateTime(startDateTime)}
+                                            </Typography>
+                                        </TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                        <TableCell>
+                                            <Typography component="span" variant="body2" gutterBottom>
+                                                Finish time:
+                                            </Typography>
+                                        </TableCell>
+                                        <TableCell align="right">
+                                            <Typography variant="body2" gutterBottom>
+                                                {formatDateTime(finishDateTime)}
+                                            </Typography>
+                                        </TableCell>
+                                    </TableRow>
                                 </TableBody>
                             </Table>
                         </Box>

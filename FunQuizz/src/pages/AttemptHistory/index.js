@@ -17,6 +17,7 @@ import {
     TableRow,
     Typography,
 } from '@mui/material';
+import { exportExcelFromTable } from '~/Utils';
 
 const AttemptHistory = () => {
     const navigate = useNavigate();
@@ -38,7 +39,12 @@ const AttemptHistory = () => {
         );
     }, []);
 
-    const exportExcelFile = () => {};
+    const handleExcelExport = () => {
+        const attemptTable = document.getElementById('attempt-history-table');
+        const detailTableCollection = document.getElementsByClassName('detail-attempt-history-table');
+
+        exportExcelFromTable(attemptTable, detailTableCollection, 'attempt-history.xlsx');
+    };
 
     return (
         <React.Fragment>
@@ -59,14 +65,14 @@ const AttemptHistory = () => {
                     color="success"
                     disableElevation
                     sx={{ textTransform: 'none' }}
-                    onClick={exportExcelFile}
+                    onClick={handleExcelExport}
                 >
                     Export to Excel
                 </Button>
             </Stack>
             <Box mx={2} mb={5}>
                 <TableContainer component={Paper}>
-                    <Table aria-label="collapsible table">
+                    <Table id="attempt-history-table" aria-label="collapsible table">
                         <TableHead>
                             <TableRow>
                                 <TableCell align="left" sx={{ fontWeight: 'bold' }}>
