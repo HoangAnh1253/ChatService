@@ -32,12 +32,12 @@ const DetailResultDialog = (props) => {
     console.log('--Detail Result Exams: ', examResult);
 
     const handleExcelExport = () => {
-        const resultTableHtmlElement = document.getElementById("exam-result-table");
-        const subTableClassCollection = document.getElementsByClassName("detail-exam-result-table");
-        const fileName = "exam-result";
+        const resultTableHtmlElement = document.getElementById('exam-result-table');
+        const subTableClassCollection = document.getElementsByClassName('detail-exam-result-table');
+        const fileName = 'exam-result';
 
         exportExcelFromTable(resultTableHtmlElement, subTableClassCollection, fileName);
-    }
+    };
 
     return (
         <Dialog open={open} onClose={handleClose} fullScreen>
@@ -147,7 +147,7 @@ function Row(props) {
             </TableRow>
             <TableRow>
                 <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={12}>
-                    <Collapse in={collapse} timeout="auto" unmountOnExit>
+                    <Collapse in={collapse} timeout="auto">
                         <Box>
                             <Table className="detail-exam-result-table" size="small" aria-label="purchases">
                                 <TableHead>
