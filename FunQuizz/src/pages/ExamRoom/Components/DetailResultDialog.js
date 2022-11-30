@@ -24,11 +24,20 @@ import {
     Typography,
 } from '@mui/material';
 import { Stack } from '@mui/system';
+import { exportExcelFromTable } from '~/Utils';
 
 const DetailResultDialog = (props) => {
     const { open, handleClose, examResult } = props;
 
     console.log('--Detail Result Exams: ', examResult);
+
+    const handleExcelExport = () => {
+        const resultTableHtmlElement = document.getElementById("exam-result-table");
+        const subTableClassCollection = document.getElementsByClassName("detail-exam-result-table");
+        const fileName = "exam-result";
+
+        exportExcelFromTable(resultTableHtmlElement, subTableClassCollection, fileName);
+    }
 
     return (
         <Dialog open={open} onClose={handleClose} fullScreen>
@@ -45,12 +54,13 @@ const DetailResultDialog = (props) => {
                         color="success"
                         disableElevation
                         sx={{ textTransform: 'none' }}
+                        onClick={handleExcelExport}
                     >
                         Export to Excel
                     </Button>
                 </Stack>
                 <TableContainer component={Paper}>
-                    <Table aria-label="collapsible table">
+                    <Table id="exam-result-table" aria-label="collapsible table">
                         <TableHead>
                             <TableRow>
                                 <TableCell sx={{ fontWeight: 'bold', color: '#F49D1A' }}>Rank</TableCell>
@@ -139,10 +149,7 @@ function Row(props) {
                 <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={12}>
                     <Collapse in={collapse} timeout="auto" unmountOnExit>
                         <Box>
-                            <Typography variant="body2" component="div" color="text.secondary" mt={2}>
-                                --Details--
-                            </Typography>
-                            <Table size="small" aria-label="purchases">
+                            <Table className="detail-exam-result-table" size="small" aria-label="purchases">
                                 <TableHead>
                                     <TableRow>
                                         <TableCell sx={{ fontWeight: 'bold' }}>Questions</TableCell>
