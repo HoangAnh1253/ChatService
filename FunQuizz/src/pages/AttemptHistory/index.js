@@ -30,12 +30,37 @@ const AttemptHistory = () => {
     React.useEffect(() => {
         AttempService.fetchAll(
             (response) => {
-                setAttemptHistory(response.data.data);
+                const attemptFilter = response.data.data.sort((a, b) => b.id - a.id)
+                setAttemptHistory(attemptFilter);
                 console.log('--ATTEMP HISTORY: ', response.data.data);
             },
             (error) => console.log(error),
         );
     }, []);
+
+    const exportExcelFile = () => {
+        var XLSX = require("xlsx");
+
+        const wb = XLSX.utils.book_new();
+        const attemptLength = attemptHistory.length;
+
+        // for( let i = 0; i < attemptLength; i ++) {
+            // const _wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.json_to_sheet(attemptHistory);
+            XLSX.utils.sheet_add_aoa(ws, [["Name", "Birthday"]], { origin: "A1" });
+
+            // XLSX.utils.book_append_sheet(wb, ws, `sheet ${1}`);
+            wb.Sheets[`sheet ${1}`] = ws
+            console.log(ws);
+        // }
+        // attemptHistory.map((attempt, index) => {
+        //     const ws = XLSX.utils.json_to_sheet(attempt);
+
+        //     XLSX.utils.book_append_sheet(wb, ws, `sheet ${index}`);
+        // });
+
+        XLSX.writeFile(wb, 'attempt-history.xlsx');
+    };
 
     return (
         <React.Fragment>
@@ -50,11 +75,18 @@ const AttemptHistory = () => {
                 <Typography variant="h5" color="text.secondary" gutterBottom fontWeight="bold">
                     Attempt history
                 </Typography>
-                <Button startIcon={<IosShareIcon />} variant="contained" color="success" disableElevation sx={{textTransform: "none"}}>
+                <Button
+                    startIcon={<IosShareIcon />}
+                    variant="contained"
+                    color="success"
+                    disableElevation
+                    sx={{ textTransform: 'none' }}
+                    onClick={exportExcelFile}
+                >
                     Export to Excel
                 </Button>
             </Stack>
-            <Box mx={2}>
+            <Box mx={2} mb={5}>
                 <TableContainer component={Paper}>
                     <Table aria-label="collapsible table">
                         <TableHead>
@@ -75,7 +107,7 @@ const AttemptHistory = () => {
                                     Number of question
                                 </TableCell>
                                 <TableCell align="center" sx={{ fontWeight: 'bold' }}>
-                                    Time limit
+                                    Time limit (min)
                                 </TableCell>
                                 <TableCell align="center" sx={{ fontWeight: 'bold', color: 'orangered' }}>
                                     Streak
@@ -100,7 +132,5 @@ const AttemptHistory = () => {
         </React.Fragment>
     );
 };
-
-
 
 export default AttemptHistory;

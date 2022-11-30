@@ -49,11 +49,11 @@ function MainAppBar(props) {
         setUser(null);
     };
 
-    const { user, setUser } = React.useContext(UserContext);
+    const { setUser } = React.useContext(UserContext);
 
     return (
         <Box sx={{ marginBottom: 11 }}>
-            <AppBar position="fixed" sx={{ backgroundColor: '#FFFFFF', boxShadow: 2 }}>
+            <AppBar position="fixed" sx={{ backgroundColor: '#FFFFFF', boxShadow: 2, py: 2 }}>
                 <Toolbar variant="dense">
                     <Link to="/">
                         <img
@@ -72,9 +72,9 @@ function MainAppBar(props) {
                         sx={useStyles}
                         InputProps={{ endAdornment: searchButton }}
                     />
-                    <Grid container direction="row" justifyContent="space-between" alignItems="center" marginLeft={3}>
+                    <Grid container direction="row" justifyContent="end" alignItems="center" marginLeft={3}>
                         <ThemeProvider theme={theme}>
-                            <Tabs value={activePageIndex} onChange={onChangeTabbarIndex}>
+                            {/* <Tabs value={activePageIndex} onChange={onChangeTabbarIndex}>
                                 <Tab
                                     label="Home"
                                     value={0}
@@ -96,7 +96,7 @@ function MainAppBar(props) {
                                     iconPosition="start"
                                     sx={{ fontWeight: '700' }}
                                 />
-                            </Tabs>
+                            </Tabs> */}
                             {isLogin ? (
                                 <AccountMenu />
                             ) : (

@@ -28,7 +28,7 @@ const CorrectOrWrongAnswerDialog = (props) => {
     };
 
     return (
-        <Dialog open={open} onClose={handleClose}>
+        <Dialog open={open}>
             <DialogContent sx={{ py: 5 }}>
                 <Stack sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                     <img src={getImagePath(isCorrect)} width="40%" />

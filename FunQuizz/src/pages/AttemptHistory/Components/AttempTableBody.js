@@ -19,10 +19,6 @@ import {
 function AttemptTableBody(props) {
     const { attempt, rowIndex } = props;
 
-    // const { email } = LocalStorageService.get();
-
-    // const { attempt } = React.useContext(ExamContext);
-
     const [collapse, setCollapse] = React.useState(false);
 
     const exam = React.useMemo(() => attempt.exam, []);
@@ -39,6 +35,7 @@ function AttemptTableBody(props) {
                 sx={{
                     '& > *': { borderBottom: 'unset' },
                     '&:last-child td, &:last-child th': { border: 0 },
+                    bgcolor: collapse ? '#F9F9F9' : 'transparent',
                 }}
             >
                 <TableCell align="left" component="th" scope="row">
@@ -130,7 +127,7 @@ function AttemptTableBody(props) {
                                                     {StringHelper.checkNullAndDefault(userAnswer.totalTime, '-')}
                                                 </TableCell>
                                                 <TableCell align="center" component="th" scope="row">
-                                                    {userAnswer.question.score}
+                                                    {userAnswer.option.isCorrect ? userAnswer.question.score : 0}
                                                 </TableCell>
                                                 <TableCell align="center" component="th" scope="row">
                                                     {userAnswer.bonus}

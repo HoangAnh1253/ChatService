@@ -13,7 +13,6 @@ import { useNavigate } from 'react-router-dom';
 
 
 const Home = () => {
-    const { user, setUser } = React.useContext(UserContext);
     const [openNewQuizModal, setOpenNewQuizModal] = React.useState(false);
     const [exams, setExams] = React.useState([]);
     const [roomId, setRoomId] = React.useState('');
@@ -28,8 +27,11 @@ const Home = () => {
     };
 
     const handleJoinRoom = (e) => {
-        if(roomId)
-         navigate(`/quiz/wait-room/guest/${roomId}`);
+        if(roomId) {
+            let roomIdValidation = roomId.trim()
+            roomIdValidation = roomIdValidation.split(" ").join("_");
+            navigate(`/quiz/wait-room/guest/${roomIdValidation}`);
+        }
     }
 
     React.useEffect(() => {

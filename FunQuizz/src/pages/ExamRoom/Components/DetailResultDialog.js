@@ -146,11 +146,20 @@ function Row(props) {
                                 <TableHead>
                                     <TableRow>
                                         <TableCell sx={{ fontWeight: 'bold' }}>Questions</TableCell>
-                                        <TableCell align="center" sx={{ fontWeight: 'bold' }}>
+                                        <TableCell align="left" sx={{ fontWeight: 'bold' }}>
                                             Your answer
                                         </TableCell>
                                         <TableCell align="center" sx={{ fontWeight: 'bold' }}>
                                             Answer time (s)
+                                        </TableCell>
+                                        <TableCell align="center" sx={{ fontWeight: 'bold' }}>
+                                            Score
+                                        </TableCell>
+                                        <TableCell align="center" sx={{ fontWeight: 'bold' }}>
+                                            Bonus
+                                        </TableCell>
+                                        <TableCell align="center" sx={{ fontWeight: 'bold' }}>
+                                            Total
                                         </TableCell>
                                         <TableCell align="center" sx={{ fontWeight: 'bold' }}>
                                             Result
@@ -176,11 +185,20 @@ function Row(props) {
                                                 <TableCell component="th" scope="row">
                                                     {question.content}
                                                 </TableCell>
-                                                <TableCell align="center" component="th" scope="row">
+                                                <TableCell align="left" component="th" scope="row">
                                                     {StringHelper.checkNullAndDefault(userAnswer?.content, '-')}
                                                 </TableCell>
                                                 <TableCell align="center" component="th" scope="row">
                                                     {StringHelper.checkNullAndDefault(answer.totalTime, '-')}
+                                                </TableCell>
+                                                <TableCell align="center" component="th" scope="row">
+                                                    {answer.score}
+                                                </TableCell>
+                                                <TableCell align="center" component="th" scope="row">
+                                                    {answer.bonus}
+                                                </TableCell>
+                                                <TableCell align="center" component="th" scope="row">
+                                                    {answer.score + answer.bonus}
                                                 </TableCell>
                                                 <TableCell align="center" component="th" scope="row">
                                                     {getCorrectOrWrongIcon(answerResult)}
