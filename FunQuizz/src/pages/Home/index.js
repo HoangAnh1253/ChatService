@@ -30,7 +30,7 @@ const Home = () => {
         if(roomId) {
             let roomIdValidation = roomId.trim()
             roomIdValidation = roomIdValidation.split(" ").join("_");
-            navigate(`/quiz/wait-room/guest/${roomIdValidation}`);
+            navigate(`/quiz/wait-room/guest/${roomIdValidation}`, {state: {mode: ""}});
         }
     }
 
