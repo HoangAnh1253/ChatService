@@ -9,13 +9,15 @@ import { UserRole } from '~/Enums/UserRole';
 import SocketContext from '~/Context/SocketContext';
 import { ListenType } from '~/Enums/ListenType';
 import KeyIcon from '@mui/icons-material/Key';
+import { useLocation } from 'react-router-dom';
 
 const WaitRoom = () => {
     const socketService = React.useContext(SocketContext);
-
+    const location = useLocation();
     const navigate = useNavigate();
     const params = useParams();
     const userRole = params.userRole;
+    const mode = location.state.mode;
     const paramId = params.id; // be careful of this paramId (it can be examId or roomId) hehe (kinda dirty but work)
     const { email } = LocalStorageService.get();
 
@@ -57,18 +59,19 @@ const WaitRoom = () => {
     }, []);
 
     React.useEffect(() => {
-        socketService.socket.on(ListenType.START_EXAM_SUCCESS, (timestamp) => {
-            console.log('first timestamp: ', timestamp);
+        socketService.socket.on(ListenType.START_EXAM_SUCCESS, (examState) => {
+            console.log('first timestamp: ', examState);
             navigate('/examRoom', {
                 state: {
-                    timestamp: timestamp.startTime,
+                    mode: examState.mode,
+                    timestamp: examState.startTime,
                 },
             });
         });
     }, []);
 
     const handleStartQuiz = () => {
-        socketService.startExam();
+        socketService.startExam(mode);
     };
 
     const handleBackToPrevPage = () => {
@@ -77,8 +80,12 @@ const WaitRoom = () => {
     };
     return (
         <React.Fragment>
-            <Button startIcon={<ArrowBackIosIcon />} sx={{ m: 2, textTransform: 'none' }} onClick={handleBackToPrevPage}>
-                {userRole === UserRole.HOST ? "Exam detail" : "Home"}
+            <Button
+                startIcon={<ArrowBackIosIcon />}
+                sx={{ m: 2, textTransform: 'none' }}
+                onClick={handleBackToPrevPage}
+            >
+                {userRole === UserRole.HOST ? 'Exam detail' : 'Home'}
             </Button>
 
             <Paper sx={{ width: '50%', mx: 'auto', p: 1, mb: 2 }} variant="outlined">

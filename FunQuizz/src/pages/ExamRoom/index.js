@@ -18,7 +18,7 @@ export const ExamContext = React.createContext(null);
 const ExamRoom = () => {
     const location = useLocation();
     const firstTimestamp = location.state.timestamp;
-
+    const mode = location.state.mode;
     const socketService = React.useContext(SocketContext);
     const { setStreak } = React.useContext(StreakContext);
 

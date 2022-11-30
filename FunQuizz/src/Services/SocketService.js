@@ -39,9 +39,9 @@ export default class SocketService {
         this.socket.connect();
     }
 
-    startExam() {
+    startExam(mode) {
         console.log('start quiz...');
-        this.socket.emit(EmitType.START_EXAM);
+        this.socket.emit(EmitType.START_EXAM, mode);
     }
 
     nextQuestion() {

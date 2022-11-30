@@ -30,7 +30,7 @@ const AttemptHistory = () => {
     React.useEffect(() => {
         AttempService.fetchAll(
             (response) => {
-                const attemptFilter = response.data.data.sort((a, b) => b.id - a.id)
+                const attemptFilter = response.data.data.sort((a, b) => b.id - a.id);
                 setAttemptHistory(attemptFilter);
                 console.log('--ATTEMP HISTORY: ', response.data.data);
             },
@@ -38,29 +38,7 @@ const AttemptHistory = () => {
         );
     }, []);
 
-    const exportExcelFile = () => {
-        var XLSX = require("xlsx");
-
-        const wb = XLSX.utils.book_new();
-        const attemptLength = attemptHistory.length;
-
-        // for( let i = 0; i < attemptLength; i ++) {
-            // const _wb = XLSX.utils.book_new();
-            const ws = XLSX.utils.json_to_sheet(attemptHistory);
-            XLSX.utils.sheet_add_aoa(ws, [["Name", "Birthday"]], { origin: "A1" });
-
-            // XLSX.utils.book_append_sheet(wb, ws, `sheet ${1}`);
-            wb.Sheets[`sheet ${1}`] = ws
-            console.log(ws);
-        // }
-        // attemptHistory.map((attempt, index) => {
-        //     const ws = XLSX.utils.json_to_sheet(attempt);
-
-        //     XLSX.utils.book_append_sheet(wb, ws, `sheet ${index}`);
-        // });
-
-        XLSX.writeFile(wb, 'attempt-history.xlsx');
-    };
+    const exportExcelFile = () => {};
 
     return (
         <React.Fragment>
