@@ -2,7 +2,7 @@ import React from 'react';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import StringHelper from '~/Helpers/StringHelper';
-import { formatDateTime, getCorrectOrWrongIcon, getStreakIcon } from '~/Helpers/GlobalHelper';
+import { formatDateTime, getCorrectOrWrongIcon, getModeText, getStreakIcon } from '~/Helpers/GlobalHelper';
 import {
     Box,
     Collapse,
@@ -40,6 +40,9 @@ function AttemptTableBody(props) {
             >
                 <TableCell align="left" component="th" scope="row">
                     {rowIndex}
+                </TableCell>
+                <TableCell align="left" component="th" scope="row">
+                    {getModeText(attempt.mode)}
                 </TableCell>
                 <TableCell align="left" component="th" scope="row">
                     {exam.topic}
@@ -97,7 +100,7 @@ function AttemptTableBody(props) {
                                     {userAnswers.map((userAnswer) => {
                                         return (
                                             <TableRow
-                                                key={userAnswer.question.id}
+                                                key={userAnswer.id}
                                                 sx={{
                                                     '&:last-child td, &:last-child th': { border: 0 },
                                                 }}

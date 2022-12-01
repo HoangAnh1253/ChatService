@@ -69,9 +69,9 @@ export default class SocketService {
         );
     };
 
-    createRoom = (examId) => {
+    createRoom = (examId, mode) => {
         console.log('creating room' + examId);
-        this.socket.emit(EmitType.CREATE_ROOM, { email: this.currentEmail, examId: examId });
+        this.socket.emit(EmitType.CREATE_ROOM, { email: this.currentEmail, examId: examId, mode: mode });
 
         ExamService.getById(
             examId,

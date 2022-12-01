@@ -10,6 +10,7 @@ import SocketContext from '~/Context/SocketContext';
 import { ListenType } from '~/Enums/ListenType';
 import KeyIcon from '@mui/icons-material/Key';
 import { useLocation } from 'react-router-dom';
+import { getModeText, getModeTextColor } from '~/Helpers/GlobalHelper';
 
 const WaitRoom = () => {
     const socketService = React.useContext(SocketContext);
@@ -17,13 +18,14 @@ const WaitRoom = () => {
     const navigate = useNavigate();
     const params = useParams();
     const userRole = params.userRole;
-    const mode = location.state.mode;
+    // const mode = location.state.mode;
     const paramId = params.id; // be careful of this paramId (it can be examId or roomId) hehe (kinda dirty but work)
     const { email } = LocalStorageService.get();
 
     const { setOpenSignInModal } = React.useContext(LoginModalContext);
 
     const [usersInRoom, setUsersInRoom] = React.useState([]);
+    const [mode, setMode] = React.useState(location.state.mode);
 
     React.useEffect(() => {
         if (paramId === null) {
@@ -38,17 +40,19 @@ const WaitRoom = () => {
                 socketService.joinRoom(paramId);
                 break;
             case UserRole.HOST:
-                socketService.createRoom(paramId);
+                socketService.createRoom(paramId, mode);
                 break;
         }
     }, []);
 
     React.useEffect(() => {
-        socketService.socket.on(ListenType.SERVER_UPDATE_USER, ({ room, users }) => {
-            socketService.roomMembers = users;
-            setUsersInRoom(users);
+        socketService.socket.on(ListenType.SERVER_UPDATE_USER, (response) => {
+            console.log("--RESPONE OF SERVER_UPDATE_USER EVENT: ", response);
+            socketService.roomMembers = response.users;
+            setUsersInRoom(response.users);
+            setMode(response.modeInRoom);
 
-            console.log('user in room: ', users);
+            console.log('user in room: ', response.users);
         });
     }, []);
 
@@ -88,6 +92,9 @@ const WaitRoom = () => {
                 {userRole === UserRole.HOST ? 'Exam detail' : 'Home'}
             </Button>
 
+            <Box sx={{ width: '50%', mx: 'auto', mb: 1 }}>
+                {getModeText(mode)}
+            </Box>
             <Paper sx={{ width: '50%', mx: 'auto', p: 1, mb: 2 }} variant="outlined">
                 <Stack direction="row" justifyContent="space-between" alignItems="center">
                     <Box display="flex" alignItems="center">

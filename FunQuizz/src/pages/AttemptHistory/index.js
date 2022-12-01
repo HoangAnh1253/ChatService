@@ -33,7 +33,7 @@ const AttemptHistory = () => {
             (response) => {
                 const attemptFilter = response.data.data.sort((a, b) => b.id - a.id);
                 setAttemptHistory(attemptFilter);
-                console.log('--ATTEMP HISTORY: ', response.data.data);
+                console.log('--ATTEMPT HISTORY: ', response.data.data);
             },
             (error) => console.log(error),
         );
@@ -79,6 +79,9 @@ const AttemptHistory = () => {
                                     #
                                 </TableCell>
                                 <TableCell align="left" sx={{ fontWeight: 'bold' }}>
+                                    Mode
+                                </TableCell>
+                                <TableCell align="left" sx={{ fontWeight: 'bold' }}>
                                     Topic
                                 </TableCell>
                                 <TableCell align="left" sx={{ fontWeight: 'bold' }}>
@@ -107,7 +110,7 @@ const AttemptHistory = () => {
                         </TableHead>
                         <TableBody>
                             {attemptHistory.map((attempt, index) => (
-                                <AttempTableBody attempt={attempt} rowIndex={index + 1} />
+                                <AttempTableBody key={index} attempt={attempt} rowIndex={index + 1} />
                             ))}
                         </TableBody>
                     </Table>

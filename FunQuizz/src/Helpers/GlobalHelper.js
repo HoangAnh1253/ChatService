@@ -3,6 +3,7 @@ import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
 import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment';
 import { dayOfWeeks, monthNames } from '~/Constants/DateConstant';
+import { Typography } from '@mui/material';
 
 export function sleep(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
@@ -14,6 +15,20 @@ export function getCorrectOrWrongIcon(isCorrectAnswer) {
     }
 
     return <CheckIcon fontSize="small" color="success" />;
+}
+
+export function getModeText(mode) {
+    if(!mode) return <Typography>-</Typography>
+
+    return (
+        <Typography variant="caption" fontWeight="bold" sx={{ color: getModeTextColor(mode) }}>
+            {mode.toUpperCase()}
+        </Typography>
+    );
+}
+
+export function getModeTextColor(mode) {
+    return mode.toLowerCase() === "normal" ? '#54B435' : '#FF7F3F';
 }
 
 export function getStreakIcon(isCorrect) {
@@ -33,4 +48,4 @@ export function formatDateTime(datetime) {
     const minute = (datetime.getMinutes() < 10 ? '0' : '') + datetime.getMinutes();
 
     return `${dayOfWeek}, ${dayOfMonth} ${monthName} ${year} at ${hour}:${minute}`;
-};
+}
