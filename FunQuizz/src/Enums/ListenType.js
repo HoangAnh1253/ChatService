@@ -1,5 +1,7 @@
 export const ListenType = {
     EXAM_RESULT: "exam-result",
+    ROOM_NOT_FOUND: "room-not-found",
+    JOIN_ROOM_SUCCESS: "join-room-success",
     START_EXAM_SUCCESS: "start-exam-success",
     SERVER_SEND_MESSAGE: 'server-send-message',
     SERVER_UPDATE_USER: 'server-update-user',

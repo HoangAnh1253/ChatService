@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
-import AttempService from '~/Services/AttempService';
+import AttemptService from '~/Services/AttemptService';
 import IosShareIcon from '@mui/icons-material/IosShare';
 import AttempTableBody from './Components/AttempTableBody';
 import {
@@ -18,9 +18,11 @@ import {
     Typography,
 } from '@mui/material';
 import { exportExcelFromTable } from '~/Utils';
+import LocalStorageService from '~/Services/LocalStorageService';
 
 const AttemptHistory = () => {
     const navigate = useNavigate();
+    const { email } = LocalStorageService.get();
 
     const [attemptHistory, setAttemptHistory] = React.useState([]);
 
@@ -29,7 +31,8 @@ const AttemptHistory = () => {
     };
 
     React.useEffect(() => {
-        AttempService.fetchAll(
+        AttemptService.fetchByEmail(
+            email,
             (response) => {
                 const attemptFilter = response.data.data.sort((a, b) => b.id - a.id);
                 setAttemptHistory(attemptFilter);
@@ -43,7 +46,7 @@ const AttemptHistory = () => {
         const attemptTable = document.getElementById('attempt-history-table');
         const detailTableCollection = document.getElementsByClassName('detail-attempt-history-table');
 
-        exportExcelFromTable(attemptTable, detailTableCollection, 'attempt-history.xlsx');
+        exportExcelFromTable(attemptTable, detailTableCollection, 'attempt-history');
     };
 
     return (

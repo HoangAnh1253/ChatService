@@ -5,18 +5,26 @@ import Box from '@mui/material/Box';
 import { TextField, Button } from '@mui/material';
 import Stack from '@mui/system/Stack';
 import ExamCard from '~/pages/Home/Components/ExamCard';
+import NotFoundModeDialog from './Components/NotFoundModeDialog';
 import NewQuizModal from '~/Components/Assets/NewQuizModal';
 import ExamService from '~/Services/ExamService';
 import { Link } from 'react-router-dom';
 import UserContext from '~/Context/UserContext';
 import { useNavigate } from 'react-router-dom';
+import SocketContext from '~/Context/SocketContext';
+import { ListenType } from '~/Enums/ListenType';
 
 
 const Home = () => {
     const [openNewQuizModal, setOpenNewQuizModal] = React.useState(false);
+    const [openExamNotFoundModal, setOpenExamNotFoundModal] = React.useState(false);
     const [exams, setExams] = React.useState([]);
     const [roomId, setRoomId] = React.useState('');
     const navigate = useNavigate();
+    const socketService = React.useContext(SocketContext);
+
+    const handleOpenExamNotFoundModal = () => setOpenExamNotFoundModal(true);
+    const handleCloseExamNotFoundModal = () => setOpenExamNotFoundModal(false);
 
     const handleCreateQuiz = () => {
         setOpenNewQuizModal(true);
@@ -27,12 +35,25 @@ const Home = () => {
     };
 
     const handleJoinRoom = (e) => {
-        if(roomId) {
-            let roomIdValidation = roomId.trim()
-            roomIdValidation = roomIdValidation.split(" ").join("_");
-            navigate(`/quiz/wait-room/guest/${roomIdValidation}`, {state: {mode: ""}});
-        }
+       socketService.joinRoom(roomId);
     }
+
+    React.useEffect(()=>{
+        socketService.socket.on(ListenType.ROOM_NOT_FOUND, ()=>{
+            handleOpenExamNotFoundModal();
+        })
+    }, []);
+
+    React.useEffect(()=>{
+        socketService.socket.on(ListenType.JOIN_ROOM_SUCCESS, ()=>{
+            if(roomId) {
+                let roomIdValidation = roomId.trim()
+                roomIdValidation = roomIdValidation.split(" ").join("_");
+    
+                navigate(`/quiz/wait-room/guest/${roomIdValidation}`, {state: {mode: ""}});
+            }
+        })
+    }, []);
 
     React.useEffect(() => {
         ExamService.getAll(
@@ -100,7 +121,7 @@ const Home = () => {
                                     to="/quiz/owning/"
                                     sx={{ color: 'white', opacity: 0.9, textTransform: 'none', fontSize: 14 }}
                                 >
-                                    &gt; Show all my exam &lt;
+                                    &gt; My exam &lt;
                                 </Button>
                             </Stack>
                         </Box>
@@ -119,6 +140,8 @@ const Home = () => {
             </Box>
 
             <NewQuizModal open={openNewQuizModal} setOpen={setOpenNewQuizModal} />
+            <NotFoundModeDialog open={openExamNotFoundModal} handleClose={handleCloseExamNotFoundModal}/>
+
         </Container>
     );
 };
