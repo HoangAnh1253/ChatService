@@ -14,7 +14,6 @@ import { useNavigate } from 'react-router-dom';
 import SocketContext from '~/Context/SocketContext';
 import { ListenType } from '~/Enums/ListenType';
 
-
 const Home = () => {
     const [openNewQuizModal, setOpenNewQuizModal] = React.useState(false);
     const [openExamNotFoundModal, setOpenExamNotFoundModal] = React.useState(false);
@@ -35,24 +34,25 @@ const Home = () => {
     };
 
     const handleJoinRoom = (e) => {
-       socketService.joinRoom(roomId);
-    }
+        if (roomId === '') return;
+        socketService.joinRoom(roomId);
+    };
 
-    React.useEffect(()=>{
-        socketService.socket.on(ListenType.ROOM_NOT_FOUND, ()=>{
+    React.useEffect(() => {
+        socketService.socket.on(ListenType.ROOM_NOT_FOUND, () => {
             handleOpenExamNotFoundModal();
-        })
+        });
     }, []);
 
-    React.useEffect(()=>{
-        socketService.socket.on(ListenType.JOIN_ROOM_SUCCESS, ()=>{
-            if(roomId) {
-                let roomIdValidation = roomId.trim()
-                roomIdValidation = roomIdValidation.split(" ").join("_");
-    
-                navigate(`/quiz/wait-room/guest/${roomIdValidation}`, {state: {mode: ""}});
+    React.useEffect(() => {
+        socketService.socket.on(ListenType.JOIN_ROOM_SUCCESS, () => {
+            if (roomId) {
+                let roomIdValidation = roomId.trim();
+                roomIdValidation = roomIdValidation.split(' ').join('_');
+
+                navigate(`/quiz/wait-room/guest/${roomIdValidation}`, { state: { mode: '' } });
             }
-        })
+        });
     }, []);
 
     React.useEffect(() => {
@@ -140,8 +140,7 @@ const Home = () => {
             </Box>
 
             <NewQuizModal open={openNewQuizModal} setOpen={setOpenNewQuizModal} />
-            <NotFoundModeDialog open={openExamNotFoundModal} handleClose={handleCloseExamNotFoundModal}/>
-
+            <NotFoundModeDialog open={openExamNotFoundModal} handleClose={handleCloseExamNotFoundModal} />
         </Container>
     );
 };
