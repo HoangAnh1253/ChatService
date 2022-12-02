@@ -1,4 +1,5 @@
 export const EmitType = {
+    INVITE_OTHER_USER: "invite-other-user",
     CREATE_ROOM: "create-room",
     START_EXAM: "start-exam",
     START_QUESTION: "start-question",

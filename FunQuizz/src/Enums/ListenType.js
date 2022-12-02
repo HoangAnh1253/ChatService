@@ -1,4 +1,5 @@
 export const ListenType = {
+    RECIEVE_INVITATION: "invite",
     EXAM_RESULT: "exam-result",
     ROOM_NOT_FOUND: "room-not-found",
     JOIN_ROOM_SUCCESS: "join-room-success",

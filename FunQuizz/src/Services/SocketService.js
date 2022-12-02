@@ -44,6 +44,11 @@ export default class SocketService {
         this.socket.emit(EmitType.START_EXAM, mode);
     }
 
+    inviteOtherUser(email)
+    {
+        this.socket.emit(EmitType.INVITE_OTHER_USER, {email: email})
+    }
+
     nextQuestion() {
         console.log('Moving to next question...');
         this.socket.emit(EmitType.START_QUESTION);
