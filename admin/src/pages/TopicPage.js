@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
+import { Navigate, Link } from 'react-router-dom';
+
 // @mui
 import {
   Card,
@@ -36,17 +38,14 @@ import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
 import USERLIST from '../_mock/user';
 import UserService from '../Services/UserService';
 import { jsonData } from './data';
+import { data } from '../_mock/topic';
 import TableModal from '../components/Modal/table';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'starttime', label: 'Start time', alignRight: false },
-  { id: 'finishtime', label: 'Finish time', alignRight: false },
-  { id: 'maxstreak', label: 'Max Correct Streak', alignRight: false },
-  { id: 'totalscore', label: 'Total score', alignRight: false },
-  { id: 'totalBonusScore', label: 'Total Bonus Score', alignRight: false },
-  { id: 'option', label: 'Option', alignRight: false },
-  { id: 'temp', alignRight: false },
+  { id: 'name', label: 'Name', alignRight: false },
+  { id: 'author', label: 'Author', alignRight: false },
+  { id: 'option', label: 'Option', alignRight: true },
 ];
 
 const styleModal = {
@@ -83,13 +82,13 @@ function applySortFilter(array, comparator, query) {
     if (order !== 0) return order;
     return a[1] - b[1];
   });
-  // if (query) {
-  //   return filter(array, (_item) => _item.firstName.toLowerCase().indexOf(query.toLowerCase()) !== -1);
-  // }
+  if (query) {
+    return filter(array, (_item) => _item.name.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+  }
   return stabilizedThis.map((el) => el[0]);
 }
 
-export default function AttemptDetailPage() {
+export default function TopicPage() {
   const [open, setOpen] = useState(null);
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
@@ -113,9 +112,9 @@ export default function AttemptDetailPage() {
   const handleCloseModalItem = () => setOpenModalItem(false);
 
   useEffect(() => {
-    setListItem(jsonData.data);
+    setListItem(data);
     console.log(listItem);
-  }, [jsonData]);
+  }, [data]);
 
   const handleOpenMenu = (event) => {
     setOpen(event.currentTarget);
@@ -133,7 +132,8 @@ export default function AttemptDetailPage() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = listItem.map((n) => n.id);
+      const newSelecteds = listItem.map((n, index) => index);
+
       setSelected(newSelecteds);
       return;
     }
@@ -185,27 +185,17 @@ export default function AttemptDetailPage() {
   return (
     <>
       <Helmet>
-        <title> Attempt Detail</title>
+        <title> Topic </title>
       </Helmet>
 
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-            Attemp Detail
+            Topic
           </Typography>
-          <Box>
-            <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenModal}>
-              Import data
-            </Button>
-            <Button
-              variant="contained"
-              startIcon={<Iconify icon="mingcute:file-export-fill" />}
-              onClick={handleOpenModal}
-              sx={{ ml: 2 }}
-            >
-              Export data
-            </Button>
-          </Box>
+          <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenModal}>
+            Create new Topic
+          </Button>
         </Stack>
 
         <Card>
@@ -224,30 +214,28 @@ export default function AttemptDetailPage() {
                   onSelectAllClick={handleSelectAllClick}
                 />
                 <TableBody>
-                  {filteredItem.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { id, startTime, finishTime, totalScore, maxCorrectStreak, totalBonusScore } = row;
-                    const selectedItem = selected.indexOf(id) !== -1;
+                  {filteredItem.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => {
+                    const { name, author, topic } = row;
+                    const selectedItem = selected.indexOf(index) !== -1;
 
                     return (
-                      <TableRow hover key={id} tabIndex={-1} role="checkbox" selected={selectedItem}>
+                      <TableRow hover key={index} tabIndex={-1} role="checkbox" selected={selectedItem}>
                         <TableCell padding="checkbox">
-                          <Checkbox checked={selectedItem} onChange={(event) => handleClick(event, id)} />
+                          <Checkbox checked={selectedItem} onChange={(event) => handleClick(event, index)} />
                         </TableCell>
 
                         <TableCell component="th" scope="row" padding="none">
                           <Stack direction="row" alignItems="center" spacing={2}>
                             <Typography variant="subtitle2" noWrap>
-                              {convertToDate(startTime)}
+                              <Link to={'/dashboard/attempt/1'}>{name}</Link>
                             </Typography>
                           </Stack>
                         </TableCell>
-                        <TableCell align="left">{convertToDate(finishTime)}</TableCell>
-                        <TableCell align="left">{maxCorrectStreak}</TableCell>
+                        <TableCell align="left">{author}</TableCell>
 
-                        <TableCell align="left">{totalScore}</TableCell>
-                        <TableCell align="left">{totalBonusScore}</TableCell>
+                        {/* <TableCell align="left">{topic}</TableCell> */}
                         <TableCell align="right">
-                          <IconButton size="large" color="inherit" onClick={handleOpenModalItem(id)}>
+                          <IconButton size="large" color="inherit" onClick={handleOpenMenu}>
                             <Iconify icon={'eva:more-vertical-fill'} />
                           </IconButton>
                         </TableCell>
@@ -348,29 +336,6 @@ export default function AttemptDetailPage() {
             <Typography id="transition-modal-description" sx={{ mt: 2 }}>
               Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
             </Typography>
-          </Box>
-        </Fade>
-      </Modal>
-
-      <Modal
-        aria-labelledby="transition-modal-title"
-        aria-describedby="transition-modal-description"
-        open={openModalItem}
-        onClose={handleCloseModalItem}
-        closeAfterTransition
-        BackdropComponent={Backdrop}
-        BackdropProps={{
-          timeout: 500,
-        }}
-      >
-        <Fade in={openModalItem}>
-          <Box sx={styleModal}>
-            <Typography id="transition-modal-title" variant="h6" component="h2">
-              Detail
-            </Typography>
-            <Box sx={{ mt: 2 }}>
-              <TableModal />
-            </Box>
           </Box>
         </Fade>
       </Modal>

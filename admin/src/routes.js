@@ -12,6 +12,7 @@ import Page404 from './pages/Page404';
 import ProductsPage from './pages/ProductsPage';
 import DashboardAppPage from './pages/DashboardAppPage';
 import ExamPage from './pages/ExamPage';
+import TopicPage from './pages/TopicPage';
 
 // ----------------------------------------------------------------------
 
@@ -25,6 +26,7 @@ export default function Router() {
         { path: 'app', element: <DashboardAppPage /> },
         { path: 'user', element: <UserPage /> },
         { path: 'exam', element: <ExamPage /> },
+        { path: 'topic', element: <TopicPage /> },
         { path: 'attempt/:id', element: <AttemptPage /> },
         { path: 'attemptdetail/:id', element: <AttemptDetailPage /> },
         { path: 'products', element: <ProductsPage /> },

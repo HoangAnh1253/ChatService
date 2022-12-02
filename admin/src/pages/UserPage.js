@@ -1,4 +1,4 @@
-import { useState,useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
@@ -21,10 +21,6 @@ import {
   IconButton,
   TableContainer,
   TablePagination,
-  Modal,
-  Fade,
-  Backdrop,
-  Box 
 } from '@mui/material';
 // components
 import Label from '../components/label';
@@ -35,7 +31,8 @@ import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
 // mock
 import USERLIST from '../_mock/user';
 import UserService from '../Services/UserService';
-
+import CreateUserModal from '../components/User/CreateUserModal';
+import UpdateUserModal from '../components/User/UpdateUserModal';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
@@ -43,7 +40,7 @@ const TABLE_HEAD = [
   { id: 'Last Name', label: 'Last Name', alignRight: false },
   { id: 'Email', label: 'Email', alignRight: false },
   { id: 'roles', label: 'Roles', alignRight: false },
-  { id: 'temp', alignRight: false}
+  { id: 'temp', alignRight: false },
 ];
 
 const style = {
@@ -102,7 +99,17 @@ export default function UserPage() {
   const handleOpenModal = () => setOpenModal(true);
   const handleCloseModal = () => setOpenModal(false);
 
+  const [openEditModal, setOpenEditModal] = useState(false);
+  const handleOpenEditModal = () => setOpenEditModal(true);
+  const handleCloseEditModal = () => setOpenEditModal(false);
+
+  const [idUserSelected, setIdUserSelected] = useState(null);
+
   useEffect(() => {
+    getAllUser();
+  }, []);
+
+  const getAllUser = () => {
     UserService.getAll(
       (response) => {
         setListUser(response.data.data);
@@ -112,7 +119,7 @@ export default function UserPage() {
         console.log(error);
       }
     );
-  }, []);
+  };
 
   const handleOpenMenu = (event) => {
     setOpen(event.currentTarget);
@@ -130,7 +137,7 @@ export default function UserPage() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = listUser.map((n) => n.name);
+      const newSelecteds = listUser.map((n, index) => index + 1);
       setSelected(newSelecteds);
       return;
     }
@@ -165,6 +172,15 @@ export default function UserPage() {
     setPage(0);
     setFilterName(event.target.value);
   };
+
+  const handleSubmit = () => {
+    getAllUser();
+    console.log('handle submit');
+  };
+
+  const handleEditModal = () => {};
+
+  const handleDeleteModal = () => {};
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - listUser.length) : 0;
 
@@ -225,9 +241,9 @@ export default function UserPage() {
                         <TableCell align="left">{email}</TableCell>
 
                         <TableCell align="left">
-                        {roles.map((role) => (
-                          <div key={role.name}>{role.name}</div>
-                        ))}
+                          {roles.map((role) => (
+                            <div key={role.name}>{role.name}</div>
+                          ))}
                         </TableCell>
                         <TableCell align="right">
                           <IconButton size="large" color="inherit" onClick={handleOpenMenu}>
@@ -302,98 +318,23 @@ export default function UserPage() {
         }}
       >
         <MenuItem>
-          <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
+          <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} onClick={handleOpenEditModal} />
           Edit
         </MenuItem>
 
         <MenuItem sx={{ color: 'error.main' }}>
-          <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} />
+          <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} onClick={handleDeleteModal} />
           Delete
         </MenuItem>
       </Popover>
-      <Modal
-        aria-labelledby="transition-modal-title"
-        aria-describedby="transition-modal-description"
-        open={openModal}
-        onClose={handleCloseModal}
-        closeAfterTransition
-        BackdropComponent={Backdrop}
-        BackdropProps={{
-          timeout: 500,
-        }}
-      >
-        <Fade in={openModal}>
-        {/* <Box component="form" sx={containerStyle}>
-                <img src={process.env.PUBLIC_URL + '/banner_form.png'} width="100%" />
 
-                <Typography sx={labelStyle}> Email </Typography>
-                <TextField
-                    placeholder="Email Address"
-                    variant="outlined"
-                    size="small"
-                    name="email"
-                    fullWidth={true}
-                    helperText={'email' in error ? error.email : ''}
-                    onChange={handleEmailChange}
-                    required
-                    autoFocus
-                    error={'email' in error}
-                />
+      <CreateUserModal openModal={openModal} handleCloseModal={handleCloseModal} handleSubmit={handleSubmit} />
 
-                <Typography sx={labelStyle} marginTop={2}>
-                    Password
-                </Typography>
-                <TextField
-                    variant="outlined"
-                    size="small"
-                    type="password"
-                    name="password"
-                    placeholder="Password"
-                    fullWidth={true}
-                    helperText={'password' in error ? error.password : ''}
-                    onChange={handlePasswordChange}
-                    error={'password' in error}
-                />
-
-                <Button variant="text" color="primary" sx={textButtonStyle} disableElevation>
-                    Forgot password?
-                </Button>
-
-                <Button
-                    variant="contained"
-                    fullWidth={true}
-                    color="primary"
-                    sx={signUpButtonStyle}
-                    onClick={onSubmit}
-                    disableElevation
-                    disabled={isFormNotValid()}
-                >
-                    Log in
-                </Button>
-
-                <Divider style={{ width: '100%' }} />
-
-                <Grid container direction="row" justifyContent="center" alignItems="center" marginTop={4}>
-                    <Typography sx={noAccountTextStyle}>Don't have an account?</Typography>
-
-                    <Button
-                        variant="outlined"
-                        color="primary"
-                        size="small"
-                        sx={{ marginLeft: 2 }}
-                        disableElevation
-                        onClick={() => {
-                            handleClose();
-                            handleOpenSignUpModal();
-                        }}
-                    >
-                        Register
-                    </Button>
-                </Grid>
-            </Box> */}
-        </Fade>
-      </Modal>
-
+      <UpdateUserModal
+        openEditModal={openEditModal}
+        handleClose={handleCloseEditModal}
+        idUserSelected={idUserSelected}
+      />
     </>
   );
 }

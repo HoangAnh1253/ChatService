@@ -3,7 +3,6 @@ import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
 import { Navigate, Link } from 'react-router-dom';
-
 // @mui
 import {
   Card,
@@ -32,19 +31,24 @@ import {
 import Label from '../components/label';
 import Iconify from '../components/iconify';
 import Scrollbar from '../components/scrollbar';
+import ExamModal from '../components/Exam/ExamModal';
+
 // sections
 import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
 // mock
 import USERLIST from '../_mock/user';
-import UserService from '../Services/UserService';
 import { jsonData } from './data';
 import { data } from '../_mock/exam';
+import UserService from '../Services/UserService';
 import TableModal from '../components/Modal/table';
+import ExamService from '../Services/ExamService';
+import TopicService from '../Services/TopicService';
+
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
   { id: 'name', label: 'Name', alignRight: false },
-  { id: 'author', label: 'Author', alignRight: false },
+  { id: 'authorEmail', label: 'Author', alignRight: false },
   { id: 'topic', label: 'Topic', alignRight: false },
   { id: 'option', label: 'Option', alignRight: true },
 ];
@@ -102,12 +106,74 @@ export default function ExamPage() {
   const [openModal, setOpenModal] = useState(false);
   const handleOpenModal = () => setOpenModal(true);
   const handleCloseModal = () => setOpenModal(false);
-
+  const [topic, setTopic] = useState([]);
+  const [exam, setExam] = useState([]);
+  const [user, setUser] = useState([]);
   const [modalItemSelected, setModalItemSelected] = useState(null);
   const [openModalItem, setOpenModalItem] = useState(false);
+  let isEdit = false;
   const handleOpenModalItem = (id) => (e) => {
     setOpenModalItem(true);
     setModalItemSelected(id);
+  };
+
+  useEffect(() => {
+    getAllExam();
+    getAllTopic();
+    getAllUser();
+    console.log('get all exam');
+  }, []);
+
+  const getAllExam = () => {
+    ExamService.get(
+      (response) => {
+        setListItem(response.data.data);
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  };
+
+  const getAllUser = () => {
+    UserService.getAll(
+      (response) => {
+        setUser(response.data.data);
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  };
+
+  const getAllTopic = () => {
+    TopicService.get(
+      (response) => {
+        setTopic(response.data.data);
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  };
+
+  const handleEdit = () => {
+    setOpenModal(true);
+  };
+
+  const handleDelete = () => {
+    console.log('delete');
+    ExamService.delete(
+      modalItemSelected,
+      () => {
+        getAllExam();
+      },
+      () => {}
+    );
+  };
+  const handleSubmit = () => {
+    getAllExam();
+    console.log('handle submit');
   };
 
   const handleCloseModalItem = () => setOpenModalItem(false);
@@ -117,8 +183,10 @@ export default function ExamPage() {
     console.log(listItem);
   }, [data]);
 
-  const handleOpenMenu = (event) => {
+  const handleOpenMenu = (id) => (event) => {
     setOpen(event.currentTarget);
+    isEdit = true;
+    setModalItemSelected(id);
   };
 
   const handleCloseMenu = () => {
@@ -133,7 +201,7 @@ export default function ExamPage() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = listItem.map((n) => n.name);
+      const newSelecteds = listItem.map((n, index) => index);
       setSelected(newSelecteds);
       return;
     }
@@ -215,7 +283,7 @@ export default function ExamPage() {
                 />
                 <TableBody>
                   {filteredItem.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => {
-                    const { name, author, topic } = row;
+                    const { name, authorEmail, topic } = row;
                     const selectedItem = selected.indexOf(index) !== -1;
 
                     return (
@@ -231,11 +299,11 @@ export default function ExamPage() {
                             </Typography>
                           </Stack>
                         </TableCell>
-                        <TableCell align="left">{author}</TableCell>
+                        <TableCell align="left">{authorEmail}</TableCell>
 
                         <TableCell align="left">{topic}</TableCell>
                         <TableCell align="right">
-                          <IconButton size="large" color="inherit" onClick={handleOpenMenu}>
+                          <IconButton size="large" color="inherit" onClick={handleOpenMenu(index)}>
                             <Iconify icon={'eva:more-vertical-fill'} />
                           </IconButton>
                         </TableCell>
@@ -307,38 +375,30 @@ export default function ExamPage() {
         }}
       >
         <MenuItem>
-          <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
-          Edit
+          <IconButton size="small" onClick={handleEdit}>
+            <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
+            Edit
+          </IconButton>
         </MenuItem>
 
         <MenuItem sx={{ color: 'error.main' }}>
-          <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} />
-          Delete
+          <IconButton size="small" onClick={handleDelete}>
+            <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} />
+            Delete
+          </IconButton>
         </MenuItem>
       </Popover>
 
-      <Modal
-        aria-labelledby="transition-modal-title"
-        aria-describedby="transition-modal-description"
-        open={openModal}
-        onClose={handleCloseModal}
-        closeAfterTransition
-        BackdropComponent={Backdrop}
-        BackdropProps={{
-          timeout: 500,
-        }}
-      >
-        <Fade in={openModal}>
-          <Box sx={styleModal}>
-            <Typography id="transition-modal-title" variant="h6" component="h2">
-              Text in a modal
-            </Typography>
-            <Typography id="transition-modal-description" sx={{ mt: 2 }}>
-              Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-            </Typography>
-          </Box>
-        </Fade>
-      </Modal>
+      <ExamModal
+        openModal={openModal}
+        handleCloseModal={handleCloseModal}
+        handleSubmit={handleSubmit}
+        topics={topic}
+        users={user}
+        isEdit={isEdit}
+        listItem={listItem}
+        index={modalItemSelected}
+      />
     </>
   );
 }

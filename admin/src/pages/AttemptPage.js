@@ -83,9 +83,9 @@ function applySortFilter(array, comparator, query) {
     if (order !== 0) return order;
     return a[1] - b[1];
   });
-  if (query) {
-    return filter(array, (_user) => _user.firstName.toLowerCase().indexOf(query.toLowerCase()) !== -1);
-  }
+  // if (query) {
+  //   return filter(array, (_item) => _item.firstName.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+  // }
   return stabilizedThis.map((el) => el[0]);
 }
 
@@ -133,7 +133,7 @@ export default function AttemptPage() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = listItem.map((n) => n.name);
+      const newSelecteds = listItem.map((n, index) => index);
       setSelected(newSelecteds);
       return;
     }
@@ -165,7 +165,7 @@ export default function AttemptPage() {
   };
 
   const handleFilterByName = (event) => {
-    setPage(0);
+    // setPage(0);
     setFilterName(event.target.value);
   };
 

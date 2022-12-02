@@ -36,6 +36,17 @@ class CredentialService {
       onError(error);
     }
   }
+
+  async update(id, onSuccess, onError) {
+    try {
+      const response = await axios.patch(`${this.BASE_URL}/User/${id}`, {
+        headers: this.ACCESS_CONTROL_HEADER,
+      });
+      onSuccess(response);
+    } catch (error) {
+      onError(error);
+    }
+  }
 }
 
 export default new CredentialService();
