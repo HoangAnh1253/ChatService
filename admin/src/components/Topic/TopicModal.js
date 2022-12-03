@@ -97,7 +97,7 @@ const TopicModal = (props) => {
               Close
             </Button>
             <Button variant="contained" color="primary" sx={signUpButtonStyle} onClick={onSubmit} disableElevation>
-              {index !== -1 ? 'Update exam' : 'Create exam'}
+              {index !== -1 ? 'Update topic' : 'Create topic'}
             </Button>
           </Box>
         </Box>

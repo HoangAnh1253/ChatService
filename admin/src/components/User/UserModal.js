@@ -13,7 +13,7 @@ import Alert from '@mui/material/Alert';
 import CredentialService from '../../Services/CredentialService';
 import UserService from '../../Services/UserService';
 
-const CreateUserModal = (props) => {
+const UserModal = (props) => {
   const { openModal, handleCloseModal, handleSubmit, selectedUser, listUser } = props;
   const PASSWORD_NOT_MATCH = { confirmPassword: "Password doesn't match" };
   const [firstName, setFirstName] = React.useState('');
@@ -197,7 +197,7 @@ const CreateUserModal = (props) => {
               Close
             </Button>
             <Button variant="contained" color="primary" sx={signUpButtonStyle} onClick={onSubmit} disableElevation>
-              Create user
+              {selectedUser !== -1 ? 'Update user' : 'Create user'}
             </Button>
           </Box>
         </Box>
@@ -234,4 +234,4 @@ const signUpButtonStyle = {
   marginTop: 3,
 };
 
-export default CreateUserModal;
+export default UserModal;

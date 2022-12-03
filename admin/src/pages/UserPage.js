@@ -32,8 +32,7 @@ import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
 // mock
 import USERLIST from '../_mock/user';
 import UserService from '../Services/UserService';
-import CreateUserModal from '../components/User/CreateUserModal';
-import UpdateUserModal from '../components/User/UpdateUserModal';
+import UserModal from '../components/User/UserModal';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
@@ -99,8 +98,8 @@ export default function UserPage() {
   const [openModal, setOpenModal] = useState(false);
   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
   const handleOpenModal = () => {
-    setSelectedUser(-1);
     setOpenModal(true);
+    setSelectedUser(-1);
   };
   const handleCloseModal = () => setOpenModal(false);
 
@@ -361,19 +360,13 @@ export default function UserPage() {
         </Button>
       </Popover>
 
-      <CreateUserModal
+      <UserModal
         selectedUser={selectedUser}
         openModal={openModal}
         handleCloseModal={handleCloseModal}
         handleSubmit={handleSubmit}
         listUser={listUser}
       />
-      {/* 
-      <UpdateUserModal
-        openEditModal={openEditModal}
-        handleClose={handleCloseEditModal}
-        idUserSelected={idUserSelected}
-      /> */}
     </>
   );
 }

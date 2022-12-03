@@ -374,19 +374,17 @@ export default function ExamPage() {
           },
         }}
       >
-        <MenuItem>
-          <IconButton size="small" onClick={handleEdit}>
-            <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
-            Edit
-          </IconButton>
-        </MenuItem>
-
-        <MenuItem sx={{ color: 'error.main' }}>
-          <IconButton size="small" onClick={handleDelete}>
-            <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} />
-            Delete
-          </IconButton>
-        </MenuItem>
+        <Button onClick={handleEdit} startIcon={<Iconify icon="eva:edit-fill" />} sx={{ mr: 2 }} fullWidth>
+          Edit
+        </Button>
+        <Button
+          onClick={handleDelete}
+          startIcon={<Iconify icon="eva:trash-2-outline" />}
+          sx={{ mr: 2, color: 'error.main' }}
+          fullWidth
+        >
+          Delete
+        </Button>
       </Popover>
 
       <ExamModal
