@@ -21,6 +21,7 @@ import {
   IconButton,
   TableContainer,
   TablePagination,
+  Alert,
 } from '@mui/material';
 // components
 import Label from '../components/label';
@@ -94,9 +95,13 @@ export default function UserPage() {
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [listUser, setListUser] = useState([]);
-
+  const [selectedUser, setSelectedUser] = useState(-1);
   const [openModal, setOpenModal] = useState(false);
-  const handleOpenModal = () => setOpenModal(true);
+  const [showSuccessAlert, setShowSuccessAlert] = useState(false);
+  const handleOpenModal = () => {
+    setSelectedUser(-1);
+    setOpenModal(true);
+  };
   const handleCloseModal = () => setOpenModal(false);
 
   const [openEditModal, setOpenEditModal] = useState(false);
@@ -105,6 +110,11 @@ export default function UserPage() {
 
   const [idUserSelected, setIdUserSelected] = useState(null);
 
+  useEffect(() => {
+    setTimeout(() => {
+      setShowSuccessAlert(false);
+    }, 3000);
+  }, [showSuccessAlert]);
   useEffect(() => {
     getAllUser();
   }, []);
@@ -121,8 +131,9 @@ export default function UserPage() {
     );
   };
 
-  const handleOpenMenu = (event) => {
+  const handleOpenMenu = (id) => (event) => {
     setOpen(event.currentTarget);
+    setSelectedUser(id);
   };
 
   const handleCloseMenu = () => {
@@ -178,9 +189,24 @@ export default function UserPage() {
     console.log('handle submit');
   };
 
-  const handleEditModal = () => {};
+  const handleEditModal = () => {
+    setOpenModal(true);
+  };
 
-  const handleDeleteModal = () => {};
+  const handleDeleteModal = () => {
+    UserService.delete(
+      selectedUser,
+      (response) => {
+        setShowSuccessAlert(true);
+        const index = listUser.findIndex((user) => user.id === selectedUser);
+        listUser.splice(index, 1);
+        handleCloseMenu();
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  };
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - listUser.length) : 0;
 
@@ -202,6 +228,11 @@ export default function UserPage() {
             New User
           </Button>
         </Stack>
+        {showSuccessAlert && (
+          <Alert severity="success" color="info" sx={{ mb: 2 }}>
+            Success
+          </Alert>
+        )}
 
         <Card>
           <UserListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
@@ -246,7 +277,7 @@ export default function UserPage() {
                           ))}
                         </TableCell>
                         <TableCell align="right">
-                          <IconButton size="large" color="inherit" onClick={handleOpenMenu}>
+                          <IconButton size="large" color="inherit" onClick={handleOpenMenu(id)}>
                             <Iconify icon={'eva:more-vertical-fill'} />
                           </IconButton>
                         </TableCell>
@@ -317,24 +348,32 @@ export default function UserPage() {
           },
         }}
       >
-        <MenuItem>
-          <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} onClick={handleOpenEditModal} />
+        <Button onClick={handleEditModal} startIcon={<Iconify icon="eva:edit-fill" />} sx={{ mr: 2 }} fullWidth>
           Edit
-        </MenuItem>
-
-        <MenuItem sx={{ color: 'error.main' }}>
-          <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} onClick={handleDeleteModal} />
+        </Button>
+        <Button
+          onClick={handleDeleteModal}
+          startIcon={<Iconify icon="eva:trash-2-outline" />}
+          sx={{ mr: 2, color: 'error.main' }}
+          fullWidth
+        >
           Delete
-        </MenuItem>
+        </Button>
       </Popover>
 
-      <CreateUserModal openModal={openModal} handleCloseModal={handleCloseModal} handleSubmit={handleSubmit} />
-
+      <CreateUserModal
+        selectedUser={selectedUser}
+        openModal={openModal}
+        handleCloseModal={handleCloseModal}
+        handleSubmit={handleSubmit}
+        listUser={listUser}
+      />
+      {/* 
       <UpdateUserModal
         openEditModal={openEditModal}
         handleClose={handleCloseEditModal}
         idUserSelected={idUserSelected}
-      />
+      /> */}
     </>
   );
 }

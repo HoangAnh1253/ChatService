@@ -10,14 +10,14 @@ import Fade from '@mui/material/Fade';
 import Backdrop from '@mui/material/Backdrop';
 import Alert from '@mui/material/Alert';
 
-// import LockOpenIcon from '@mui/icons-material/LockOpen';
-import Avatar from '@mui/material/Avatar';
 import CredentialService from '../../Services/CredentialService';
+import UserService from '../../Services/UserService';
 
 const CreateUserModal = (props) => {
-  const { openModal, handleCloseModal, handleSubmit } = props;
+  const { openModal, handleCloseModal, handleSubmit, selectedUser, listUser } = props;
   const PASSWORD_NOT_MATCH = { confirmPassword: "Password doesn't match" };
-
+  const [firstName, setFirstName] = React.useState('');
+  const [lastName, setLastName] = React.useState('');
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [confirmPassword, setConfirmPassword] = React.useState('');
@@ -26,6 +26,8 @@ const CreateUserModal = (props) => {
 
   const handleEmailChange = (e) => setEmail(e.target.value);
   const handlePasswordChange = (e) => setPassword(e.target.value);
+  const handleFirstNameChange = (e) => setFirstName(e.target.value);
+  const handleLastNameChange = (e) => setLastName(e.target.value);
   const isFormNotValid = () => email === '' || password === '' || confirmPassword === '' || 'confirmPassword' in error;
 
   const handleConfirmPasswordChange = (e) => {
@@ -34,8 +36,28 @@ const CreateUserModal = (props) => {
   };
 
   const onSubmit = (_) => {
+    console.log({ selectedUser });
+    if (selectedUser !== -1) {
+      UserService.update(
+        selectedUser,
+        email,
+        firstName,
+        lastName,
+        (response) => {
+          setShowSuccessAlert(true);
+          handleSubmit();
+        },
+        (error) => {
+          console.log(error.response);
+          setError(error.response.data);
+        }
+      );
+      return;
+    }
     CredentialService.register(
       email,
+      firstName,
+      lastName,
       password,
       (response) => {
         clearText();
@@ -57,6 +79,19 @@ const CreateUserModal = (props) => {
     clearText();
     setError({});
     setShowSuccessAlert(false);
+    if (selectedUser !== -1) {
+      const user = listUser.find((element) => element.id === selectedUser);
+      console.log('set states');
+      if (user.firstName !== null) {
+        setFirstName(user.firstName);
+      }
+      if (user.lastName !== null) {
+        setLastName(user.lastName);
+      }
+      if (user.email !== null) {
+        setEmail(user.email);
+      }
+    }
   }, [openModal]);
 
   const checkPass = () => {
@@ -88,12 +123,33 @@ const CreateUserModal = (props) => {
         <Box component="form" sx={containerStyle}>
           {showSuccessAlert && (
             <Alert severity="success" color="info" sx={{ mb: 2 }}>
-              Your account has been created!
+              Success
             </Alert>
           )}
+          <Typography variant="h3">{selectedUser === -1 ? 'Create user' : 'Update user'}</Typography>
+          <Typography sx={labelStyle}> Firstname </Typography>
+          <TextField
+            variant="outlined"
+            size="small"
+            name="firstname"
+            fullWidth
+            autoFocus
+            onChange={handleFirstNameChange}
+            value={firstName}
+          />
+
+          <Typography sx={labelStyle}> Lastname </Typography>
+          <TextField
+            variant="outlined"
+            size="small"
+            name="lastname"
+            fullWidth
+            autoFocus
+            onChange={handleLastNameChange}
+            value={lastName}
+          />
           <Typography sx={labelStyle}> Email </Typography>
           <TextField
-            placeholder="Email"
             variant="outlined"
             size="small"
             name="email"
@@ -103,35 +159,38 @@ const CreateUserModal = (props) => {
             helperText={'email' in error ? error.email : ''}
             error={'email' in error}
             onChange={handleEmailChange}
+            value={email}
           />
+          {selectedUser === -1 && (
+            <>
+              <Typography sx={labelStyle}> Password </Typography>
+              <TextField
+                variant="outlined"
+                size="small"
+                type="password"
+                name="password"
+                fullWidth
+                required
+                autoFocus
+                onChange={handlePasswordChange}
+              />
 
-          <Typography sx={labelStyle}> Password </Typography>
-          <TextField
-            placeholder="Ex: Nlh0@ng4nH"
-            variant="outlined"
-            size="small"
-            type="password"
-            name="password"
-            fullWidth
-            required
-            autoFocus
-            onChange={handlePasswordChange}
-          />
-
-          <Typography sx={labelStyle} marginTop={2}>
-            Confirm password
-          </Typography>
-          <TextField
-            variant="outlined"
-            size="small"
-            type="password"
-            fullWidth
-            name="confirmPassword"
-            value={confirmPassword}
-            onChange={handleConfirmPasswordChange}
-            helperText={'confirmPassword' in error ? error.confirmPassword : ''}
-            error={'confirmPassword' in error}
-          />
+              <Typography sx={labelStyle} marginTop={2}>
+                Confirm password
+              </Typography>
+              <TextField
+                variant="outlined"
+                size="small"
+                type="password"
+                fullWidth
+                name="confirmPassword"
+                value={confirmPassword}
+                onChange={handleConfirmPasswordChange}
+                helperText={'confirmPassword' in error ? error.confirmPassword : ''}
+                error={'confirmPassword' in error}
+              />
+            </>
+          )}
 
           <Box sx={{ display: 'flex', justifyContent: 'space-around' }}>
             <Button variant="contained" color="info" sx={signUpButtonStyle} onClick={handleCloseModal} disableElevation>

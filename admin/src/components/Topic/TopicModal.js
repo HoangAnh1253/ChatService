@@ -11,30 +11,20 @@ import Typography from '@mui/material/Typography';
 import Fade from '@mui/material/Fade';
 import Backdrop from '@mui/material/Backdrop';
 import Alert from '@mui/material/Alert';
-import ExamService from '../../Services/ExamService';
+import TopicService from '../../Services/TopicService';
 
-const ExamModal = (props) => {
-  const { openModal, handleCloseModal, handleSubmit, topics, users, isEdit, listItem, index } = props;
-
-  const [name, setName] = React.useState('');
-  const [author, setAuthor] = React.useState('');
-  const [topic, setTopic] = React.useState('');
+const TopicModal = (props) => {
+  const { openModal, handleCloseModal, handleSubmit, listItem, index, name, setName } = props;
   const [error, setError] = React.useState({});
   const [showSuccessAlert, setShowSuccessAlert] = React.useState(false);
 
   const handleNameChange = (e) => setName(e.target.value);
-  const handleAuthorChange = (e) => {
-    setAuthor(e.target.value);
-  };
-  const handleTopicChange = (e) => setTopic(e.target.value);
-  const isFormNotValid = () => name === '' || author === '' || topic === '';
 
   const onSubmit = (_) => {
     if (index !== -1) {
-      ExamService.patch(
+      TopicService.patch(
         name,
-        author,
-        topic,
+        listItem[index].id,
         (response) => {
           setShowSuccessAlert(true);
           handleSubmit();
@@ -46,14 +36,11 @@ const ExamModal = (props) => {
       );
       return;
     }
-    ExamService.create(
+    TopicService.create(
       name,
-      author,
-      topic,
       (response) => {
         setShowSuccessAlert(true);
         handleSubmit();
-        clearText();
       },
       (error) => {
         console.log(error.response);
@@ -63,28 +50,13 @@ const ExamModal = (props) => {
   };
 
   useEffect(() => {
-    clearText();
     setError({});
     setShowSuccessAlert(false);
-    // if (index !== -1) {
-    //   console.log('edit');
-    //   console.log(listItem[index]);
-    //   setName(listItem[index].name);
-    //   setAuthor(listItem[index].authorEmail);
-    //   setTopic(listItem[index].topic);
-    // }
-    console.log(index);
   }, [openModal]);
 
   function clearText() {
     setName('');
-    setAuthor('');
-    setTopic('');
   }
-
-  const specificTopic = () => {
-    // topics.filter(e => {e})
-  };
 
   return (
     <Modal
@@ -118,49 +90,14 @@ const ExamModal = (props) => {
             error={'name' in error}
             onChange={handleNameChange}
             value={name}
-            type="text"
           />
-          <FormControl fullWidth>
-            <Typography sx={labelStyle}> Author </Typography>
-            <Select
-              labelId="form-select"
-              id="demo-simple-select"
-              value={author}
-              label="Name"
-              onChange={handleAuthorChange}
-              defaultValue=""
-            >
-              {users.map((user) => (
-                <MenuItem value={user.email} key={user.email}>
-                  {user.firstName}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          <FormControl fullWidth>
-            <Typography sx={labelStyle}> Topic </Typography>
-            <Select
-              labelId="form-select"
-              id="demo-simple-select2"
-              value={specificTopic}
-              label="Name"
-              onChange={handleTopicChange}
-              defaultValue=""
-            >
-              {topics.map((topic) => (
-                <MenuItem value={topic.id} key={topic.id}>
-                  {topic.name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
 
           <Box sx={{ display: 'flex', justifyContent: 'space-around' }}>
             <Button variant="contained" color="info" sx={signUpButtonStyle} onClick={handleCloseModal} disableElevation>
               Close
             </Button>
             <Button variant="contained" color="primary" sx={signUpButtonStyle} onClick={onSubmit} disableElevation>
-              Create exam
+              {index !== -1 ? 'Update exam' : 'Create exam'}
             </Button>
           </Box>
         </Box>
@@ -197,4 +134,4 @@ const signUpButtonStyle = {
   marginTop: 3,
 };
 
-export default ExamModal;
+export default TopicModal;

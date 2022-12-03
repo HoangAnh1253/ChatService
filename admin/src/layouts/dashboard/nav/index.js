@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { useLocation } from 'react-router-dom';
 // @mui
 import { styled, alpha } from '@mui/material/styles';
-import { Box, Link, Button, Drawer, Typography, Avatar, Stack,SvgIcon } from '@mui/material';
+import { Box, Link, Button, Drawer, Typography, Avatar, Stack, SvgIcon } from '@mui/material';
 // mock
 // import account from '../../../_mock/account';
 // hooks
@@ -67,7 +67,7 @@ export default function Nav({ openNav, onCloseNav }) {
               </Typography>
 
               <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                {user.email}
+                {user.lastName} {user.firstName}
               </Typography>
             </Box>
           </StyledAccount>

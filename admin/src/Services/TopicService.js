@@ -41,7 +41,7 @@ class TopicService {
 
   async patch(name, topicID, onSuccess, onError) {
     try {
-      const response = await axios.patch(`${this.BASE_URL}/topic/${topicID}`, {
+      const response = await axios.patch(`${this.BASE_URL}/${topicID}`, {
         headers: this.ACCESS_CONTROL_HEADER,
         name,
       });

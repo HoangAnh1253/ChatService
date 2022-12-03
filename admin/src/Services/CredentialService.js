@@ -24,10 +24,12 @@ class CredentialService {
     }
   }
 
-  async register(email, password, onSuccess, onError) {
+  async register(email, firstName, lastName, password, onSuccess, onError) {
     try {
       const response = await axios.post(`${this.BASE_URL}/register`, {
         headers: this.ACCESS_CONTROL_HEADER,
+        firstName,
+        lastName,
         email,
         password,
       });

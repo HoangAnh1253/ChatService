@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
@@ -40,11 +40,13 @@ import UserService from '../Services/UserService';
 import { jsonData } from './data';
 import { data } from '../_mock/topic';
 import TableModal from '../components/Modal/table';
+import TopicModal from '../components/Topic/TopicModal';
+import TopicService from '../Services/TopicService';
+
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
   { id: 'name', label: 'Name', alignRight: false },
-  { id: 'author', label: 'Author', alignRight: false },
   { id: 'option', label: 'Option', alignRight: true },
 ];
 
@@ -97,27 +99,64 @@ export default function TopicPage() {
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [listItem, setListItem] = useState([]);
-
+  const [ID, setID] = useState(null);
+  const [name, setName] = useState('');
   const [openModal, setOpenModal] = useState(false);
-  const handleOpenModal = () => setOpenModal(true);
+  const handleOpenModal = () => {
+    setOpenModal(true);
+  };
   const handleCloseModal = () => setOpenModal(false);
-
-  const [modalItemSelected, setModalItemSelected] = useState(null);
+  const [modalItemSelected, setModalItemSelected] = useState(-1);
   const [openModalItem, setOpenModalItem] = useState(false);
-  const handleOpenModalItem = (id) => (e) => {
+  const handleOpenModalItem = (index, id1) => (e) => {
     setOpenModalItem(true);
-    setModalItemSelected(id);
+    setModalItemSelected(index);
+    setID(id1);
+  };
+  useEffect(() => {
+    getAllTopic();
+    console.log('get all topic');
+  }, []);
+
+  const getAllTopic = () => {
+    TopicService.get(
+      (response) => {
+        setListItem(response.data.data);
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  };
+  const handleEdit = () => {
+    setOpenModal(true);
   };
 
-  const handleCloseModalItem = () => setOpenModalItem(false);
+  const handleDelete = () => {
+    console.log('delete');
+    TopicService.delete(
+      ID,
+      () => {
+        getAllTopic();
+      },
+      () => {}
+    );
+  };
+
+  const handleSubmit = () => {
+    getAllTopic();
+  };
 
   useEffect(() => {
     setListItem(data);
-    console.log(listItem);
   }, [data]);
 
-  const handleOpenMenu = (event) => {
+  const handleOpenMenu = (index, id1) => (event) => {
     setOpen(event.currentTarget);
+    setModalItemSelected(index);
+    const temp = listItem.find((element) => element.id === id1);
+    setName(temp.name);
+    setID(id1);
   };
 
   const handleCloseMenu = () => {
@@ -133,7 +172,6 @@ export default function TopicPage() {
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
       const newSelecteds = listItem.map((n, index) => index);
-
       setSelected(newSelecteds);
       return;
     }
@@ -174,14 +212,6 @@ export default function TopicPage() {
   const filteredItem = applySortFilter(listItem, getComparator(order, orderBy), filterName);
   const isNotFound = !filteredItem.length && !!filterName;
 
-  const convertToDate = (string) => {
-    const date = new Date(string);
-    const dateString = `${date.getUTCFullYear()}/${
-      date.getUTCMonth() + 1
-    }/${date.getUTCDate()} ${date.getUTCHours()}:${date.getUTCMinutes()}:${date.getUTCSeconds()}`;
-    return date.toLocaleString();
-  };
-
   return (
     <>
       <Helmet>
@@ -215,7 +245,7 @@ export default function TopicPage() {
                 />
                 <TableBody>
                   {filteredItem.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => {
-                    const { name, author, topic } = row;
+                    const { id, name } = row;
                     const selectedItem = selected.indexOf(index) !== -1;
 
                     return (
@@ -231,11 +261,9 @@ export default function TopicPage() {
                             </Typography>
                           </Stack>
                         </TableCell>
-                        <TableCell align="left">{author}</TableCell>
 
-                        {/* <TableCell align="left">{topic}</TableCell> */}
                         <TableCell align="right">
-                          <IconButton size="large" color="inherit" onClick={handleOpenMenu}>
+                          <IconButton size="large" color="inherit" onClick={handleOpenMenu(index, id)}>
                             <Iconify icon={'eva:more-vertical-fill'} />
                           </IconButton>
                         </TableCell>
@@ -307,38 +335,29 @@ export default function TopicPage() {
         }}
       >
         <MenuItem>
-          <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
-          Edit
+          <IconButton size="small" onClick={handleEdit}>
+            <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
+            Edit
+          </IconButton>
         </MenuItem>
 
         <MenuItem sx={{ color: 'error.main' }}>
-          <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} />
-          Delete
+          <IconButton size="small" onClick={handleDelete}>
+            <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} />
+            Delete
+          </IconButton>
         </MenuItem>
       </Popover>
 
-      <Modal
-        aria-labelledby="transition-modal-title"
-        aria-describedby="transition-modal-description"
-        open={openModal}
-        onClose={handleCloseModal}
-        closeAfterTransition
-        BackdropComponent={Backdrop}
-        BackdropProps={{
-          timeout: 500,
-        }}
-      >
-        <Fade in={openModal}>
-          <Box sx={styleModal}>
-            <Typography id="transition-modal-title" variant="h6" component="h2">
-              Text in a modal
-            </Typography>
-            <Typography id="transition-modal-description" sx={{ mt: 2 }}>
-              Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-            </Typography>
-          </Box>
-        </Fade>
-      </Modal>
+      <TopicModal
+        openModal={openModal}
+        handleCloseModal={handleCloseModal}
+        handleSubmit={handleSubmit}
+        listItem={listItem}
+        index={modalItemSelected}
+        name={name}
+        setName={setName}
+      />
     </>
   );
 }

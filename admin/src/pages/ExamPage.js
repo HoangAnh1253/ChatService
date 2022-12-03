@@ -109,7 +109,7 @@ export default function ExamPage() {
   const [topic, setTopic] = useState([]);
   const [exam, setExam] = useState([]);
   const [user, setUser] = useState([]);
-  const [modalItemSelected, setModalItemSelected] = useState(null);
+  const [modalItemSelected, setModalItemSelected] = useState(-1);
   const [openModalItem, setOpenModalItem] = useState(false);
   let isEdit = false;
   const handleOpenModalItem = (id) => (e) => {
