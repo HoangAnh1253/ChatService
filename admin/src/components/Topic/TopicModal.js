@@ -39,6 +39,7 @@ const TopicModal = (props) => {
     TopicService.create(
       name,
       (response) => {
+        clearText();
         setShowSuccessAlert(true);
         handleSubmit();
       },

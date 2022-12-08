@@ -37,7 +37,7 @@ import ExamModal from '../components/Exam/ExamModal';
 import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
 // mock
 import USERLIST from '../_mock/user';
-import { jsonData } from './data';
+import { jsonData } from '../_mock/data';
 import { data } from '../_mock/exam';
 import UserService from '../Services/UserService';
 import TableModal from '../components/Modal/table';

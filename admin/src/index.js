@@ -1,6 +1,7 @@
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
+import { ConfirmProvider } from 'material-ui-confirm';
 
 //
 import App from './App';
@@ -16,7 +17,9 @@ root.render(
   <UserContextProvider>
     <HelmetProvider>
       <BrowserRouter>
-        <App />
+        <ConfirmProvider>
+          <App />
+        </ConfirmProvider>
       </BrowserRouter>
     </HelmetProvider>
   </UserContextProvider>

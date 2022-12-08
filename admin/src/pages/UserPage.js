@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
-import { sentenceCase } from 'change-case';
+import { useConfirm } from 'material-ui-confirm';
 // @mui
 import {
   Card,
@@ -24,36 +24,30 @@ import {
   Alert,
 } from '@mui/material';
 // components
-import Label from '../components/label';
 import Iconify from '../components/iconify';
 import Scrollbar from '../components/scrollbar';
 // sections
 import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
-// mock
-import USERLIST from '../_mock/user';
 import UserService from '../Services/UserService';
 import UserModal from '../components/User/UserModal';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'First name', label: 'First Name', alignRight: false },
-  { id: 'Last Name', label: 'Last Name', alignRight: false },
-  { id: 'Email', label: 'Email', alignRight: false },
+  { id: 'firstName', label: 'First Name', alignRight: false },
+  { id: 'lastName', label: 'Last Name', alignRight: false },
+  { id: 'email', label: 'Email', alignRight: false },
   { id: 'roles', label: 'Roles', alignRight: false },
   { id: 'temp', alignRight: false },
 ];
 
-const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 400,
-  bgcolor: 'background.paper',
-  border: '2px solid #000',
-  boxShadow: 24,
-  p: 4,
+const dialogProps = {
+  title: 'Confirm delete',
+  content: 'Delete user',
+  titleProps: { sx: { fontWeight: 700 } },
+  confirmationButtonProps: { color: 'error', variant: 'outlined', sx: { fontWeight: 700 } },
+  cancellationButtonProps: { variant: 'outlined', sx: { fontWeight: 700 } },
 };
+
 // ----------------------------------------------------------------------
 
 function descendingComparator(a, b, orderBy) {
@@ -80,7 +74,9 @@ function applySortFilter(array, comparator, query) {
     return a[1] - b[1];
   });
   if (query) {
-    return filter(array, (_user) => _user.firstName.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+    return filter(array, (_user) => {
+      return _user.firstName !== null && _user.email.toLowerCase().indexOf(query.toLowerCase()) !== -1;
+    });
   }
   return stabilizedThis.map((el) => el[0]);
 }
@@ -97,23 +93,19 @@ export default function UserPage() {
   const [selectedUser, setSelectedUser] = useState(-1);
   const [openModal, setOpenModal] = useState(false);
   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
+  const confirm = useConfirm();
   const handleOpenModal = () => {
     setOpenModal(true);
     setSelectedUser(-1);
   };
   const handleCloseModal = () => setOpenModal(false);
 
-  const [openEditModal, setOpenEditModal] = useState(false);
-  const handleOpenEditModal = () => setOpenEditModal(true);
-  const handleCloseEditModal = () => setOpenEditModal(false);
-
-  const [idUserSelected, setIdUserSelected] = useState(null);
-
   useEffect(() => {
     setTimeout(() => {
       setShowSuccessAlert(false);
     }, 3000);
   }, [showSuccessAlert]);
+
   useEffect(() => {
     getAllUser();
   }, []);
@@ -147,7 +139,7 @@ export default function UserPage() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = listUser.map((n, index) => index + 1);
+      const newSelecteds = filteredUsers.map((n, index) => index);
       setSelected(newSelecteds);
       return;
     }
@@ -193,18 +185,22 @@ export default function UserPage() {
   };
 
   const handleDeleteModal = () => {
-    UserService.delete(
-      selectedUser,
-      (response) => {
-        setShowSuccessAlert(true);
-        const index = listUser.findIndex((user) => user.id === selectedUser);
-        listUser.splice(index, 1);
-        handleCloseMenu();
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
+    confirm(dialogProps)
+      .then(() => {
+        UserService.delete(
+          selectedUser,
+          (response) => {
+            setShowSuccessAlert(true);
+            const index = listUser.findIndex((user) => user.id === selectedUser);
+            listUser.splice(index, 1);
+            handleCloseMenu();
+          },
+          (error) => {
+            console.log(error);
+          }
+        );
+      })
+      .catch(() => {});
   };
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - listUser.length) : 0;
@@ -249,14 +245,14 @@ export default function UserPage() {
                   onSelectAllClick={handleSelectAllClick}
                 />
                 <TableBody>
-                  {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
+                  {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => {
                     const { id, firstName, lastName, email, roles } = row;
-                    const selectedUser = selected.indexOf(id) !== -1;
+                    const selectedUser = selected.indexOf(index) !== -1;
 
                     return (
-                      <TableRow hover key={id} tabIndex={-1} role="checkbox" selected={selectedUser}>
+                      <TableRow hover key={index} tabIndex={-1} role="checkbox" selected={selectedUser}>
                         <TableCell padding="checkbox">
-                          <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, id)} />
+                          <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, index)} />
                         </TableCell>
 
                         <TableCell component="th" scope="row" padding="none">

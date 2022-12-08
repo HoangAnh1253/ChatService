@@ -1,8 +1,8 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
-import { sentenceCase } from 'change-case';
-import { Navigate, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { useConfirm } from 'material-ui-confirm';
 
 // @mui
 import {
@@ -27,19 +27,14 @@ import {
   Fade,
   Backdrop,
   Box,
+  Alert,
 } from '@mui/material';
 // components
-import Label from '../components/label';
 import Iconify from '../components/iconify';
 import Scrollbar from '../components/scrollbar';
 // sections
 import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
 // mock
-import USERLIST from '../_mock/user';
-import UserService from '../Services/UserService';
-import { jsonData } from './data';
-import { data } from '../_mock/topic';
-import TableModal from '../components/Modal/table';
 import TopicModal from '../components/Topic/TopicModal';
 import TopicService from '../Services/TopicService';
 
@@ -50,14 +45,12 @@ const TABLE_HEAD = [
   { id: 'option', label: 'Option', alignRight: true },
 ];
 
-const styleModal = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  bgcolor: 'background.paper',
-  boxShadow: 24,
-  p: 4,
+const dialogProps = {
+  title: 'Confirm delete',
+  content: 'Delete topic',
+  titleProps: { sx: { fontWeight: 700 } },
+  confirmationButtonProps: { color: 'error', variant: 'outlined', sx: { fontWeight: 700 } },
+  cancellationButtonProps: { variant: 'outlined', sx: { fontWeight: 700 } },
 };
 // ----------------------------------------------------------------------
 
@@ -102,18 +95,23 @@ export default function TopicPage() {
   const [ID, setID] = useState(null);
   const [name, setName] = useState('');
   const [openModal, setOpenModal] = useState(false);
+  const confirm = useConfirm();
+  const [showSuccessAlert, setShowSuccessAlert] = useState(false);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setShowSuccessAlert(false);
+    }, 3000);
+  }, [showSuccessAlert]);
+
   const handleOpenModal = () => {
+    setName('');
     setOpenModal(true);
     setModalItemSelected(-1);
   };
   const handleCloseModal = () => setOpenModal(false);
   const [modalItemSelected, setModalItemSelected] = useState(-1);
-  const [openModalItem, setOpenModalItem] = useState(false);
-  const handleOpenModalItem = (index, id1) => (e) => {
-    setOpenModalItem(true);
-    setModalItemSelected(index);
-    setID(id1);
-  };
+
   useEffect(() => {
     getAllTopic();
     console.log('get all topic');
@@ -134,23 +132,26 @@ export default function TopicPage() {
   };
 
   const handleDelete = () => {
-    console.log('delete');
-    TopicService.delete(
-      ID,
-      () => {
-        getAllTopic();
-      },
-      () => {}
-    );
+    confirm(dialogProps)
+      .then(() => {
+        console.log('delete');
+        TopicService.delete(
+          ID,
+          () => {
+            setShowSuccessAlert(true);
+            const index = listItem.findIndex((item) => item.id === modalItemSelected);
+            listItem.splice(index, 1);
+            handleCloseMenu();
+          },
+          () => {}
+        );
+      })
+      .catch(() => {});
   };
 
   const handleSubmit = () => {
     getAllTopic();
   };
-
-  useEffect(() => {
-    setListItem(data);
-  }, [data]);
 
   const handleOpenMenu = (index, id1) => (event) => {
     setOpen(event.currentTarget);
@@ -228,6 +229,12 @@ export default function TopicPage() {
             Create new Topic
           </Button>
         </Stack>
+
+        {showSuccessAlert && (
+          <Alert severity="success" color="info" sx={{ mb: 2 }}>
+            Success
+          </Alert>
+        )}
 
         <Card>
           <UserListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />

@@ -76,7 +76,6 @@ const UserModal = (props) => {
   }, [password, confirmPassword]);
 
   useEffect(() => {
-    clearText();
     setError({});
     setShowSuccessAlert(false);
     if (selectedUser !== -1) {
@@ -91,7 +90,9 @@ const UserModal = (props) => {
       if (user.email !== null) {
         setEmail(user.email);
       }
+      return;
     }
+    clearText();
   }, [openModal]);
 
   const checkPass = () => {
@@ -103,6 +104,8 @@ const UserModal = (props) => {
   };
 
   function clearText() {
+    setFirstName('');
+    setLastName('');
     setEmail('');
     setPassword('');
     setConfirmPassword('');

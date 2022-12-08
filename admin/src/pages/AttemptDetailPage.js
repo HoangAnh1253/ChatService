@@ -35,7 +35,7 @@ import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
 // mock
 import USERLIST from '../_mock/user';
 import UserService from '../Services/UserService';
-import { jsonData } from './data';
+import { jsonData } from '../_mock/data';
 import TableModal from '../components/Modal/table';
 // ----------------------------------------------------------------------
 

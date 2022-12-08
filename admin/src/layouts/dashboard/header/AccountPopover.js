@@ -40,7 +40,7 @@ export default function AccountPopover() {
   };
 
   const handleLogout = () => {
-    window.localStorage.clear()
+    window.localStorage.clear();
     setOpen(null);
     navigate('/login');
   };
@@ -64,7 +64,7 @@ export default function AccountPopover() {
           }),
         }}
       >
-        <Avatar src="/" alt="photoURL" />
+        <Avatar src="/avatar.png" alt="avatar.png" />
       </IconButton>
 
       <Popover
